@@ -1,0 +1,362 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "<%=test.name%> | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Test page for WiseSloth.open: details, result scoreboards and more in " + "<%=test.name%>" + ".");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Página de test para WiseSloth.open: detalles, resultados y más en " + "<%=test.name%>" + ".");
+
+  // Set as noindex if test.visibility is "private" or "followers"
+  <% if (test.visibility === "private" || test.visibility === "followers") { %>
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+  <% } else { %>
+  if (metaRobots) metaRobots.setAttribute("content", "index");
+  <% } %>
+</script>
+
+<% var isAuthor = session.user && test.author && (session.user.id === test.author.id) %>
+<!-- Include hero header -->
+<% const heroTitleEn = "Show Test" %>
+<% const heroTitleEs = "Mostrar Test" %>
+<% const heroSubtitleEn = "Test details, result scoreboards and more..." %>
+<% const heroSubtitleEs = "Detalles del test, resultados y más..." %>
+<% const containerId = "" %>
+<%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+
+<!-- Test Content -->
+<% const viewType = "SHOW" %>
+<% var isAuthor = session.user && test.author && (test.author.username === session.user.username); %>
+<% var isFavorite = session.user && (session.user.favoriteIds || []).includes(test.id); %>
+<div class="container">
+
+<!-- In case the test visibility is private, show a notification encouraging the user to make the test public -->
+<!-- so that any user in the community can view and take the test -->
+<% const userIsTestAuthor = session.user && test.author && (test.author.username === session.user.username); %>
+<% if (userIsTestAuthor && test.visibility === 'private' && test.stats.nTries === 0) { %>
+<div id="make-test-public-notification" class="notification is-link is-light is-hidden-touch">
+  <button class="delete" aria-label="delete"></button>
+  <div class="columns is-vcentered">
+    <div class="column">
+      <p class="title is-5">
+        <span lang="en">Share your test with the community! &#128588;</span>
+        <span lang="es">¡Comparte tu test con la comunidad! &#128588;</span>
+      </p>
+      <p class="subtitle is-6">
+        <span lang="en">Change the visibility to public <i class="fas fa-globe-europe has-text-success"></i> so that any user can view and compete for the best score.</span>
+        <span lang="es">Cambia la visibilidad a pública <i class="fas fa-globe-europe has-text-success"></i> para que cualquier usuario pueda ver y competir por la mejor puntuación.</span>
+      </p>
+    </div>
+    <div class="column is-narrow has-text-centered">
+      <div class="button is-rounded is-fullwidth open-edit-test-modal-button <%=userIsTestAuthor ? 'is-link' : 'is-danger'%>"
+        data-test-id='<%=test.id%>'
+        data-test-visibility='<%=test.visibility%>'
+        data-test-hide-answers='<%=test.hideAnswers%>'
+        data-test-type='<%=test.type%>'>
+        <span class="icon"><i class="fas fa-pen-nib"></i></span>
+        <span lang="en">Edit details</span>
+        <span lang="es">Editar detalles</span>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<!-- Include test card -->
+<div class="flex-container">
+  <%- include('../cards/test', { viewType, test }) %>
+</div>
+<br>
+
+<!-- General AI edit -->
+<%- include('../auxiliary/general-ai-edit', { test, isAuthor, isAdmin }) %>
+
+<!-- Unified action bar: TRY / BATTLE / SHARE / LIKE -->
+<div class="show-action-bar is-hidden-touch">
+  <button class="show-action show-action-primary open-modal-try-button" data-test-id="<%=test.id%>" data-test-type="<%=test.type%>" data-test-name="<%=test.name%>" data-n-quizzes="<%=test.quizzes.length%>" data-test-author="<%=test.author ? test.author.username : 'Anonymous'%>">
+    <span class="icon"><i class="fas fa-play"></i></span>
+    <span lang="en">Try</span>
+    <span lang="es">Intentar</span>
+  </button>
+  <button class="show-action open-modal-trylive-button" data-test-id="<%=test.id%>" data-test-type="<%=test.type%>" data-test-name="<%=test.name%>" data-n-quizzes="<%=test.quizzes.length%>">
+    <span class="icon"><i class="fas fa-bolt"></i></span>
+    <span lang="en">Battle</span>
+    <span lang="es">Battle</span>
+  </button>
+  <button class="show-action share-test-button" data-test-id="<%=test.id%>" data-test-name="<%=test.name%>">
+    <span class="icon"><i class="fas fa-share-alt"></i></span>
+    <span lang="en">Share</span>
+    <span lang="es">Compartir</span>
+  </button>
+  <% if ((isAuthor || isAdmin || !test.hideAnswers) && (test.type !== 'personality')) { %>
+  <button class="show-action download-as-pdf-button" data-test-id="<%=test.id%>" data-test-name="<%=test.name%>" title="Download as PDF">
+    <span class="icon"><i class="fas fa-file-pdf"></i></span>
+    <span>PDF</span>
+  </button>
+  <button class="show-action download-as-docx-button" data-test-id="<%=test.id%>" data-test-name="<%=test.name%>" title="Download as DOCX">
+    <span class="icon"><i class="fas fa-file-word"></i></span>
+    <span>DOCX</span>
+  </button>
+  <% } %>
+  <% if (session.user && !isAuthor && !isAdmin) { %>
+  <button class="show-action favorite-button" data-is-logged-in="<%=!!session.user%>" data-test-id="<%= test.id %>" data-is-favorite="<%=isFavorite%>">
+    <span class="icon heart-icon"><i class="far fa-heart"></i></span>
+    <span lang="en">Like</span>
+    <span lang="es">Me gusta</span>
+  </button>
+  <% } %>
+</div>
+
+<!-- Admin-only: source content + creation guidelines used to generate this test -->
+<% if (isAdmin && (test.creationContent || test.creationGuidelines)) { %>
+<div class="box admin-creation-info">
+  <button type="button" class="admin-creation-toggle" aria-expanded="false">
+    <span class="icon is-small"><i class="fas fa-robot"></i></span>
+    <span lang="en">Creation source (admin)</span>
+    <span lang="es">Origen de creación (admin)</span>
+    <span class="admin-creation-chevron"><i class="fas fa-chevron-down"></i></span>
+  </button>
+  <div class="admin-creation-body is-hidden">
+    <% if (test.creationGuidelines) { %>
+    <p class="admin-creation-label">
+      <span lang="en">Creation guidelines</span>
+      <span lang="es">Instrucciones de creación</span>
+    </p>
+    <pre class="admin-creation-text"><%= test.creationGuidelines %></pre>
+    <% } %>
+    <% if (test.creationContent) { %>
+    <p class="admin-creation-label">
+      <span lang="en">Source content</span>
+      <span lang="es">Contenido fuente</span>
+    </p>
+    <pre class="admin-creation-text"><%= test.creationContent %></pre>
+    <% } %>
+  </div>
+</div>
+<script class="test-show-js" data-n="0" nonce="<%=nonce%>">
+  (function () {
+    const toggle = document.querySelector('.admin-creation-toggle');
+    if (!toggle) return;
+    toggle.addEventListener('click', () => {
+      const body = toggle.parentElement.querySelector('.admin-creation-body');
+      const isOpen = !body.classList.contains('is-hidden');
+      body.classList.toggle('is-hidden', isOpen);
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      toggle.querySelector('.admin-creation-chevron')?.classList.toggle('is-open', !isOpen);
+    });
+  })();
+</script>
+<% } %>
+
+<!-- Include test result tables if it is a knowledge test -->
+<% if (test.type === 'knowledge') { %>
+<div class="box">
+  <%- include('../auxiliary/test-tables', { viewType, test }) %>
+</div>
+<!-- Include personality test taking statistics if personality test -->
+<% } else if (test.type === 'personality') { %>
+<div class="box">
+  <%- include('../auxiliary/test-tables-personality', { viewType, test }) %>
+</div>
+<% } %>
+
+<!-- Show test context -->
+<% if (false) { %>
+<% if (test.context && (isAdmin || isAuthor || !test.hideAnswers)) { %>
+<div class="card">
+  <div class="card-header">
+    <div class="card-header-title">
+      <h3 class="title is-4">Text necessary to answer the questions</h3>
+    </div>
+    <div class="card-header-icon">
+      <span id="card-hide-button-context" class="icon is-large">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+    </div>
+  </div>
+  <div class="card-content is-hidden" id="card-hidden-context">
+    <%= test.context %>
+  </div>
+</div>
+<% } %>
+<% } %>
+
+<!-- Show test questions -->
+<div class="box" style="position: relative;">
+  <% if (isAdmin || isAuthor || !test.hideAnswers) { %>
+  <div class="columns mx-0 is-vcentered">
+    <div class="column">
+      <h3 class="title is-4">
+        <span lang="en">Questions & Stats</span>
+        <span lang="es">Preguntas y Stats</span>
+      </h3>
+      <h4 class="subtitle is-7">
+        <span lang="en">Last modified <%= formatTimeAgo(test.latestQuizUpdatedAt, 'en') %></span>
+        <span lang="es">Última modificación <%= formatTimeAgo(test.latestQuizUpdatedAt, 'es') %></span>
+      </h4>
+    </div>
+  </div>
+  <% if (test.type === 'knowledge') { %>
+  <div class="button is-link is-light is-rounded is-medium toggle-correct-answers-switch upper-right-pos">
+    <span class="icon is-small is-hidden-desktop"><i class="fas fa-eye"></i></span>
+    <span lang="en" class=" is-hidden-touch">Show answers</span>
+    <span lang="es" class=" is-hidden-touch">Ver respuestas</span>
+    <span class="icon is-small has-color-link"><i class="fas fa-toggle-off"></i></span>
+  </div>
+  <% } %>
+
+  <% if (test.hideAnswers && (isAdmin || isAuthor)) { %>
+  <p class="is-size-7 has-text-centered" style="margin-top: 5px; margin-bottom: 5px;">
+    <span class="icon is-small"><i class="fas fa-eye-slash has-text-danger"></i></span>
+    <b lang="en">Questions and answers hidden. Only you can view them.</b>
+    <b lang="es">Preguntas y respuestas ocultas. Solo tú puedes verlas.</b>
+  </p>
+  <% } else if (!test.hideAnswers && (isAdmin || isAuthor)) { %>
+  <p class="is-size-7 has-text-centered" style="margin-top: 5px; margin-bottom: 5px;">
+    <span class="icon is-small"><i class="fas fa-eye has-text-link"></i></span>
+    <b lang="en">Questions and answers visible to everyone.</b>
+    <b lang="es">Preguntas y respuestas visibles para todos.</b>
+  </p>
+  <% } %>
+
+  <!-- Include quiz links for sequential mode -->
+  <div class="quiz-links flex-container-no-wrap">
+  <% for (const i in test.quizzes) { %>
+  <% var quiz = test.quizzes[i]; %>
+  <!-- If the quiz has stats -->
+  <% if (quiz.stats && ((quiz.stats.totalHits + quiz.stats.totalOmissions + quiz.stats.totalFails) > 0)) {
+    const total = quiz.stats.totalHits + quiz.stats.totalOmissions + quiz.stats.totalFails;
+    const hitsPerc = Math.round((quiz.stats.totalHits / total) * 100);
+    const omissionsPerc = Math.round((quiz.stats.totalOmissions / total) * 100);
+    const failsPerc = 100 - hitsPerc - omissionsPerc;
+  %>
+  <div class="show-quiz-by-id-button" id="quiz-link-<%= quiz.id %>" data-quiz-id="<%= quiz.id %>"
+    style="cursor: pointer;
+          position: relative;
+          flex: 1 0 35px;
+          margin: 2px;
+          padding: 2px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          border: 3px solid;
+          border-image: linear-gradient(to right,
+                                        var(--success-color) 0%,
+                                        var(--success-color) <%=hitsPerc%>%,
+                                        var(--grey-color) <%=hitsPerc%>%,
+                                        var(--grey-color) <%=hitsPerc + omissionsPerc%>%,
+                                        var(--danger-color) <%=hitsPerc + omissionsPerc%>%,
+                                        var(--danger-color) 100%);
+          border-image-slice: 1;">
+      <%= quiz.number %>
+  </div>
+  <% } else { %>
+  <div class="flex-item-quiz-link show-quiz-by-id-button" id="quiz-link-<%= quiz.id %>" data-quiz-id="<%= quiz.id %>">
+    <%= quiz.number %>
+  </div>
+  <% } %>
+  <% } %>
+  </div>
+
+  <!-- Include next button for sequential mode -->
+  <div class="field is-grouped" style="margin-top: 10px;">
+    <div id="show-prev-quiz-button" class="button is-fullwidth is-hidden">
+      <span class="icon"><i class="fas fa-arrow-left"></i></span>
+      <span lang="en">Previous</span>
+      <span lang="es">Anterior</span>
+    </div>
+    <% if (test.quizzes.length > 1) { %>
+    <div id="show-next-quiz-button" class="button is-fullwidth show-quiz-by-id-button" data-quiz-id="<%=test.quizzes[1].id%>">
+      <span lang="en">Next</span>
+      <span lang="es">Siguiente</span>
+      <span class="icon"><i class="fas fa-arrow-right"></i></span>
+    </div>
+    <div id="check-button" class="button has-text-primary is-fullwidth is-hidden open-modal-try-button" data-test-id="<%=test.id%>" data-test-type="<%=test.type%>" data-test-name="<%=test.name%>" data-n-quizzes="<%=test.quizzes.length%>" data-test-author="<%=test.author ? test.author.username : 'Anonymous'%>">
+    <% } else { %>
+    <div id="check-button" class="button has-text-primary is-fullwidth open-modal-try-button" data-test-id="<%=test.id%>" data-test-type="<%=test.type%>" data-test-name="<%=test.name%>" data-n-quizzes="<%=test.quizzes.length%>" data-test-author="<%=test.author ? test.author.username : 'Anonymous'%>">
+    <% } %>
+      <span class="icon"><i class="fas fa-play"></i></span>
+      <b lang="en">TRY</b>
+      <b lang="es">INTENTAR</b>
+    </div>
+  </div>
+
+  <!-- Include quiz elements -->
+  <% let hideQuiz = false; %>
+  <% for (var i in test.quizzes) { %>
+  <% var quiz = test.quizzes[i]; %>
+  <% const n = Number(i) + 1; %>
+  <!-- Include quiz box -->
+  <%- include('../auxiliary/test-quiz', { viewType, quiz, n, hideQuiz, isAdmin, isAuthor }) %>
+  <% hideQuiz = true; %>
+  <% } %>
+
+  <% } else { %>
+  <h3 class="title is-4">
+    <span lang="en">Questions</span>
+    <span lang="es">Preguntas</span>
+  </h3>
+  <div class="notification">
+    <p lang="en"><strong>Questions and answers hidden.</strong> Only the author can view them.</p>
+    <p lang="es"><strong>Preguntas y respuestas ocultas.</strong> Solo el autor puede verlas.</p>
+  </div>
+  <% } %>
+  </div>
+</div>
+
+<!-- Modals HTML -->
+<% var context = test.context %>
+<%- include('../auxiliary/modal-context', { context }) %>
+
+<!-- If the user is an author or an admin and the test is not a personality test, include a button to generate a PDF or DOCX file -->
+<% if ((isAuthor || isAdmin ) && (test.type !== 'personality')) { %>
+<!-- Import libraries to turn into PDF or DOCX file -->
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" class="test-show-js" id="pdf-lib-js" data-n="1" nonce="<%=nonce%>"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@9.0.2/build/index.umd.min.js" class="test-show-js" id="docx-js" data-n="2" nonce="<%=nonce%>"></script>
+<script src="/scripts/tests/gen-pdf-or-docx.js?v=20260824-norm" class="test-show-js" id="gen-pdf-or-docx-js" data-n="3" nonce="<%=nonce%>"></script>
+
+<%
+  // Remove every attribute from testToDownload which is not name, author, desc, or quizzes
+  const testToDownload = structuredClone(test);
+  Object.keys(testToDownload).forEach(key => {
+    if (key !== "id" && key !== "name" && key !== "author" && key !== "desc" && key !== "quizzes" && key !== "latestQuizUpdatedAt") {
+      delete testToDownload[key];
+    }
+  });
+  // Remove stats attribute from each element in test.quizzes list
+  testToDownload.quizzes.forEach(quiz => {
+    delete quiz.id;
+    delete quiz.updatedAt;
+    delete quiz.createdAt;
+    delete quiz.stats;
+  })
+%>
+
+<script class="test-show-js" data-n="0" nonce="<%=nonce%>">
+  testToDownload = <%- safeJson(testToDownload) %>;
+  // console.log(testToDownload);
+
+  document.querySelectorAll(".download-as-pdf-button").forEach((button) =>
+    button.addEventListener("click", () => downloadPDF(testToDownload))
+  );
+  document.querySelectorAll(".download-as-docx-button").forEach((button) =>
+    button.addEventListener("click", () => downloadDOCX(testToDownload))
+  );
+</script>
+
+<!-- Inline quiz editing (only for authors/admins of knowledge tests) -->
+<% if (test.type === 'knowledge') { %>
+<script class="test-show-js" data-n="4" nonce="<%=nonce%>">
+  window.__showQuizData = <%- safeJson({
+    testId: test.id,
+    userId: test.userId || (test.author && test.author.id),
+    quizzes: test.quizzes.map((q) => ({
+      id: q.id, number: q.number, question: q.question, correct_opts: q.correct_opts,
+      opt1: q.opt1, opt2: q.opt2, opt3: q.opt3, opt4: q.opt4, opt5: q.opt5, opt6: q.opt6,
+      image_url: q.image_url || ''
+    }))
+  }) %>;
+</script>
+<script src="/scripts/tests/test-show-edit.js?v=20260814" class="test-show-js" id="test-show-edit-js" data-n="5" nonce="<%=nonce%>"></script>
+<%- include('../auxiliary/modal-edit-quiz-inline') %>
+<% } %>
+<% } %>

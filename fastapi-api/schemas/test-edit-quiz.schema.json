@@ -1,0 +1,82 @@
+{
+  "type": "object",
+  "required": ["summary", "test_updates", "quizzes_to_add", "quizzes_to_remove_ids", "quizzes_to_update"],
+  "properties": {
+    "summary": {
+      "type": "string",
+      "description": "One short sentence (same language as the test) summarizing exactly what was changed. Shown to the user before they confirm."
+    },
+    "test_updates": {
+      "type": "object",
+      "required": ["name", "topic", "desc"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The test's name. Copy the CURRENT name unchanged unless the instruction explicitly asked to rename/retitle it."
+        },
+        "topic": {
+          "type": "string",
+          "description": "The test's topic tag (2-4 hyphenated lowercase nouns). Copy the CURRENT topic unchanged unless the new content requires a different one."
+        },
+        "desc": {
+          "type": "string",
+          "description": "The test's description. Copy the CURRENT description unchanged unless the instruction explicitly asked to change it."
+        }
+      },
+      "additionalProperties": false
+    },
+    "quizzes_to_add": {
+      "type": "array",
+      "description": "Brand-new questions to append. Leave EMPTY unless the instruction explicitly asked to add question(s).",
+      "items": {
+        "type": "object",
+        "required": ["q", "a", "b", "exp", "correctOpts"],
+        "properties": {
+          "q": { "type": "string", "description": "The question text. Use MathJax ($...$) for math expressions." },
+          "a": { "type": "string", "description": "Option A text" },
+          "b": { "type": "string", "description": "Option B text" },
+          "c": { "type": "string", "description": "Option C text (optional)" },
+          "d": { "type": "string", "description": "Option D text (optional)" },
+          "e": { "type": "string", "description": "Option E text (optional)" },
+          "exp": { "type": "string", "description": "Explanation justifying the correct answer(s)" },
+          "correctOpts": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["a", "b", "c", "d", "e"] },
+            "description": "Array of correct option letters"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "quizzes_to_remove_ids": {
+      "type": "array",
+      "description": "IDs (copied verbatim from the current questions list below) of questions to delete. Leave EMPTY unless the instruction explicitly asked to remove question(s).",
+      "items": { "type": "string" }
+    },
+    "quizzes_to_update": {
+      "type": "array",
+      "description": "Existing questions to modify in place. Include ONLY the questions the instruction actually asked to change - never rewrite untouched questions.",
+      "items": {
+        "type": "object",
+        "required": ["id", "q", "a", "b", "exp", "correctOpts"],
+        "properties": {
+          "id": { "type": "string", "description": "The id of the existing question being updated, copied verbatim from the current list." },
+          "q": { "type": "string", "description": "The updated question text. Use MathJax ($...$) for math expressions." },
+          "a": { "type": "string", "description": "Option A text" },
+          "b": { "type": "string", "description": "Option B text" },
+          "c": { "type": "string", "description": "Option C text (optional)" },
+          "d": { "type": "string", "description": "Option D text (optional)" },
+          "e": { "type": "string", "description": "Option E text (optional)" },
+          "exp": { "type": "string", "description": "Explanation justifying the correct answer(s)" },
+          "correctOpts": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["a", "b", "c", "d", "e"] },
+            "description": "Array of correct option letters"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

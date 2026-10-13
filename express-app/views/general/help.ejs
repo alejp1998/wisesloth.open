@@ -1,0 +1,149 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Help | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Help page for WiseSloth.open: discover how to create interactive quizzes seamlessly with AI.");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Página de ayuda para WiseSloth.open: descubre cómo crear cuestionarios interactivos sin problemas con IA.");
+
+  // Set as index
+  if (metaRobots) metaRobots.setAttribute("content", "index");
+</script>
+
+<!-- Include hero header -->
+<% const heroTitleEn = "In need of help?" %>
+<% const heroTitleEs = "¿Necesitas ayuda?" %>
+<% const heroSubtitleEn = "Check out the tips and FAQs to get started." %>
+<% const heroSubtitleEs = "Revisa los consejos y FAQs para comenzar." %>
+<% const containerId = "" %>
+<%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+
+<!-- Present and encourage user to check "Tips" and "FAQ" sections -->
+<div class="container has-text-centered">
+  <p class="title is-2">
+    <span lang="en">Tips and FAQs</span>
+    <span lang="es">Consejos y FAQs</span>
+  </p>
+  <p class="subtitle is-4">
+    <span lang="en">Improve the quality of the tests you create and check the most common questions.</span>
+    <span lang="es">Mejora la calidad de los tests que creas y revisa las preguntas más comunes.</span>
+  </p>
+  <br>
+  <div class="columns mx-0 is-vcentered">
+    <div class="column">
+      <div class="card is-clickable equal-height-as-sibling" data-href="/tips">
+        <div class="card-content">
+          <p class="title is-5 has-text-centered">
+            <span class="icon"><i class="fas fa-lightbulb"></i></span>
+            <span lang="en">Tips and Tricks</span>
+            <span lang="es">Consejos y Trucos</span>
+          </p>
+          <p>
+            <span lang="en">Improve the quality of the tests you create.</span>
+            <span lang="es">Mejora la calidad de los tests que creas.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card is-clickable equal-height-as-sibling" data-href="/faq">
+        <div class="card-content">
+          <p class="title is-5 has-text-centered">
+            <span class="icon"><i class="fas fa-question"></i></span>
+            <span lang="en">Frequently Asked Questions</span>
+            <span lang="es">Preguntas Frecuentes</span>
+          </p>
+          <p>
+            <span lang="en">Common questions about how WiseSloth.open works.</span>
+            <span lang="es">Preguntas comunes sobre como funciona WiseSloth.open.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<br>
+
+
+<!-- Get started section: CTA + creation methods (video removed) -->
+<div class="container has-text-centered">
+  <div class="box">
+    <p class="title is-3">
+      <span lang="en">Get Started</span>
+      <span lang="es">Empieza</span>
+    </p>
+    <p class="subtitle is-5">
+      <span lang="en">Pick how you want to create your test — it only takes a minute.</span>
+      <span lang="es">Elige cómo quieres crear tu test — solo toma un minuto.</span>
+    </p>
+    <a href="/tests/new" class="button is-large is-link is-light mb-4">
+      <span class="icon"><i class="fas fa-plus"></i></span>
+      <span lang="en">Create Your First Test</span>
+      <span lang="es">Crea tu Primer Test</span>
+    </a>
+  </div>
+  <br>
+
+  <div class="columns mx-0 is-multiline">
+    <div class="column is-half-tablet is-one-quarter-desktop">
+      <div id="create-from-old-exam-card" class="card is-clickable equal-height-as-sibling" data-href="/tests/new?type=oldexam">
+        <div class="card-content">
+          <p class="title is-5 has-text-centered">
+            <span lang="en">From Old Exams</span>
+            <span lang="es">Desde Exámenes Antiguos</span>
+          </p>
+          <p>
+            <span lang="en">Turn your old exams into interactive quizzes to compete with friends!</span>
+            <span lang="es">¡Convierte tus exámenes antiguos en tests interactivos para competir con amigos!</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="column is-half-tablet is-one-quarter-desktop">
+      <div id="create-from-notes-card" class="card is-clickable equal-height-as-sibling" data-href="/tests/new?type=notes">
+        <div class="card-content">
+          <p class="title is-5 has-text-centered">
+            <span lang="en">From Notes or Text</span>
+            <span lang="es">Desde Apuntes o Texto</span>
+          </p>
+          <p>
+            <span lang="en">Paste notes, Wikipedia content, etc., and let our AI generate questions for you.</span>
+            <span lang="es">Pega apuntes, contenido de Wikipedia, etc., y deja que la IA genere preguntas por ti.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="column is-half-tablet is-one-quarter-desktop">
+      <div id="create-from-instructions-card" class="card is-clickable equal-height-as-sibling" data-href="/tests/new?type=instructions">
+        <div class="card-content">
+          <p class="title is-5 has-text-centered">
+            <span lang="en">From Scratch</span>
+            <span lang="es">Desde Cero</span>
+          </p>
+          <p>
+            <span lang="en">Provide guidelines, and WiseSloth.open will devise a quiz to test comprehension.</span>
+            <span lang="es">Proporciona instrucciones, y WiseSloth.open creará un test para evaluar tus conocimientos.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="column is-half-tablet is-one-quarter-desktop">
+      <div id="create-personality-test-card" class="card is-clickable equal-height-as-sibling" data-href="/tests/new?type=personality">
+        <div class="card-content">
+          <p class="title is-5 has-text-centered">
+            <span lang="en">Personality</span>
+            <span lang="es">Personalidad</span>
+          </p>
+          <p>
+            <span lang="en">Create a personality test to learn more about yourself or your friends.</span>
+            <span lang="es">Crea un test de personalidad para conocer más sobre ti o tus amigos.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

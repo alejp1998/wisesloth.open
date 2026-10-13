@@ -1,0 +1,334 @@
+<% const isTestAuthor = session.user && test.author && test.author.username === session.user.username; %>
+<% const isTestFavorite = session.user && (session.user.favoriteIds || []).includes(test.id); %>
+<% const testUpdatedAt = test.updatedAt; %>
+<% const daysSinceTestUpdatedAt = Math.floor((Date.now() - testUpdatedAt) / (1000 * 60 * 60 * 24)); %>
+<% const daysRemainingForTestDeletion = 30 - daysSinceTestUpdatedAt; %>
+
+<div class="flex-card" id="card-test-<%=test.id%>">
+  <div class="card test-card" data-test-id="<%=test.id%>">
+    <!-- If the test has stats -->
+    <% if (viewType !== "EDIT" && viewType !== "TRY" && test.stats) {
+      const total = test.stats.totalHits + test.stats.totalOmissions + test.stats.totalFails;
+      const hitsPerc = Math.round(test.stats.totalHits / total * 100);
+      const omissionsPerc = Math.round(test.stats.totalOmissions / total * 100);
+      const failsPerc = Math.round(test.stats.totalFails / total * 100);
+    %>
+    <header class="card-header stats-border"
+      style="--stats-green-end: <%=hitsPerc%>%; --stats-grey-end: <%=hitsPerc + omissionsPerc%>%;">
+    <% } else { %>
+    <header class="card-header">
+    <% } %>
+      <div class="card-header-title">
+        <p class="is-size-4">
+          <span class="test-name is-clickable" data-href="/tests/<%=test.id%>"><%=test.name%></span>
+        </p>
+      </div>
+      <div class="card-header-icon">
+        <% if (viewType !== "EDIT" && viewType !== "TRY" && viewType !== "RESULT") { %>
+        <% if (test.stats && test.stats.nTries > 0) { %>
+        <% if (test.type !== 'personality') { %>
+        <div class="stats test-stats">
+          <!-- Include test charts -->
+          <% var chartType = "test"; %>
+          <% var chartId = test.id; %>
+          <% var chartStats = test.stats; %>
+          <%- include('../auxiliary/chart', { chartType, chartId, chartStats }) %>
+        </div>
+        <% } else { %>
+        <div class="stats personality-stats">
+          <!-- Include personality test charts -->
+          <% var chartType = "personality"; %>
+          <% var chartId = test.id; %>
+          <% var chartStats = test.stats; %>
+          <% var personalities = test.personalities; %>
+          <%- include('../auxiliary/chart', { chartType, chartId, chartStats, personalities }) %>
+        </div>
+        <% } %>
+        <% } else { %>
+        <span class="icon has-text-danger" title="If the test has no valid results, it will be deleted after <%= daysRemainingForTestDeletion %> days."><i class="fas fa-exclamation-triangle"></i></span>
+        <% } %>
+        <% } %>
+        <% if (viewType !== "TRY") { %>
+        <span id="card-hide-button-test-<%=test.id%>" class="icon is-large card-hide-button">
+          <i class="fas fa-angle-down" aria-hidden="true"></i>
+        </span>
+        <% if ((isAdmin || isTestAuthor)) { %>
+        <span class="open-edit-test-modal-button <%=isTestAuthor ? 'has-text-link' : 'has-text-danger'%>"
+          data-test-id='<%=test.id%>'
+          data-test-visibility='<%=test.visibility%>'
+          data-test-hide-answers='<%=test.hideAnswers%>'
+          data-test-type='<%=test.type%>'>
+          <span class="icon is-small"><i class="fas fa-pen-nib"></i></span>
+        </span>
+        <% } %>
+        <% } %>
+      </div>
+    </header>
+    <% if (viewType !== "TRY") { %>
+    <div class="card-content" id="card-content-<%=test.id%>">
+      <% const tagSize = viewType === "INDEX" ? "is-medium" : "is-medium"; %>
+      <% const tagSizeTopic = viewType === "INDEX" ? "is-small" : "is-medium"; %>
+      <div class="content">
+        <!-- Show promptTokens and completionTokens if user is admin -->
+        <% if (isAdmin) { %>
+        <div class="field is-grouped is-grouped-multiline">
+          <div class="control">
+            <div class="tags has-addons">
+              <span class="tag is-success">
+                <span lang="en">I</span>
+                <span lang="es">I</span>
+              </span>
+              <span class="tag">
+                <b><%=test.promptTokens%></b>
+              </span>
+            </div>
+          </div>
+          <div class="control">
+            <div class="tags has-addons">
+              <span class="tag is-danger">
+                <span lang="en">O</span>
+                <span lang="es">O</span>
+              </span>
+              <span class="tag">
+                <b><%=test.completionTokens%></b>
+              </span>
+            </div>
+          </div>
+          <div class="control">
+            <div class="tags has-addons">
+              <span class="tag is-link">
+                <span lang="en">T</span>
+                <span lang="es">T</span>
+              </span>
+              <span class="tag">
+                <b><%=test.promptTokens + test.completionTokens%></b>
+              </span>
+            </div>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Test folder -->
+        <div class="columns is-vcentered">
+          <div class="column">
+            <span class="test-topic is-hidden"><%=test.topic%></span>
+            <div class="test-topic-words">
+              <% let topicWords = test.topic.split("-"); %>
+              <span class="icon is-small" style="color: var(--bulma-link);"><i class="fas fa-folder-open fa-xs"></i></span>
+              <% for (let i = 0; i < topicWords.length; i++) { %>
+              <% if (viewType === "INDEX") { %>
+              <b class="test-topic-<%=i%> is-size-6 is-clickable select-topic-button" data-topic="<%=topicWords.slice(0, i + 1).join("-")%>">
+              <% } else { %>
+              <b class="test-topic-<%=i%> is-size-6 ajax-link" data-href="/tests?topic=<%=topicWords.slice(0, i + 1).join("-")%>">
+              <% } %>
+                <%=topicWords[i]%>
+              </b>
+              <% if (i < topicWords.length - 1) { %>
+              <span class="icon is-small" style="color: var(--bulma-link);">/</span>
+              <% } %>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test description -->
+        <div class="card-hideable-content is-hidden" id="card-hidden-test-<%=test.id%>">
+          <p class="test-desc"><%=test.desc%></p>
+          <br>
+        </div>
+
+        <!-- Test tags -->
+        <div class="columns is-vcentered">
+          <div class="column">
+            <div class="tags">
+              <!-- Personality tag -->
+              <% if (test.type === 'personality') { %>
+              <span title="Personality test" class="tag is-danger <%=tagSize%>">
+                <i class="fas fa-brain"></i>
+                <em lang="en">Pers</em>
+                <em lang="es">Pers</em>
+              </span>
+              <% } %>
+              <!-- Flashcards tag -->
+              <% if (test.type === 'flashcards') { %>
+              <span title="Flashcards" class="tag is-success <%=tagSize%>">
+                <i class="fas fa-layer-group"></i>
+                <em lang="en">Cards</em>
+                <em lang="es">Tarjetas</em>
+              </span>
+              <% } %>
+              <!-- Language tag -->
+              <% if (test.language in languagesDict) { %>
+              <% const langData = languagesDict[test.language]; %>
+              <span title="Language: <%=test.language.toUpperCase()%>" class="tag <%=tagSize%>">
+                <i class="fi fi-<%= langData.country %>"></i> <%= test.language.toUpperCase() %>
+              </span>
+              <% } else { %>
+              <span title="Language: <%=test.language.toUpperCase()%>" class="tag <%=tagSize%>">
+                <%= test.language.toUpperCase() %>
+              </span>
+              <% } %>
+
+              <span title="Number of questions: <%=test.quizzes.length%>" class="tag is-info <%=tagSize%>">
+                <i class="fas fa-hashtag"></i> <em><%=test.quizzes.length%></em>
+              </span>
+
+              <% if (viewType !== "TRY") { %>
+              <% if (test.stats && test.stats.nTries > 0) { %>
+              <span title="Number of tries: <%=test.stats.nTries%>" class="tag is-warning <%=tagSize%>">
+                <i class="fas fa-play-circle"></i> <em><%=test.stats.nTries%></em>
+              </span>
+              <% } %>
+              <% if ((test.stats && test.stats.nSeconds > 0)) { %>
+              <span title="Average completion time" class="tag is-dark <%=tagSize%>">
+                <!-- Include stopwatch -->
+                <% var nSeconds = test.stats.nSeconds; %>
+                <%- include('../auxiliary/stopwatch', {nSeconds, viewType}) %>
+              </span>
+              <% } %>
+              <% } %>
+            </div>
+          </div>
+          <div class="column is-narrow has-text-right">
+            <p class="title is-6">
+              <% if (viewType === "SHOW") { %>
+              <span lang="en">By: </span>
+              <span lang="es">Por: </span>
+              <% } %>
+              <% if (isTestAuthor) { %>
+              <a class="has-text-success" href="/users/<%= test.author.username %>">
+                <span lang="en">ME</span>
+                <span lang="es">YO</span>
+                <span class="icon"><i class="fas fa-user-astronaut"></i></span>
+              </a>
+              <% } else { %>
+                <% if(test.author) { %>
+                <a href="/users/<%= test.author.username %>">
+                  <%=test.author.username%>
+                </a>
+                <% } else { %>
+                <em>Unknown</em>
+                <% } %>
+              <% } %>
+              <% if (session.user && test.author && (test.author.username !== session.user.username)) { %>
+              <% const isIFollow =  session.user && (session.user.iFollowUsernames || []).includes(test.author.username); %>
+              <a class="follow-button" data-user-username="<%=test.author.username%>" data-is-followed="<%=isIFollow%>">
+                <% if (isIFollow) { %>
+                <span class="icon"><i class="fas fa-user-minus" style="color: var(--danger-color);"></i></i></span>
+                <% } else { %>
+                <span class="icon"><i class="fas fa-user-plus" style="color: var(--success-color);"></i></span>
+                <% } %>
+              </a>
+              <% } %>
+            </p>
+            <p class="subtitle is-6">
+              <!-- Test difficulty icon: if test.creationData has keys and has the key "difficulty" -->
+              <% if (test.creationData && test.creationData.difficulty) { %>
+              <span title="Difficulty: <%=test.creationData.difficulty%>" class="icon has-text-warning difficulty-icon">
+                <% if (test.creationData.difficulty === "beginner") { %>
+                <i class="fas fa-egg has-text-primary"></i>
+                <% } else if (test.creationData.difficulty === "elementary") { %>
+                <i class="fas fa-child has-text-warning"></i>
+                <% } else if (test.creationData.difficulty === "intermediate") { %>
+                <i class="fas fa-user has-text-info"></i>
+                <% } else if (test.creationData.difficulty === "advanced") { %>
+                <i class="fas fa-user-graduate has-text-success"></i>
+                <% } else if (test.creationData.difficulty === "expert") { %>
+                <i class="fas fa-user-tie has-text-danger"></i>
+                <% } %>
+              </span>
+              <% } %>
+              <!-- Test hiddenAnswers icon -->
+              <% if (test.hideAnswers) { %>
+              <span title="Hidden answers" class="icon has-text-danger hide-answers-icon">
+                <i class="fas fa-eye-slash"></i>
+              </span>
+              <% } else { %>
+              <span title="Visible answers" class="icon has-text-link hide-answers-icon">
+                <i class="fas fa-eye"></i>
+              </span>
+              <% } %>
+
+              <!-- Test visibility icon -->
+              <% if (test.visibility === "public") { %>
+              <span title="Visibility: public" class="icon has-text-success visibility-icon"><i class="fas fa-globe-europe"></i></span>
+              <% } else if (test.visibility === "followers") { %>
+              <span title="Visibility: followers" class="icon has-text-warning visibility-icon"><i class="fas fa-users"></i></span>
+              <% } else { %>
+              <span title="Visibility: private" class="icon has-text-danger visibility-icon"><i class="fas fa-lock"></i></span>
+              <% } %>
+              <em><%= formatTimeAgo(test.createdAt, lang) %></em>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- If the test has no results, warn user that it will be deleted after 30 days. -->
+      <% if ((viewType !== "INDEX" && viewType !== "EDIT" && viewType !== "TRY") && ((!test.stats) || (test.stats.nTries === 0))) { %>
+      <p class="is-size-7 has-text-centered has-text-danger">
+        <span class="icon is-small"><i class="fas fa-exclamation-triangle"></i></span>
+        <span lang="en">Will be deleted in <%= daysRemainingForTestDeletion %> days if it has no valid results.</span>
+        <span lang="es">Será eliminado en <%= daysRemainingForTestDeletion %> días si no tiene resultados válidos.</span>
+      </p>
+      <% } %>
+    </div>
+    <% } else { %>
+    <div class="card-content is-hidden-touch" id="card-content-<%=test.id%>">
+      <div class="content">
+        <p class="test-desc"><%=test.desc%></p>
+      </div>
+    </div>
+    <% } %>
+    <% if (viewType !== "EDIT") { %>
+    <footer class="card-footer">
+      <% if((viewType !== "SHOW") && (viewType !== "TRY") && (viewType !== "INDEX")) { %>
+      <a href="/tests/<%=test.id%>" class="card-footer-item">
+        <span class="icon"><i class="fas fa-eye"></i></span>
+      </a>
+      <% } %>
+      <% if(viewType !== "TRY") { %>
+      <div class="card-footer-item open-modal-try-button" data-test-id="<%=test.id%>" data-test-type="<%=test.type%>" data-test-name="<%=test.name%>" data-n-quizzes="<%=test.quizzes.length%>" data-test-author="<%=test.author ? test.author.username : 'Anonymous'%>">
+        <span class="icon"><i class="fas fa-play" style="color: var(--bulma-primary);"></i></span>
+      </div>
+      <% } %>
+      <% if ((isAdmin || isTestAuthor) && false) { %>
+      <div class="card-footer-item open-edit-test-modal-button"
+        data-test-id="<%=test.id%>"
+        data-test-visibility="<%=test.visibility%>"
+        data-test-hide-answers="<%=test.hideAnswers%>">
+        <span class="icon <%=isTestAuthor ? 'has-text-link' : 'has-text-danger'%>"><i class="fas fa-pen-nib"></i></span>
+      </div>
+      <% } %>
+      <% if((isAdmin || isTestAuthor) && (test.type !== "personality") && (viewType !== "TRY") && (viewType !== "EDIT")) { %>
+      <a href="/tests/<%=test.id%>/edit" class="card-footer-item">
+        <span class="icon"><i class="fas fa-edit"></i></span>
+      </a>
+      <% } %>
+      <% if((isAdmin || isTestAuthor) && (viewType !== "TRY") && (viewType !== "EDIT")) { %>
+      <% const deleteType = 'test'; %>
+      <% const deleteMsg = "Delete " + test.name + "?"; %>
+      <div class="card-footer-item delete-item-button" data-item-id="<%=test.id%>" data-delete-type="<%=deleteType%>" data-delete-msg="<%=deleteMsg%>">
+        <span class="icon"><i class="fas fa-trash" style="color: var(--bulma-danger);"></i></span>
+      </div>
+      <% } %>
+      <div class="card-footer-item share-test-button" data-test-id="<%=test.id%>" data-test-name="<%=test.name%>">
+        <span class="icon"><i class="fas fa-share-alt" style="color: var(--bulma-info);"></i></span>
+      </div>
+      <div class="card-footer-item favorite-button" data-is-logged-in="<%=!!session.user%>" data-test-id="<%= test.id %>" data-is-favorite="<%=isTestFavorite%>">
+        <% if (isTestFavorite) { %>
+        <span class="icon heart-icon"><i class="fas fa-heart" style="color: red;"></i></span>
+        <% } else { %>
+        <span class="icon heart-icon"><i class="far fa-heart" style="color: red;"></i></span>
+        <% } %>
+        <% if (test.nFavorites > 0) { %>
+        <span class="icon counter-icon is-size-4" style="color: red;">
+        <% } else { %>
+        <span class="icon counter-icon is-size-4 has-text-danger is-hidden" style="color: red;">
+        <% } %>
+        <%=test.nFavorites%>
+        </span>
+      </div>
+    </footer>
+    <% } %>
+  </div>
+</div>

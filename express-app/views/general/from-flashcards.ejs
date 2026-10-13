@@ -1,0 +1,155 @@
+<% if (typeof isHelpModal === 'undefined') { %>
+    <% var isHelpModal = false %>
+<% } %>
+
+<% if (!isHelpModal) { %>
+    <!-- Modify title in meta tag -->
+    <script class="title-metadata-js" nonce="<%=nonce%>">
+        document.title = "From Flashcards | WiseSloth.open";
+    </script>
+
+    <!-- Include hero header -->
+    <% const heroTitleEn = "Flashcards" %>
+    <% const heroTitleEs = "Flashcards" %>
+    <% const heroSubtitleEn = "" %>
+    <% const heroSubtitleEs = "" %>
+    <% const containerId = "" %>
+    <%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+<% } %>
+
+<div class="container">
+    <div class="section">
+        <h1 class="title is-2">
+            <span lang="en">How to create flashcards</span>
+            <span lang="es">Cómo crear tarjetas de estudio</span>
+        </h1>
+        <h2 class="subtitle is-4">
+            <span lang="en">Turn any study material into flip cards: a short prompt on the front and the answer or definition on the back. Study them one by one, shuffle them, and memorize faster. You can edit every card and even use AI to improve them.</span>
+            <span lang="es">Convierte cualquier material de estudio en tarjetas: una pregunta corta al frente y la respuesta o definición al reverso. Estúdialas una a una, barájalas y memoriza más rápido. Puedes editar cada tarjeta e incluso usar IA para mejorarlas.</span>
+        </h2>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">What do you need to get started?</span>
+                <span lang="es">¿Qué necesitas para empezar?</span>
+            </h1>
+        </div>
+        <br>
+
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-8">
+                <h2 class="title is-3">
+                    <span lang="en">Study material in PDF or plain text format</span>
+                    <span lang="es">Material de estudio en formato PDF o texto plano</span>
+                </h2>
+
+                <h2 class="title is-4">
+                    <span lang="en">Tip 1: Paste the key concepts</span>
+                    <span lang="es">Consejo 1: Pega los conceptos clave</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Paste your notes, a chapter summary, definitions or vocabulary. The more focused the text, the better the flashcards will be.</span>
+                    <span lang="es">Pega tus apuntes, un resumen, definiciones o vocabulario. Cuanto más enfocado esté el texto, mejores serán las tarjetas.</span>
+                </p>
+                <br>
+                <h2 class="title is-4">
+                    <span lang="en">Tip 2: Choose the number of cards</span>
+                    <span lang="es">Consejo 2: Elige el número de tarjetas</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Pick how many cards you want. Each card has a front (term, concept or question) and a back (definition or answer).</span>
+                    <span lang="es">Elige cuántas tarjetas quieres. Cada tarjeta tiene un frente (término, concepto o pregunta) y un reverso (definición o respuesta).</span>
+                </p>
+                <br>
+                <h2 class="title is-4">
+                    <span lang="en">Tip 3: Add extra guidelines (optional)</span>
+                    <span lang="es">Consejo 3: Añade instrucciones adicionales (opcional)</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Tell the AI what you care about, for example: "Focus on definitions, not procedures" or "Use examples in every card".</span>
+                    <span lang="es">Dile a la IA qué te importa, por ejemplo: "Céntrate en definiciones, no en procedimientos" o "Usa ejemplos en cada tarjeta".</span>
+                </p>
+            </div>
+            <div class="column is-4">
+                <div class="card">
+                    <div class="card-content has-text-centered">
+                        <span class="icon is-large has-text-link"><i class="fas fa-layer-group fa-3x"></i></span>
+                        <h3 class="title is-4">
+                            <span lang="en">Example - Flashcard</span>
+                            <span lang="es">Ejemplo - Tarjeta</span>
+                        </h3>
+                        <p class="subtitle is-6">
+                            <span lang="en"><b>Front:</b> What is photosynthesis?</span>
+                            <span lang="es"><b>Frente:</b> ¿Qué es la fotosíntesis?</span>
+                        </p>
+                        <p class="subtitle is-6">
+                            <span lang="en"><b>Back:</b> The process plants use to convert light into chemical energy.</span>
+                            <span lang="es"><b>Reverso:</b> El proceso por el que las plantas convierten la luz en energía química.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">How to study your flashcards</span>
+                <span lang="es">Cómo estudiar tus tarjetas</span>
+            </h1>
+        </div>
+        <br>
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-6">
+                <h2 class="title is-4">
+                    <span lang="en">Flip to check yourself</span>
+                    <span lang="es">Gira para comprobarte</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Read the front, try to recall the answer, then flip the card (click it or press Space).</span>
+                    <span lang="es">Lee el frente, intenta recordar la respuesta y luego gira la tarjeta (haz clic en ella o pulsa Espacio).</span>
+                </p>
+                <br>
+                <h2 class="title is-4">
+                    <span lang="en">Move and shuffle</span>
+                    <span lang="es">Muévete y baraja</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Use the arrows (or &#8592; &#8594; keys) to go through the deck and the Shuffle button to randomize the order.</span>
+                    <span lang="es">Usa las flechas (o las teclas &#8592; &#8594;) para recorrer la baraja y el botón Barajar para aleatorizar el orden.</span>
+                </p>
+                <br>
+                <h2 class="title is-4">
+                    <span lang="en">Edit with AI</span>
+                    <span lang="es">Edita con IA</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">On the edit view, use <i class="fas fa-magic has-text-info"></i> <b>Edit with AI</b> to change a single card by describing the edit you want (e.g. "make the answer more concise").</span>
+                    <span lang="es">En la vista de edición, usa <i class="fas fa-magic has-text-info"></i> <b>Editar con IA</b> para cambiar una sola tarjeta describiendo la edición que quieres (por ejemplo, "haz la respuesta más concisa").</span>
+                </p>
+            </div>
+            <div class="column is-6">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img class="preview-image" src="/images/sloth-logo.webp" alt="Flashcards" loading="lazy">
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">You are ready to create your flashcards!</span>
+                <span lang="es">¡Estás listo para crear tus tarjetas!</span>
+            </h1>
+        </div>
+        <br>
+    </div>
+</div>

@@ -1,0 +1,924 @@
+<!--
+  New Test Creation Page
+  Creates tests from: Old Exam, Notes/Text, Instructions (From Scratch), or Personality
+-->
+
+<!-- ========== PAGE METADATA ========== -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "New Test | WiseSloth.open: Create a Quiz or Test Effortlessly with AI";
+  document.querySelector('meta[name="description"][lang="en"]')?.setAttribute("content",
+    "Create a new quiz or test effortlessly with AI from an old exam, notes, text, or from scratch. Share with friends or students and compete in leaderboards."
+  );
+  if (metaRobots) metaRobots.setAttribute("content", "index");
+</script>
+
+<!-- ========== INITIALIZATION SCRIPT ========== -->
+<!-- NOTE: no `id` on purpose - scripts without an id re-run on every AJAX navigation
+     (handleCurrentState), which re-initializes FilePond/PDF uploads on the fresh DOM.
+     With an id, loadedScripts dedupes it and the upload widgets never re-init after
+     navigating away and back to /tests/new. -->
+<script class="test-new-js" data-n="100" nonce="<%=nonce%>">
+  // Load random facts from server
+  if (randomFacts.length === 0) {
+    randomFacts = <%- safeJson(randomFacts) %>;
+  }
+
+  // Initialize page (only if not already initialized)
+  if (!isNewTestInitialized) {
+    const initNewTestPage = () => {
+      if (isTestNewJSLoaded) {
+        addAllNewTestEventListeners();
+        isNewTestInitialized = true;
+      } else {
+        setTimeout(initNewTestPage, 500);
+      }
+    };
+
+    if (document.readyState === "complete") {
+      initNewTestPage();
+    } else {
+      document.addEventListener("DOMContentLoaded", () => {
+        addAllNewTestEventListeners();
+        isNewTestInitialized = true;
+      });
+    }
+  } else {
+    addAllNewTestEventListeners();
+  }
+</script>
+
+<!-- ========== EXTERNAL DEPENDENCIES ========== -->
+<!-- FilePond -->
+<script src="https://cdn.jsdelivr.net/npm/filepond@4.30.6/dist/filepond.min.js" class="test-new-js" id="filepond-js" data-n="2"></script>
+<script src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-size@2.2.8/dist/filepond-plugin-file-validate-size.min.js" class="test-new-js" id="filepond-validate-size-js" data-n="3"></script>
+<script src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-type@1.2.9/dist/filepond-plugin-file-validate-type.min.js" class="test-new-js" id="filepond-validate-type-js" data-n="4"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/filepond@4.30.6/dist/filepond.min.css" class="test-new-css" id="filepond-css">
+
+<!-- PDF.js -->
+<script src="/scripts/pdf-loader.js" class="test-new-js" id="pdf-js" data-n="5"></script>
+
+<!-- ========== HELPER VARIABLES ========== -->
+<%
+  const canCreate = !!session.user;
+  const infoMsgHTML = '<p class="has-text-centered"><a href="/settings">API key and spending settings</a></p>';
+
+  // Question and option limits for form fields
+  const notesQuestionsMax = 30;
+  const creativeQuestionsMax = 30;
+%>
+
+<!-- ========== MAIN CONTENT ========== -->
+<div class="hero is-fullheight-with-navbar">
+  <!-- Background decoration -->
+  <div class="is-hidden-touch absolute top-0 left-0 w-72 h-72 sm:w-96 sm:h-96 bg-wise-green rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+  <div class="is-hidden-touch absolute bottom-0 right-0 w-72 h-72 sm:w-96 sm:h-96 bg-wise-yellow rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+
+  <div class="hero-body">
+    <div class="container">
+
+      <!-- ========== CREATION GROUPS (Quiz/Test | Flashcards) ========== -->
+      <div class="creation-groups">
+        <button type="button" class="creation-group is-active" id="creation-group-quiz" data-group="quiz">
+          <span class="creation-group-icon"><i class="fas fa-clipboard-list"></i></span>
+          <span class="creation-group-label">
+            <span lang="en">Quiz / Test</span>
+            <span lang="es">Quiz / Test</span>
+          </span>
+          <span class="creation-group-sub">
+            <span lang="en">Questions with options</span>
+            <span lang="es">Preguntas con opciones</span>
+          </span>
+        </button>
+        <button type="button" class="creation-group" id="creation-group-flashcards" data-group="flashcards">
+          <span class="creation-group-icon"><i class="fas fa-layer-group"></i></span>
+          <span class="creation-group-label">
+            <span lang="en">Flashcards</span>
+            <span lang="es">Flashcards</span>
+          </span>
+          <span class="creation-group-sub">
+            <span lang="en">Term / definition cards</span>
+            <span lang="es">Tarjetas término / definición</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- ========== QUIZ GROUP BODY: generation source subtabs ========== -->
+      <div id="creation-quiz-group-body">
+        <div class="creation-tabs">
+          <button class="creation-tab tab" id="tab-toggle-oldexam" data-type="oldexam">
+            <span class="creation-tab-icon"><i class="fas fa-file-alt"></i></span>
+            <span class="creation-tab-label">
+              <span lang="en">Old Exam</span>
+              <span lang="es">Examen</span>
+            </span>
+            <span class="creation-tab-help from-old-exam-help" aria-haspopup="true" aria-controls="from-old-exam-help-modal">
+              <i class="fas fa-question-circle"></i>
+            </span>
+          </button>
+          <button class="creation-tab tab" id="tab-toggle-notes" data-type="notes">
+            <span class="creation-tab-icon"><i class="fas fa-sticky-note"></i></span>
+            <span class="creation-tab-label">
+              <span lang="en">Notes</span>
+              <span lang="es">Apuntes</span>
+            </span>
+            <span class="creation-tab-help from-notes-or-text-help" aria-haspopup="true" aria-controls="from-notes-or-text-help-modal">
+              <i class="fas fa-question-circle"></i>
+            </span>
+          </button>
+          <button class="creation-tab tab is-active" id="tab-toggle-creative" data-type="instructions">
+            <span class="creation-tab-icon"><i class="fas fa-magic"></i></span>
+            <span class="creation-tab-label">
+              <span lang="en">From Scratch</span>
+              <span lang="es">Desde Cero</span>
+            </span>
+            <span class="creation-tab-help from-instructions-help" aria-haspopup="true" aria-controls="from-instructions-help-modal">
+              <i class="fas fa-question-circle"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ========== FLASHCARDS GROUP BODY (hidden toggle kept for JS compat) ========== -->
+      <div id="creation-flashcards-group-body" class="is-hidden">
+        <button class="creation-tab tab is-hidden" id="tab-toggle-flashcards" data-type="flashcards"></button>
+      </div>
+
+      <% if (!session.user) { %>
+      <p class="notification is-info"><a href="/login">Sign in</a> to create quizzes and save progress.</p>
+      <% } %>
+      <!-- Skills & Preferences modal (per-type + always management) -->
+      <%- include('../auxiliary/modal-skills') %>
+
+      <!-- ========== TAB CONTENTS CONTAINER ========== -->
+      <div id="tab-contents"></div>
+
+      <!-- ==================== OLD EXAM TAB ==================== -->
+      <div id="tab-content-oldexam" class="tab-content is-hidden">
+        <div id="oldexamTest" class="box">
+
+          <!-- PDF/Text Tabs -->
+          <div class="tabs is-medium is-centered">
+            <ul>
+              <li class="tab is-active" id="tab-toggle-oldExamFromPDF">
+                <a>
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span lang="en">From PDF</span>
+                  <span lang="es">Desde PDF</span>
+                </a>
+              </li>
+              <li class="tab" id="tab-toggle-oldExamFromText">
+                <a>
+                  <span class="icon"><i class="fas fa-align-left"></i></span>
+                  <span lang="en">From text</span>
+                  <span lang="es">Desde texto</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- PDF Upload Section -->
+          <div id="tab-content-oldexamFromPDF" class="tab-content">
+            <div class="field">
+              <label class="label">
+                <span lang="en">Set of questions and answers</span>
+                <span lang="es">Conjunto de preguntas y respuestas</span>
+              </label>
+              <input type="file" class="filepond" name="filepond" id="oldexam-file-input" data-max-files="1">
+              <div id="oldexam-pdf-container" class="pdf-container is-hidden">
+                <p lang="en" class="is-hidden-touch">Select and preview pages to process:</p>
+                <p lang="es" class="is-hidden-touch">Selecciona y previsualiza las páginas a procesar:</p>
+                <div id="oldexam-pdf-pages" class="pdf-pages"></div>
+              </div>
+            </div>
+            <div class="field is-hidden" id="oldexam-extracted-text-field">
+              <label class="label">
+                <span lang="en">Text extracted from PDF</span>
+                <span lang="es">Texto extraído del PDF</span>
+              </label>
+              <div class="control">
+                <textarea class="textarea is-link" id="oldexam-extracted-text" autocomplete="off" rows="5" placeholder=""></textarea>
+              </div>
+              <div class="help is-hidden-touch is-size-7">
+                <span lang="en">Will be used to generate the questions. If the text is not correct, you can edit it here.</span>
+                <span lang="es">Se usará para generar las preguntas. Si el texto no es correcto, puedes editarlo aquí.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Text Input Section -->
+          <div id="tab-content-oldExamFromText" class="tab-content is-hidden">
+            <div class="field">
+              <label class="label">
+                <span lang="en">Set of questions and answers</span>
+                <span lang="es">Conjunto de preguntas y respuestas</span>
+              </label>
+              <div class="control">
+                <textarea class="textarea is-link" id="oldexam-content-input" autocomplete="off" rows="5"
+                  placeholder="<%= lang === 'en' ? 'Question 1. What is the science that studies...' : 'Pregunta 1. ¿Cuál es la ciencia que estudia...' %>"></textarea>
+<div class="field mt-3"><label class="label" for="oldexam-source-url">Or import a web link</label><input class="input" id="oldexam-source-url" type="url" placeholder="https://example.com/article"><p class="help">Public HTML, Markdown or plain text; links can be combined with your notes.</p></div>
+              </div>
+              <p class="help is-hidden-touch">
+                <span lang="en">Paste the questions and answers from the old exam.</span>
+                <span lang="es">Pega las preguntas y respuestas del examen antiguo.</span>
+              </p>
+            </div>
+          </div>
+
+          <br>
+
+          <!-- Create Button -->
+          <em id="result-container-oldexam" class="has-text-centered has-text-danger is-size-6"></em>
+          <p class="is-size-7 has-text-link has-text-centered is-hidden-touch">
+            <span lang="en"><b>Your files are safe!</b> They are processed entirely on your device and never sent to our servers.</span>
+            <span lang="es"><b>¡Tus archivos están seguros!</b> Se procesan únicamente en tu dispositivo y nunca se envían a nuestros servidores.</span>
+          </p>
+          <div class="create-row">
+          <button type="button" class="creation-skills-btn creation-skills-chip"
+                  data-defaults='<%= JSON.stringify(DEFAULT_SKILLS) %>'
+                  data-logged-in="<%= session.user ? 'true' : 'false' %>"
+                  title="Skills &amp; preferences for the current creation type">
+            <i class="fas fa-sliders-h"></i>
+            <span class="creation-skills-label">
+              <span lang="en">Skills</span>
+              <span lang="es">Skills</span>
+            </span>
+            <span class="skill-type-count skills-mini-count"></span>
+          </button>
+          <button id="oldexam-test-button" class="button is-medium is-link is-rounded is-fullwidth create-test-button" disabled data-can-create="<%= canCreate ? 'true' : 'false' %>">
+            <span class="icon"><i class="fas fa-magic"></i></span>
+            <span lang="en">Do the magic!</span>
+            <span lang="es">¡Haz la magia!</span>
+          </button>
+          </div>
+          <%- infoMsgHTML %>
+        </div>
+      </div>
+
+      <!-- ==================== NOTES TAB ==================== -->
+      <div id="tab-content-notes" class="tab-content is-hidden">
+        <div id="notesTest" class="box">
+
+          <!-- Form Fields -->
+          <div class="field is-horizontal">
+            <div class="field-body">
+              <!-- Number of Questions -->
+              <div class="field">
+                <label class="label" for="notes-questions-select">
+                  <span lang="en">Questions</span>
+                  <span lang="es">Preguntas</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="notes-questions-select">
+                      <% for (let j = 5; j <= notesQuestionsMax; j += 5) { %>
+                      <option value="<%= j %>" <%= j === 10 ? 'selected' : '' %>><%= j %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Options per Question -->
+              <div class="field">
+                <label class="label" for="notes-options-select">
+                  <span lang="en">Options</span>
+                  <span lang="es">Opciones</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="notes-options-select">
+                      <% for (let k = 2; k <= 5; k++) { %>
+                      <option value="<%= k %>" <%= k === 3 ? 'selected' : '' %>><%= k %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Difficulty -->
+              <div class="field">
+                <label class="label" for="notes-difficulty-select">
+                  <span lang="en">Difficulty</span>
+                  <span lang="es">Dificultad</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="notes-difficulty-select">
+                      <option value="beginner"><%= lang === 'es' ? 'Principiante' : 'Beginner' %></option>
+                      <option value="elementary"><%= lang === 'es' ? 'Elemental' : 'Elementary' %></option>
+                      <option value="intermediate" selected><%= lang === 'es' ? 'Intermedio' : 'Intermediate' %></option>
+                      <option value="advanced"><%= lang === 'es' ? 'Avanzado' : 'Advanced' %></option>
+                      <option value="expert"><%= lang === 'es' ? 'Experto' : 'Expert' %></option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra Guidelines -->
+          <div class="field">
+            <label class="label">
+              <span lang="en">Extra Guidelines (Optional)</span>
+              <span lang="es">Instrucciones Adicionales (Opcional)</span>
+            </label>
+            <div class="control">
+              <textarea class="textarea" id="notes-instructions-input" autocomplete="off" rows="1"
+                placeholder="<%= lang === 'en' ? 'Designed for students 16 years old. Include some true/false questions.' : 'Diseñado para estudiantes de 16 años. Incluye algunas preguntas verdadero/falso.' %>"></textarea>
+            </div>
+            <p class="help is-hidden-touch">
+              <span lang="en">Extra guidelines about what you want the test to be about. The more details, the better.</span>
+              <span lang="es">Instrucciones adicionales sobre el tema del test. Cuantos más detalles, mejor.</span>
+            </p>
+          </div>
+
+          <!-- PDF/Text Tabs -->
+          <div class="tabs is-medium is-centered">
+            <ul>
+              <li class="tab is-active" id="tab-toggle-notesFromPDF">
+                <a>
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span lang="en">From PDF</span>
+                  <span lang="es">Desde PDF</span>
+                </a>
+              </li>
+              <li class="tab" id="tab-toggle-notesFromText">
+                <a>
+                  <span class="icon"><i class="fas fa-align-left"></i></span>
+                  <span lang="en">From text</span>
+                  <span lang="es">Desde texto</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- PDF Upload Section -->
+          <div id="tab-content-notesFromPDF" class="tab-content">
+            <div class="field">
+              <label class="label">
+                <span lang="en">Content to ask questions about</span>
+                <span lang="es">Contenido sobre el que preguntar</span>
+              </label>
+              <input type="file" class="filepond" name="filepond" id="notes-file-input" data-max-files="1">
+              <div id="notes-pdf-container" class="pdf-container is-hidden">
+                <p lang="en" class="is-hidden-touch">Select and preview pages to process:</p>
+                <p lang="es" class="is-hidden-touch">Selecciona y previsualiza las páginas a procesar:</p>
+                <div id="notes-pdf-pages" class="pdf-pages"></div>
+              </div>
+            </div>
+            <div class="field is-hidden" id="notes-extracted-text-field">
+              <label class="label">
+                <span lang="en">Text extracted from PDF</span>
+                <span lang="es">Texto extraído del PDF</span>
+              </label>
+              <div class="control">
+                <textarea class="textarea is-link" id="notes-extracted-text" autocomplete="off" rows="5" placeholder=""></textarea>
+              </div>
+              <div class="help is-hidden-touch is-size-7">
+                <span lang="en">Will be used to generate the questions. If the text is not correct, you can edit it here.</span>
+                <span lang="es">Se usará para generar las preguntas. Si el texto no es correcto, puedes editarlo aquí.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Text Input Section -->
+          <div id="tab-content-notesFromText" class="tab-content is-hidden">
+            <div class="field">
+              <label class="label">
+                <span lang="en">Content to ask questions about</span>
+                <span lang="es">Contenido sobre el que preguntar</span>
+              </label>
+              <div class="control">
+                <textarea class="textarea is-link" id="notes-content-input" autocomplete="off" rows="5"
+                  placeholder="<%= lang === 'en' ? 'A cell is a ... it has a nucleus ...' : 'Una célula es un ... tiene un núcleo ...' %>"></textarea>
+<div class="field mt-3"><label class="label" for="notes-source-url">Or import a web link</label><input class="input" id="notes-source-url" type="url" placeholder="https://example.com/article"><p class="help">Public HTML, Markdown or plain text; links can be combined with your notes.</p></div>
+              </div>
+              <p class="help is-hidden-touch">
+                <span lang="en">Paste your notes or text content here.</span>
+                <span lang="es">Pega tus apuntes o contenido de texto aquí.</span>
+              </p>
+            </div>
+          </div>
+
+          <br>
+
+          <!-- Create Button -->
+          <em id="result-container-notes" class="has-text-centered has-text-danger is-size-6"></em>
+          <p class="is-size-7 has-text-link has-text-centered is-hidden-touch">
+            <span lang="en"><b>Your files are safe!</b> They are processed entirely on your device and never sent to our servers.</span>
+            <span lang="es"><b>¡Tus archivos están seguros!</b> Se procesan únicamente en tu dispositivo y nunca se envían a nuestros servidores.</span>
+          </p>
+          <div class="create-row">
+          <button type="button" class="creation-skills-btn creation-skills-chip"
+                  data-defaults='<%= JSON.stringify(DEFAULT_SKILLS) %>'
+                  data-logged-in="<%= session.user ? 'true' : 'false' %>"
+                  title="Skills &amp; preferences for the current creation type">
+            <i class="fas fa-sliders-h"></i>
+            <span class="creation-skills-label">
+              <span lang="en">Skills</span>
+              <span lang="es">Skills</span>
+            </span>
+            <span class="skill-type-count skills-mini-count"></span>
+          </button>
+          <button id="notes-test-button" class="button is-medium is-link is-rounded is-fullwidth create-test-button" disabled data-can-create="<%= canCreate ? 'true' : 'false' %>">
+            <span class="icon"><i class="fas fa-magic"></i></span>
+            <span lang="en">Do the magic!</span>
+            <span lang="es">¡Haz la magia!</span>
+          </button>
+          </div>
+          <%- infoMsgHTML %>
+        </div>
+      </div>
+
+      <!-- ==================== FROM SCRATCH (CREATIVE) TAB ==================== -->
+      <div id="tab-content-creative" class="tab-content">
+        <div id="creativeTest" class="box">
+
+          <!-- Form Fields -->
+          <div class="field is-horizontal">
+            <div class="field-body">
+              <!-- Language Select -->
+              <div class="field">
+                <label class="label" for="creative-language-select">
+                  <span lang="en">Language</span>
+                  <span lang="es">Idioma</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="creative-language-select">
+                      <% Object.entries(languagesDict).forEach(([code, language]) => { %>
+                      <option value="<%= language.name %> (<%= code %>)" <%= code === lang ? 'selected' : '' %>><%= language.name %> (<%= code %>)</option>
+                      <% }); %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Number of Questions -->
+              <div class="field">
+                <label class="label" for="creative-questions-select">
+                  <span lang="en">Questions</span>
+                  <span lang="es">Preguntas</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="creative-questions-select">
+                      <% for (let j = 5; j <= creativeQuestionsMax; j += 5) { %>
+                      <option value="<%= j %>" <%= j === 10 ? 'selected' : '' %>><%= j %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Options per Question -->
+              <div class="field">
+                <label class="label" for="creative-options-select">
+                  <span lang="en">Options</span>
+                  <span lang="es">Opciones</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="creative-options-select">
+                      <% for (let k = 2; k <= 5; k++) { %>
+                      <option value="<%= k %>" <%= k === 3 ? 'selected' : '' %>><%= k %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Difficulty -->
+              <div class="field">
+                <label class="label" for="creative-difficulty-select">
+                  <span lang="en">Difficulty</span>
+                  <span lang="es">Dificultad</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="creative-difficulty-select">
+                      <option value="beginner"><%= lang === 'es' ? 'Principiante' : 'Beginner' %></option>
+                      <option value="elementary"><%= lang === 'es' ? 'Elemental' : 'Elementary' %></option>
+                      <option value="intermediate" selected><%= lang === 'es' ? 'Intermedio' : 'Intermediate' %></option>
+                      <option value="advanced"><%= lang === 'es' ? 'Avanzado' : 'Advanced' %></option>
+                      <option value="expert"><%= lang === 'es' ? 'Experto' : 'Expert' %></option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instructions -->
+          <div class="field">
+            <label class="label">
+              <span lang="en">Instructions</span>
+              <span lang="es">Instrucciones</span>
+            </label>
+            <div class="control">
+              <textarea class="textarea is-link" id="creative-instructions-input" autocomplete="off" rows="1"
+                placeholder="<%= lang === 'en' ? 'About Spain\'s geography for 12 year olds. Include some true/false questions.' : 'Sobre la geografía de España para niños de 12 años. Incluye algunas preguntas verdadero/falso.' %>"></textarea>
+            </div>
+            <p class="help is-hidden-touch">
+              <span lang="en">Instructions about what you want the test to be about. The more details, the better.</span>
+              <span lang="es">Instrucciones sobre el tema del test. Cuantos más detalles, mejores resultados.</span>
+            </p>
+          </div>
+
+          <!-- Create Button -->
+          <em id="result-container-creative" class="has-text-centered has-text-danger is-size-6"></em>
+          <div class="create-row">
+          <button type="button" class="creation-skills-btn creation-skills-chip"
+                  data-defaults='<%= JSON.stringify(DEFAULT_SKILLS) %>'
+                  data-logged-in="<%= session.user ? 'true' : 'false' %>"
+                  title="Skills &amp; preferences for the current creation type">
+            <i class="fas fa-sliders-h"></i>
+            <span class="creation-skills-label">
+              <span lang="en">Skills</span>
+              <span lang="es">Skills</span>
+            </span>
+            <span class="skill-type-count skills-mini-count"></span>
+          </button>
+          <button id="creative-test-button" class="button is-medium is-link is-rounded is-fullwidth create-test-button" disabled data-can-create="<%= canCreate ? 'true' : 'false' %>">
+            <span class="icon"><i class="fas fa-magic"></i></span>
+            <span lang="en">Do the magic!</span>
+            <span lang="es">¡Haz la magia!</span>
+          </button>
+          </div>
+          <%- infoMsgHTML %>
+        </div>
+      </div>
+
+      <!-- ==================== PERSONALITY TAB (Hidden) ==================== -->
+      <div id="tab-content-personality" class="tab-content is-hidden" style="display: none;">
+        <div id="personalityTest" class="box">
+
+          <!-- Form Fields -->
+          <div class="field is-horizontal">
+            <div class="field-body">
+              <!-- Language Select -->
+              <div class="field">
+                <label class="label" for="personality-language-select">
+                  <span lang="en">Language</span>
+                  <span lang="es">Idioma</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="personality-language-select">
+                      <% Object.entries(languagesDict).forEach(([code, language]) => { %>
+                      <option value="<%= language.name %> (<%= code %>)" <%= code === lang ? 'selected' : '' %>><%= language.name %> (<%= code %>)</option>
+                      <% }); %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Number of Questions -->
+              <div class="field">
+                <label class="label" for="personality-questions-select">
+                  <span lang="en">Questions</span>
+                  <span lang="es">Preguntas</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="personality-questions-select">
+                      <% for (let j = 5; j <= 10; j++) { %>
+                      <option value="<%= j %>" <%= j === 5 ? 'selected' : '' %>><%= j %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Number of Personalities -->
+              <div class="field">
+                <label class="label" for="personality-options-select">
+                  <span lang="en">Personalities</span>
+                  <span lang="es">Personalidades</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="personality-options-select">
+                      <% for (let k = 2; k <= 6; k++) { %>
+                      <option value="<%= k %>" <%= k === 3 ? 'selected' : '' %>><%= k %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instructions -->
+          <div class="field">
+            <label class="label">
+              <span lang="en">Instructions</span>
+              <span lang="es">Instrucciones</span>
+            </label>
+            <div class="control">
+              <textarea class="textarea is-link" id="personality-instructions-input" autocomplete="off" rows="1"
+                placeholder="<%= lang === 'en' ? 'Fun test to discover what character is more like me: Superman, Batman, Lex Luthor or The Joker' : 'Test divertido para descubrir qué personaje se parece más a mí: Superman, Batman, Lex Luthor o el Joker' %>"></textarea>
+            </div>
+            <p class="help is-hidden-touch">
+              <span lang="en">Instructions about what you want the personality test to be about.</span>
+              <span lang="es">Instrucciones sobre el tema del test de personalidad.</span>
+            </p>
+          </div>
+
+          <br>
+
+          <!-- Create Button -->
+          <em id="result-container-personality" class="has-text-centered has-text-danger is-size-6"></em>
+          <div class="create-row">
+          <button type="button" class="creation-skills-btn creation-skills-chip"
+                  data-defaults='<%= JSON.stringify(DEFAULT_SKILLS) %>'
+                  data-logged-in="<%= session.user ? 'true' : 'false' %>"
+                  title="Skills &amp; preferences for the current creation type">
+            <i class="fas fa-sliders-h"></i>
+            <span class="creation-skills-label">
+              <span lang="en">Skills</span>
+              <span lang="es">Skills</span>
+            </span>
+            <span class="skill-type-count skills-mini-count"></span>
+          </button>
+          <button id="personality-test-button" class="button is-medium is-link is-rounded is-fullwidth create-test-button" disabled data-can-create="<%= canCreate ? 'true' : 'false' %>">
+            <span class="icon"><i class="fas fa-magic"></i></span>
+            <span lang="en">Do the magic!</span>
+            <span lang="es">¡Haz la magia!</span>
+          </button>
+          </div>
+          <%- infoMsgHTML %>
+        </div>
+      </div>
+
+      <!-- ==================== FLASHCARDS TAB ==================== -->
+      <div id="tab-content-flashcards" class="tab-content is-hidden">
+        <div id="flashcardsTest" class="box">
+
+          <div class="columns is-variable is-4">
+            <!-- Number of Cards (left) -->
+            <div class="column is-4">
+              <div class="field">
+                <label class="label" for="flashcards-cards-select">
+                  <span lang="en">Cards</span>
+                  <span lang="es">Tarjetas</span>
+                </label>
+                <div class="control">
+                  <div class="select">
+                    <select id="flashcards-cards-select">
+                      <% for (let j = 10; j <= 50; j += 5) { %>
+                      <option value="<%= j %>" <%= j === 20 ? 'selected' : '' %>><%= j %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+                <p class="help is-hidden-touch">
+                  <span lang="en">Each card has a front (term/concept) and a back (definition/answer).</span>
+                  <span lang="es">Cada tarjeta tiene un frente (término/concepto) y un reverso (definición/respuesta).</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Extra Guidelines (right of the card count) -->
+            <div class="column">
+              <div class="field">
+                <label class="label">
+                  <span lang="en">Extra Guidelines (Optional)</span>
+                  <span lang="es">Instrucciones Adicionales (Opcional)</span>
+                </label>
+                <div class="control">
+                  <textarea class="textarea" id="flashcards-instructions-input" autocomplete="off" rows="2"
+                    placeholder="<%= lang === 'en' ? 'For medical students. Focus on definitions, not procedures.' : 'Para estudiantes de medicina. Céntrate en definiciones, no en procedimientos.' %>"></textarea>
+                </div>
+                <p class="help is-hidden-touch">
+                  <span lang="en">Extra guidelines about the flashcards you want. The more details, the better.</span>
+                  <span lang="es">Instrucciones adicionales sobre las tarjetas que quieres. Cuantos más detalles, mejor.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- PDF/Text Tabs -->
+          <div class="tabs is-medium is-centered">
+            <ul>
+              <li class="tab is-active" id="tab-toggle-flashcardsFromPDF">
+                <a>
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span lang="en">From PDF</span>
+                  <span lang="es">Desde PDF</span>
+                </a>
+              </li>
+              <li class="tab" id="tab-toggle-flashcardsFromText">
+                <a>
+                  <span class="icon"><i class="fas fa-align-left"></i></span>
+                  <span lang="en">From text</span>
+                  <span lang="es">Desde texto</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- PDF Upload Section -->
+          <div id="tab-content-flashcardsFromPDF" class="tab-content">
+            <div class="field">
+              <label class="label">
+                <span lang="en">Content to make flashcards from</span>
+                <span lang="es">Contenido para hacer tarjetas</span>
+              </label>
+              <input type="file" class="filepond" name="filepond" id="flashcards-file-input" data-max-files="1">
+              <div id="flashcards-pdf-container" class="pdf-container is-hidden">
+                <p lang="en" class="is-hidden-touch">Select and preview pages to process:</p>
+                <p lang="es" class="is-hidden-touch">Selecciona y previsualiza las páginas a procesar:</p>
+                <div id="flashcards-pdf-pages" class="pdf-pages"></div>
+              </div>
+            </div>
+            <div class="field is-hidden" id="flashcards-extracted-text-field">
+              <label class="label">
+                <span lang="en">Text extracted from PDF</span>
+                <span lang="es">Texto extraído del PDF</span>
+              </label>
+              <div class="control">
+                <textarea class="textarea is-link" id="flashcards-extracted-text" autocomplete="off" rows="5" placeholder=""></textarea>
+              </div>
+              <div class="help is-hidden-touch is-size-7">
+                <span lang="en">Will be used to generate the flashcards. If the text is not correct, you can edit it here.</span>
+                <span lang="es">Se usará para generar las tarjetas. Si el texto no es correcto, puedes editarlo aquí.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Text Input Section -->
+          <div id="tab-content-flashcardsFromText" class="tab-content is-hidden">
+            <div class="field">
+              <label class="label">
+                <span lang="en">Content to make flashcards from</span>
+                <span lang="es">Contenido para hacer tarjetas</span>
+              </label>
+              <div class="control">
+                <textarea class="textarea is-link" id="flashcards-content-input" autocomplete="off" rows="5"
+                  placeholder="<%= lang === 'en' ? 'A cell is a ... it has a nucleus ...' : 'Una célula es un ... tiene un núcleo ...' %>"></textarea>
+<div class="field mt-3"><label class="label" for="flashcards-source-url">Or import a web link</label><input class="input" id="flashcards-source-url" type="url" placeholder="https://example.com/article"><p class="help">Public HTML, Markdown or plain text; links can be combined with your notes.</p></div>
+              </div>
+              <p class="help is-hidden-touch">
+                <span lang="en">Paste your notes or text content here.</span>
+                <span lang="es">Pega tus apuntes o contenido de texto aquí.</span>
+              </p>
+            </div>
+          </div>
+
+          <br>
+
+          <!-- Create Button -->
+          <em id="result-container-flashcards" class="has-text-centered has-text-danger is-size-6"></em>
+          <p class="is-size-7 has-text-link has-text-centered is-hidden-touch">
+            <span lang="en"><b>Your files are safe!</b> They are processed entirely on your device and never sent to our servers.</span>
+            <span lang="es"><b>¡Tus archivos están seguros!</b> Se procesan únicamente en tu dispositivo y nunca se envían a nuestros servidores.</span>
+          </p>
+          <div class="create-row">
+          <button type="button" class="creation-skills-btn creation-skills-chip"
+                  data-defaults='<%= JSON.stringify(DEFAULT_SKILLS) %>'
+                  data-logged-in="<%= session.user ? 'true' : 'false' %>"
+                  title="Skills &amp; preferences for the current creation type">
+            <i class="fas fa-sliders-h"></i>
+            <span class="creation-skills-label">
+              <span lang="en">Skills</span>
+              <span lang="es">Skills</span>
+            </span>
+            <span class="skill-type-count skills-mini-count"></span>
+          </button>
+          <button id="flashcards-test-button" class="button is-medium is-link is-rounded is-fullwidth create-test-button" disabled data-can-create="<%= canCreate ? 'true' : 'false' %>">
+            <span class="icon"><i class="fas fa-magic"></i></span>
+            <span lang="en">Do the magic!</span>
+            <span lang="es">¡Haz la magia!</span>
+          </button>
+          </div>
+          <%- infoMsgHTML %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ========== PROCESSING MODAL ========== -->
+<div class="modal" id="processing-modal">
+  <div class="non-closable-background"></div>
+  <div class="modal-content" style="min-width: 50%;">
+    <div class="box">
+      <!-- Processing in progress -->
+      <div id="processing-ongoing">
+        <nav class="level is-mobile">
+          <div class="level-left">
+            <div class="level-item">
+              <i class="fas fa-cog fa-2x fa-spin"></i>
+            </div>
+          </div>
+          <div class="level-item">
+            <div class="subtitle is-3" id="processing-message">
+              <span lang="en">Processing...</span>
+              <span lang="es">Procesando...</span>
+            </div>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <div id="stopwatch-value" class="subtitle is-3">0s</div>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subtitle is-5 has-text-centered" id="processing-fact"></div>
+
+        <div class="title is-7 has-text-danger has-text-centered" id="processing-warning">
+          <span lang="en">Do not close this tab until processing is done.</span>
+          <span lang="es">No cierres esta pestaña hasta que termine el procesamiento.</span>
+        </div>
+        <br>
+      </div>
+
+      <!-- Processing successful -->
+      <div id="processing-succesful" class="is-hidden">
+        <div id="processing-succesful-title" class="subtitle is-4"></div>
+        <div id="processing-succesful-stats"></div>
+        <div id="processing-succesful-info">
+          <div class="subtitle is-7 has-text-danger is-hidden-touch">
+            <span lang="en">Once your tokens become negative, you won't be able to create new tests until reset.</span>
+            <span lang="es">Una vez que tus tokens se vuelvan negativos, no podrás crear nuevos tests hasta que se restablezcan.</span>
+          </div>
+        </div>
+        <div id="processing-succesful-test-card"></div>
+        <div class="field is-grouped">
+          <div id="processing-succesful-button-try" class="button is-primary is-medium is-fullwidth"></div>
+          <div id="processing-succesful-button-view" class="button is-link is-medium is-fullwidth"></div>
+          <div id="processing-succesful-button-edit" class="button is-warning is-medium is-fullwidth"></div>
+        </div>
+        <br>
+      </div>
+
+      <!-- Ad container (hidden for premium users) - TEMPORARILY DISABLED (ads deactivated).
+           Re-enable by removing the comment markers below. -->
+
+    </div>
+  </div>
+</div>
+
+<!-- ========== HELP MODALS ========== -->
+<!-- From Old Exam Help Modal -->
+<div class="modal" id="from-old-exam-help-modal">
+  <div class="modal-background"></div>
+  <div class="modal-content" style="min-width: 60%;">
+    <div class="box">
+      <% var isHelpModal = true; %>
+      <%- include('../general/from-old-exam', { isHelpModal }) %>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<!-- From Notes or Text Help Modal -->
+<div class="modal" id="from-notes-or-text-help-modal">
+  <div class="modal-background"></div>
+  <div class="modal-content" style="min-width: 60%;">
+    <div class="box">
+      <% var isHelpModal = true; %>
+      <%- include('../general/from-notes-or-text', { isHelpModal }) %>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<!-- From Instructions Help Modal -->
+<div class="modal" id="from-instructions-help-modal">
+  <div class="modal-background"></div>
+  <div class="modal-content" style="min-width: 60%;">
+    <div class="box">
+      <% var isHelpModal = true; %>
+      <%- include('../general/from-instructions', { isHelpModal }) %>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<!-- From Flashcards Help Modal -->
+<div class="modal" id="from-flashcards-help-modal">
+  <div class="modal-background"></div>
+  <div class="modal-content" style="min-width: 60%;">
+    <div class="box">
+      <% var isHelpModal = true; %>
+      <%- include('../general/from-flashcards', { isHelpModal }) %>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<!-- ========== MAIN SCRIPT ========== -->
+<script src="/scripts/tests/test-new.js?v=20261013-byok" class="test-new-js" id="test-new-js" data-n="7"></script>
+
+<!-- ========== SKILLS / PREFERENCES SCRIPT ========== -->
+<script src="/scripts/user-skills.js?v=20260816-multi" class="test-new-js" id="user-skills-lib-js" data-n="8"></script>
+<script class="user-skills-js" nonce="<%=nonce%>">
+  // Re-inits the skills selector on every (AJAX) render of this page
+  (function retrySkills() {
+    if (!window.UserSkills) return setTimeout(retrySkills, 200);
+    window.UserSkills.reload();
+  })();
+</script>

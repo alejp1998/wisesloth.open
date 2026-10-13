@@ -1,0 +1,150 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Try: <%=test.name%> | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Try page for WiseSloth.open: answer the questions, try to do your best in " + "<%=test.name%>" + ".");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Página de intentar para WiseSloth.open: responde las preguntas, intenta hacerlo lo mejor posible en " + "<%=test.name%>" + ".");
+
+  // Set as noindex
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+</script>
+
+<!-- Test Content -->
+<% const viewType = "TRY" %>
+<% var isAuthor = session.user && test.author && (test.author.username === session.user.username); %>
+<% var isFavorite = session.user && (session.user.favoriteIds || []).includes(test.id); %>
+<% var isSequential = tryConfig.sequentialQuestions %>
+
+<!-- Include test control panel (floating left panel) - only for non-sequential mode -->
+<% var nSeconds = 0; %>
+<% var quizResults = []; %>
+<% if (!isSequential) { %>
+<%- include('../auxiliary/test-control-panel', { viewType, isSequential, test, nSeconds, quizResults, resultId }) %>
+<% } %>
+
+<!-- Try Test Content -->
+<section class="hero is-fullheight-with-navbar try-hero">
+  <div class="hero-body">
+    <div class="container">
+
+          <% if (isSequential) { %>
+          <!-- Test Header with Inline Controls for Sequential Mode -->
+          <div class="try-header-row">
+            <a href="/tests/<%= test.id %>" class="try-header-link" onclick="event.preventDefault(); fetchBodyContent('/tests/<%= test.id %>');">
+              <div class="try-header" id="try-header-box">
+                <div class="try-header-info">
+                  <p class="try-header-title"><%= test.name %></p>
+                  <p class="try-header-meta"><%= test.author ? test.author.username : 'Anonymous' %></p>
+                </div>
+                <span class="try-header-arrow">
+                  <i class="fas fa-chevron-right"></i>
+                </span>
+              </div>
+            </a>
+            <div class="try-inline-controls">
+              <input class="is-hidden" type="text" name="nSeconds" id="nSeconds"/>
+              <span id="stopwatch" class="button is-dark is-small is-rounded">
+                <span class="icon is-small"><i class="fas fa-stopwatch"></i></span>
+                <span id="stopwatch-value">0s</span>
+              </span>
+              <span id="check-button" class="confirm-submit-button button is-success is-small is-rounded" data-result-id="<%=resultId%>" title="Finish">
+                <span class="icon is-small"><i class="fas fa-flag-checkered"></i></span>
+              </span>
+              <span class="cancel-try-button button is-warning is-small is-rounded" title="Return to test page">
+                <span class="icon is-small"><i class="fas fa-door-open"></i></span>
+              </span>
+            </div>
+          </div>
+          <% } else { %>
+          <!-- Test Header - Minimalistic (non-sequential) -->
+          <a href="/tests/<%= test.id %>" class="try-header-link" onclick="event.preventDefault(); fetchBodyContent('/tests/<%= test.id %>');">
+            <div class="try-header" id="try-header-box">
+              <div class="try-header-info">
+                <p class="try-header-title"><%= test.name %></p>
+                <p class="try-header-meta"><%= test.author ? test.author.username : 'Anonymous' %></p>
+              </div>
+              <span class="try-header-arrow">
+                <i class="fas fa-chevron-right"></i>
+              </span>
+            </div>
+          </a>
+          <% } %>
+
+          <% if (isSequential) { %>
+          <!-- Main Quiz Container - Box for sequential -->
+          <div class="box" id="try-quiz-box">
+
+            <!-- Quiz Navigation Links -->
+            <div class="quiz-links flex-container-no-wrap mb-3">
+              <% for (const i in tryConfig.randomQuizIds) { %>
+              <% const randomQuizId = tryConfig.randomQuizIds[i]; %>
+              <% var quiz = test.quizzes.find(quiz => quiz.id === randomQuizId); %>
+              <div id="quiz-link-<%= randomQuizId %>" class="flex-item-quiz-link show-quiz-by-id-button" data-quiz-id="<%= randomQuizId %>"><%= Number(i)+1 %></div>
+              <% } %>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="try-navigation mb-4">
+              <div class="field is-grouped">
+                <div id="show-prev-quiz-button" class="button is-light is-fullwidth is-hidden">
+                  <span class="icon"><i class="fas fa-arrow-left"></i></span>
+                  <span lang="en">Previous</span>
+                  <span lang="es">Anterior</span>
+                </div>
+                <% if (tryConfig.randomQuizIds.length > 1) { %>
+                <div id="show-next-quiz-button" class="button is-link is-fullwidth show-quiz-by-id-button" data-quiz-id="<%=tryConfig.randomQuizIds[1]%>">
+                  <span lang="en">Next</span>
+                  <span lang="es">Siguiente</span>
+                  <span class="icon"><i class="fas fa-arrow-right"></i></span>
+                </div>
+                <div id="nav-finish-button" class="confirm-submit-button button is-success is-fullwidth is-hidden" data-result-id="<%=resultId%>">
+                  <span class="icon"><i class="fas fa-flag-checkered"></i></span>
+                  <span lang="en">Finish</span>
+                  <span lang="es">Terminar</span>
+                </div>
+                <% } else { %>
+                <div id="nav-finish-button" class="confirm-submit-button button is-success is-fullwidth" data-result-id="<%=resultId%>">
+                  <span class="icon"><i class="fas fa-flag-checkered"></i></span>
+                  <span lang="en">Finish</span>
+                  <span lang="es">Terminar</span>
+                </div>
+                <% } %>
+              </div>
+            </div>
+
+            <!-- Quizzes -->
+            <% let hideQuiz = false; %>
+            <% for (const i in tryConfig.randomQuizIds) { %>
+            <% const randomQuizId = tryConfig.randomQuizIds[i]; %>
+            <% const randomQuizOpts = tryConfig.randomQuizzesOpts[randomQuizId]; %>
+            <% var quiz = test.quizzes.find(quiz => quiz.id === randomQuizId); %>
+            <% const n = Number(i) + 1; %>
+
+            <!-- Include quiz box -->
+            <%- include('../auxiliary/test-quiz', { viewType, quiz, n, hideQuiz, randomQuizOpts, isSequential, resultId, isAuthor, isAdmin: (session.user && session.user.isAdmin) }) %>
+            <% hideQuiz = isSequential %>
+            <% } %>
+
+          </div><!-- /.box -->
+
+          <% } else { %>
+          <!-- No box wrapper for non-sequential mode -->
+          <div id="try-quiz-container">
+            <!-- Quizzes -->
+            <% let hideQuiz = false; %>
+            <% for (const i in tryConfig.randomQuizIds) { %>
+            <% const randomQuizId = tryConfig.randomQuizIds[i]; %>
+            <% const randomQuizOpts = tryConfig.randomQuizzesOpts[randomQuizId]; %>
+            <% var quiz = test.quizzes.find(quiz => quiz.id === randomQuizId); %>
+            <% const n = Number(i) + 1; %>
+
+            <!-- Include quiz box -->
+            <%- include('../auxiliary/test-quiz', { viewType, quiz, n, hideQuiz, randomQuizOpts, isSequential, resultId, isAuthor, isAdmin: (session.user && session.user.isAdmin) }) %>
+            <% } %>
+          </div>
+          <% } %>
+
+    </div><!-- /.container -->
+  </div><!-- /.hero-body -->
+</section><!-- /.hero -->

@@ -1,0 +1,46 @@
+<div class="flex-item-quiz-link is-hidden" id="flex-item-quiz-link-edit-example"></div>
+
+<div class="quiz is-hidden" id="quiz-edit-example">
+  <div class="box">
+    <div class="quiz-title-div">
+      <span class="quiz-title">0. Quiz Question</h3>
+    </div>
+    <!-- Edit & Delete Buttons -->
+    <button class="quiz-edit-button button is-link is-rounded is-warning">
+      <span class="icon is-small">
+        <i class="fas fa-edit"></i>
+      </span>
+    </button>
+    <button class="quiz-delete-button button is-link is-rounded is-danger">
+      <span class="icon is-small">
+        <i class="fas fa-trash"></i>
+      </span>
+    </button>
+    <!-- Quiz Image -->
+    <div class="image-container">
+      <div style="width: 70%;">
+        <!-- File pond image input -->
+        <input type="file" class="filepond" name="filepond" data-max-files="1">
+      </div>
+      <img class="gcs-image preview-image is-hidden" alt="gcs-image-000" src=""/>
+      <p class="is-size-7">
+        <span class="icon has-text-success"><i class="fas fa-info-circle"></i></span>
+        <b lang="en">Change correct answers just by clicking on them!</b>
+        <b lang="es">¡Cambia las respuestas correctas haciendo clic en ellas!</b>
+      </p>
+      <p class="quiz-edit-alert title is-6 has-text-danger is-hidden"></p>
+      <p class="quiz-alert title is-6 is-hidden"></p>
+    </div>
+    <!-- Quiz Options -->
+    <div class="flex-container">
+      <div class="option flex-opt-clickable is-edit" id="opt1">
+        <input class="is-hidden" type="checkbox" name="chosenOpts-222" value="1" />
+        <p class="subtitle is-6">A. Option A</p>
+      </div>
+      <div class="option flex-opt-clickable is-edit" id="opt2">
+        <input class="is-hidden" type="checkbox" name="chosenOpts-222" value="2" checked="" />
+        <p class="subtitle is-6">B. Option B</p>
+      </div>
+    </div>
+  </div>
+</div>

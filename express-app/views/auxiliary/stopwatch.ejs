@@ -1,0 +1,16 @@
+<% const minutes = Math.floor(nSeconds / (60)); %>
+<% const seconds = Math.floor(nSeconds) % 60; %>
+<% let formattedTime = `${minutes ? minutes.toString()+"m" : ""} ${seconds.toString()}s`; %>
+
+<!-- If there are more than 60 seconds, display only minutes with a comma -->
+<% if ((minutes > 0) && (viewType !== "INDEX")) { %>
+    <% formattedTime = `${minutes}m` + (seconds > 0 ? ` ${seconds}s` : ""); %>
+<% } else if ((minutes > 0) && (viewType === "INDEX")) { %>
+    <% formattedTime = `${Math.round(nSeconds / 60)}m`; %>
+<% } else { %>
+    <% formattedTime = `${seconds.toString()}s`; %>
+<% } %>
+
+<!-- Display the stopwatch -->
+<span class="icon is-small"><i class="fas fa-stopwatch"></i></span>
+<em><%= formattedTime %></em>

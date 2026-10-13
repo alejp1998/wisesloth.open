@@ -1,0 +1,246 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Live Battle <%=liveBattle.id%> | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Live Battle page for WiseSloth.open: compete in real-time with other players for the best score.");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Página de Live Battle para WiseSloth.open: compete en tiempo real con otros jugadores para la mejor puntuación.");
+
+  // Set as noindex
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+</script>
+
+<% var host = liveBattle.host %>
+<% var players = liveBattle.players %>
+<% var test = liveBattle.test %>
+<% var quizzes = liveBattle.quizzes %>
+
+<!-- Test Content -->
+<% const viewType = "TRY"; %>
+<% var isHost = session.user && host && (host.username === session.user.username) && (session.user.username === playername); %>
+<% var isAuthor = session.user && test.author && (test.author.username === session.user.username); %>
+<% var isFavorite = session.user && (session.user.favoriteIds || []).includes(test.id); %>
+
+<!-- Hero wrapper for centered content -->
+<section class="hero is-fullheight-with-navbar livebattle-hero">
+  <div class="hero-body">
+    <div class="container">
+
+          <!-- Battle ID Header - Prominent and Copyable -->
+          <div class="box has-text-centered mb-4" id="battle-id-box">
+            <p class="is-size-7 has-text-grey mb-2">
+              <span lang="en">SHARE THIS CODE WITH YOUR FRIENDS</span>
+              <span lang="es">COMPARTE ESTE CÓDIGO CON TUS AMIGOS</span>
+            </p>
+            <div class="is-flex is-justify-content-center is-align-items-center">
+              <span id="live-battle-id" class="is-size-2 has-text-weight-bold" style="font-family: 'Courier New', monospace; letter-spacing: 6px;"><%= liveBattle.id %></span>
+              <button class="button is-light ml-3" id="copy-battle-id-button" title="Copy to clipboard">
+                <span class="icon"><i class="fas fa-copy"></i></span>
+              </button>
+            </div>
+            <p class="is-size-7 mt-2">
+              <span class="icon is-small"><i class="fas fa-clock"></i></span>
+              <span><%= liveBattle.nQs %></span>
+              <span lang="en"> questions</span>
+              <span lang="es"> preguntas</span>
+              <span class="mx-2">•</span>
+              <span><%= liveBattle.secondsPerQuestion %>s</span>
+              <span lang="en"> each</span>
+              <span lang="es"> c/u</span>
+            </p>
+          </div>
+
+          <!-- Show host and players that joined the live battle -->
+          <div class="box" id="live-battle-box">
+            <!-- Timer Bar - Shows during game -->
+            <div id="livebattle-timer-bar" class="is-hidden">
+              <!-- Countdown to next question -->
+              <div id="countdown" class="timer-bar countdown is-hidden">
+                <div class="timer-bar-track">
+                  <div class="timer-bar-fill" id="countdown-progress"></div>
+                </div>
+                <div class="timer-bar-label">
+                  <span class="timer-bar-icon"><i class="fas fa-forward"></i></span>
+                  <span lang="en">Next in</span>
+                  <span lang="es">Siguiente en</span>
+                  <span id="time-remaining-for-start" class="timer-bar-value"></span><span class="timer-bar-unit">s</span>
+                </div>
+              </div>
+
+              <!-- Time remaining to answer -->
+              <div id="time-remaining-for-end-div" class="timer-bar answering is-hidden">
+                <div class="timer-bar-header">
+                  <div class="timer-bar-label">
+                    <span class="timer-bar-icon"><i class="fas fa-clock"></i></span>
+                    <span lang="en">Time</span>
+                    <span lang="es">Tiempo</span>
+                    <span id="time-remaining-for-end" class="timer-bar-value"></span><span class="timer-bar-unit">s</span>
+                  </div>
+                  <button id="livebattle-submit-btn" class="livebattle-submit" disabled title="Send answer">
+                    <i class="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+                <div class="timer-bar-track">
+                  <div class="timer-bar-fill" id="answer-progress"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Host/Player controls (top-right) -->
+            <div class="livebattle-controls">
+              <!-- Join as player button -->
+      <% if (isHost) { %>
+      <% if (liveBattle.hostIsPlayer) { %>
+      <div class="button is-link is-light is-rounded is-small" id="join-as-player-button" data-host-is-player="true">
+      <% } else { %>
+      <div class="button is-link is-light is-rounded is-small" id="join-as-player-button" data-host-is-player="false">
+      <% } %>
+        <span class="icon is-small"><i class="fas fa-gamepad"></i></span>
+        <span lang="en" class="is-hidden-touch">Play too</span>
+        <span lang="es" class="is-hidden-touch">Jugar</span>
+        <% if (liveBattle.hostIsPlayer) { %>
+        <span class="icon is-small has-color-link" id="join-as-player-button-icon"><i class="fas fa-toggle-on"></i></span>
+        <% } else { %>
+        <span class="icon is-small has-color-link" id="join-as-player-button-icon"><i class="fas fa-toggle-off"></i></span>
+        <% } %>
+      </div>
+      <% } else { %>
+      <!-- Show waiting message button -->
+      <div class="button is-link is-light is-rounded is-small" id="waiting-message-button">
+        <span class="icon is-small"><i class="fas fa-spinner fa-pulse"></i></span>
+        <span lang="en" class="is-hidden-touch">Waiting...</span>
+        <span lang="es" class="is-hidden-touch">Esperando...</span>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Player info -->
+    <div id="live-battle-info">
+      <p class="is-size-6 mb-3">
+        <span class="icon"><i class="fas fa-user-astronaut"></i></span>
+        <span lang="en">You: </span>
+        <span lang="es">Tú: </span>
+        <b id="playername"><%- playername %></b>
+        <span class="tag is-light ml-2">[<span id="player-score">0</span> pts]</span>
+      </p>
+    </div>
+
+    <!-- PLAYERS INFO -->
+    <div id="players-info">
+      <p class="is-size-6 mb-2" id="n-players-info">
+        <span class="icon"><i class="fas fa-users"></i></span>
+        <span lang="en">Players: </span>
+        <span lang="es">Jugadores: </span>
+        <b><%= liveBattle.players.length %></b>
+      </p>
+
+      <div class="quiz-links flex-container">
+        <% players.forEach((player) => { %>
+        <% var userIsMyself = player.name === playername; %>
+        <% var userIsHost = player.name === host.username; %>
+        <div class="player-info flex-item-quiz-link <%= userIsMyself ? 'selected' : '' %>">
+          <% if (userIsHost) { %>
+            <span class="icon has-text-danger"><i class="fas fa-crown"></i></span>
+          <% } else if (userIsMyself) { %>
+            <span class="icon has-text-success"><i class="fas fa-user-astronaut"></i></span>
+          <% } else { %>
+            <span class="icon"><i class="fas fa-user"></i></span>
+          <% } %>
+          <%= player.name %>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <% if (isHost && (playername === host.username)) { %>
+    <!-- Start Live Battle Button -->
+    <div id="start-live-battle-div" class="mt-4">
+      <button class="button is-link is-fullwidth is-medium" id="start-live-battle-button" disabled>
+        <span class="icon"><i class="fas fa-bolt"></i></span>
+        <span lang="en">Start Battle</span>
+        <span lang="es">Iniciar Batalla</span>
+      </button>
+      <p class="is-size-7 has-text-danger has-text-centered mt-2" id="start-live-battle-message">
+        <span class="icon is-small"><i class="fas fa-info-circle"></i></span>
+        <span lang="en">Need at least 2 players</span>
+        <span lang="es">Se necesitan al menos 2 jugadores</span>
+      </p>
+    </div>
+    <% } %>
+
+    <!-- Send answer result div -->
+    <div id="send-answer-result-div" class="is-hidden"></div>
+
+    <!-- Quiz Links -->
+    <% var isSequential = true; %>
+    <% var resultId = "null"; %>
+    <div id="livebattle-quiz-links" class="is-hidden mt-4">
+      <div class="quiz-links flex-container-no-wrap">
+        <% for (const i in quizzes) { %>
+        <% const quiz = quizzes[i]; %>
+        <div id="quiz-link-<%= quiz.id %>" class="flex-item-quiz-link" data-quiz-id="<%= quiz.id %>"><%= Number(i)+1 %></div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Waiting for others to answer message -->
+    <div id="waiting-for-others-message" class="is-hidden">
+      <p class="is-size-6 has-text-grey has-text-centered">
+        <span class="icon"><i class="fas fa-spinner fa-pulse"></i></span>
+        <span lang="en">Waiting for others to answer...</span>
+        <span lang="es">Esperando a otros jugadores...</span>
+      </p>
+    </div>
+
+    <!-- Quizzes -->
+    <div id="livebattle-quizzes" class="is-hidden">
+      <% let hideQuiz = false; %>
+      <% for (const i in quizzes) { %>
+      <% const quiz = quizzes[i]; %>
+      <% const randomQuizId = quiz.id %>
+      <% const randomQuizOpts = quiz.randomOpts; %>
+      <% const n = Number(i) + 1; %>
+
+      <!-- Include quiz box -->
+      <%- include('../auxiliary/test-quiz', { viewType, test, quiz, n, hideQuiz, randomQuizOpts, isSequential, resultId, isLiveBattle: true, isAuthor, isAdmin: (session.user && session.user.isAdmin) }) %>
+      <% hideQuiz = isSequential %>
+      <% } %>
+    </div>
+  </div>
+
+    </div><!-- /.container -->
+  </div><!-- /.hero-body -->
+</section><!-- /.hero -->
+
+<!-- Variables initialization -->
+<script class="live-battle-js" data-n="0" nonce="<%=nonce%>">
+  // Initialize liveBattleStatus to "waiting"
+  liveBattleStatus = "waiting";
+
+  // Load liveBattleId on a frontend variable
+  liveBattleId = '<%=liveBattle.id%>';
+  // console.log("liveBattleId: " + liveBattleId);
+
+  // Load playername on a frontend variable
+  playername = '<%=playername%>';
+  // console.log("playername: " + playername);
+
+  // Load host, test, and quizzes on a frontend variable (using safer JSON encoding)
+  liveBattleHost = <%- safeJson(liveBattle.host) %>;
+  liveBattleTest = <%- safeJson(liveBattle.test) %>;
+  liveBattleQuizzes = <%- safeJson(liveBattle.quizzes) %>;
+
+  // Copy battle ID functionality
+  document.getElementById('copy-battle-id-button')?.addEventListener('click', function() {
+    const battleId = document.getElementById('live-battle-id').textContent;
+    navigator.clipboard.writeText(battleId).then(() => {
+      this.innerHTML = '<span class="icon"><i class="fas fa-check"></i></span>';
+      setTimeout(() => {
+        this.innerHTML = '<span class="icon"><i class="fas fa-copy"></i></span>';
+      }, 2000);
+    });
+  });
+</script>
+
+<!-- AUXILIARY JS -->
+<script src="/scripts/livebattle.js" class="live-battle-js" id="livebattle-js" data-n="1" nonce="<%= nonce %>"></script>

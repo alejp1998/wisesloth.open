@@ -1,0 +1,8 @@
+title: Short answers
+types: notes;instructions
+description: |
+  Prefer open short-answer questions where the learner types their own
+  response instead of choosing from options. Each question should target a
+  single, specific fact or concept and allow a concise and unambiguous answer
+  of a few words up to one sentence. Always include a clear expected-answer
+  key inside the explanation so the result is self-grading.

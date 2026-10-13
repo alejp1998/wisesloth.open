@@ -1,0 +1,11 @@
+node_modules
+.venv
+__pycache__
+**/__pycache__
+coverage
+.env*
+*.log
+error_logs
+completion_logs
+__tests__
+tests

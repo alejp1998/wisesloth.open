@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "required": ["lang", "name", "topic", "desc", "cards"],
+  "properties": {
+    "lang": {
+      "type": "string",
+      "description": "ISO 639-1 language code (e.g., 'en', 'es', 'fr')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Concise flashcard set title, max 5 words"
+    },
+    "topic": {
+      "type": "string",
+      "description": "2-4 hyphenated lowercase nouns, general to specific (e.g., 'biology-cells-mitochondria')"
+    },
+    "desc": {
+      "type": "string",
+      "description": "30-50 word description summarizing the flashcard set content"
+    },
+    "cards": {
+      "type": "array",
+      "description": "Array of flashcard objects (front/back pairs)",
+      "items": {
+        "type": "object",
+        "required": ["front", "back"],
+        "properties": {
+          "front": {
+            "type": "string",
+            "description": "The front side of the flashcard: a term, concept, question or prompt. Keep it short (max ~25 words). Use MathJax ($...$) for math expressions."
+          },
+          "back": {
+            "type": "string",
+            "description": "The back side of the flashcard: the definition, answer or explanation. Concise but complete (max ~40 words)."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

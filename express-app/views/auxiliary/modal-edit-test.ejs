@@ -1,0 +1,169 @@
+<div id="modal-edit-test" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">
+        <span lang="en">Edit test details</span>
+        <span lang="es">Editar detalles del test</span>
+      </p>
+      <button class="modal-delete delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <!-- General (whole-test/deck) AI edit: "add 2 more questions about X", "remove
+           question 3", "change the description"... Populated/reset by openEditTestModal()
+           in general-actions.js each time this shared modal opens for a (possibly
+           different) test; test-general-ai-edit.js (loaded globally) drives it. -->
+      <div class="box general-ai-edit-box qe-ai-box ai-panel" id="modal-edit-test-ai-box" data-test-id="" data-test-type="">
+        <div class="ai-panel-head">
+          <span class="ai-panel-title">
+            <span class="icon is-small"><i class="fas fa-magic"></i></span>
+            <span lang="en">Edit with AI</span>
+            <span lang="es">Editar con IA</span>
+          </span>
+        </div>
+        <p class="help general-ai-edit-hint ai-panel-hint">
+          <span lang="en">Describe a change: "add 2 more questions/cards about X", "remove question/card 3", "change the description"...</span>
+          <span lang="es">Describe un cambio: "añade 2 preguntas/tarjetas más sobre X", "elimina la pregunta/tarjeta 3", "cambia la descripción"...</span>
+        </p>
+        <div class="field has-addons">
+          <div class="control is-expanded has-icons-left">
+            <span class="icon is-left is-small"><i class="fas fa-pen-nib"></i></span>
+            <input class="input general-ai-edit-instruction" type="text" autocomplete="off" maxlength="500"
+              placeholder="e.g. Add 2 more questions/cards about X / Remove question 3...">
+          </div>
+          <div class="control">
+            <button type="button" class="button ai-generate-btn general-ai-edit-apply">
+              <span class="icon is-small"><i class="fas fa-magic"></i></span>
+              <span lang="en">Generate</span>
+              <span lang="es">Generar</span>
+            </button>
+          </div>
+        </div>
+        <p class="general-ai-edit-status is-size-7"></p>
+
+        <!-- Review panel: populated + shown once a proposed diff comes back -->
+        <div class="general-ai-edit-review is-hidden">
+          <hr>
+          <p class="general-ai-edit-summary title is-6"></p>
+          <div class="general-ai-edit-changes content is-size-7"></div>
+          <div class="buttons">
+            <button type="button" class="button ai-confirm-btn general-ai-edit-confirm">
+              <span class="icon is-small"><i class="fas fa-check"></i></span>
+              <span lang="en">Apply changes</span>
+              <span lang="es">Aplicar cambios</span>
+            </button>
+            <button type="button" class="button ai-discard-btn general-ai-edit-discard">
+              <span lang="en">Discard</span>
+              <span lang="es">Descartar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <hr>
+
+      <div class="modalTest">
+        <div class="field">
+          <label class="label" for="modalTestName">
+            <span class="icon"><i class="fas fa-signature"></i></span>
+            <span lang="en">Name</span>
+            <span lang="es">Nombre</span>
+          </label>
+          <div class="control">
+            <input type="text" class="input" id="modalTestName" value="" autocomplete="off"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="modalTestTopic">
+            <span class="icon"><i class="fas fa-folder-open"></i></span>
+            <span lang="en">Folder</span>
+            <span lang="es">Carpeta</span>
+            <span lang="en">e.g. biology/animals/lion</span>
+            <span lang="es">p.ej. biologia/animales/leon</span>
+          </label>
+          <div class="control">
+            <input type="text" class="input" id="modalTestTopic" value="" autocomplete="off"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">
+            <span lang="en">Visibility</span>
+            <span lang="es">Visibilidad</span>
+          </label>
+          <div class="control">
+            <label class="radio" title="Public: anyone can see it.">
+              <input type="radio" name="visibility" value="public">
+              <span class="icon is-small"><i class="fas fa-globe-europe" style="color: var(--bulma-success);"></i></span>
+              <b lang="en" class=" has-text-success">Public</b>
+              <b lang="es" class=" has-text-success">Público</b>
+            </label>
+            <label class="radio" title="Followers: only users who follow you can see it.">
+              <input type="radio" name="visibility" value="followers">
+              <span class="icon is-small"><i class="fas fa-users" style="color: var(--bulma-warning);"></i></span>
+              <span lang="en" class=" has-text-warning">Followers</span>
+              <span lang="es" class=" has-text-warning">Seguidores</span>
+            </label>
+            <label class="radio" title="Private: only users with the link.">
+              <input type="radio" name="visibility" value="private">
+              <span class="icon is-small"><i class="fas fa-lock" style="color: var(--bulma-danger);"></i></span>
+              <span lang="en" class=" has-text-danger">Private</span>
+              <span lang="es" class=" has-text-danger">Privado</span>
+            </label>
+          </div>
+          <!-- <p class="help">
+            <span lang="en">Private: only users with the link.</span>
+            <span lang="es">Privado: solo usuarios con el enlace.</span>
+          </p> -->
+        </div>
+
+        <div class="field">
+          <label class="label">
+            <span lang="en">Hide questions and answers</span>
+            <span lang="es">Ocultar preguntas y respuestas</span>
+          </label>
+          <div class="control">
+            <label class="radio" title="Yes: only you can see them.">
+              <input type="radio" name="hideAnswers" value="true">
+              <span class="icon is-small"><i class="fas fa-eye-slash" style="color: var(--bulma-danger);"></i></span>
+              <span lang="en">Yes</span>
+              <span lang="es">Sí</span>
+            </label>
+            <label class="radio" title="No: everyone can see them.">
+              <input type="radio" name="hideAnswers" value="false">
+              <span class="icon is-small"><i class="fas fa-eye" style="color: var(--bulma-link);"></i></span>
+              <span lang="en">No</span>
+              <span lang="es">No</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="modalTestDesc">
+            <span class="icon"><i class="fas fa-align-left"></i></span>
+            <span lang="en">Description</span>
+            <span lang="es">Descripción</span>
+          </label>
+          <div class="control">
+            <textarea class="textarea" rows="3" id="modalTestDesc"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-alert"></div>
+    </section>
+    <footer class="modal-card-foot">
+      <div class="buttons">
+        <button id="modal-edit-test-button" class="button is-link">
+          <span class="icon"><i class="fas fa-save"></i></span>
+          <span lang="en">Save changes</span>
+          <span lang="es">Guardar cambios</span>
+        </button>
+        <button class="modal-cancel button">
+          <span class="icon"><i class="fas fa-times"></i></span>
+          <span lang="en">Cancel</span>
+          <span lang="es">Cancelar</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

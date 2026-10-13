@@ -1,0 +1,62 @@
+{
+  "type": "object",
+  "required": ["summary", "test_updates", "cards_to_add", "cards_to_remove_ids", "cards_to_update"],
+  "properties": {
+    "summary": {
+      "type": "string",
+      "description": "One short sentence (same language as the deck) summarizing exactly what was changed. Shown to the user before they confirm."
+    },
+    "test_updates": {
+      "type": "object",
+      "required": ["name", "topic", "desc"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The deck's name. Copy the CURRENT name unchanged unless the instruction explicitly asked to rename/retitle it."
+        },
+        "topic": {
+          "type": "string",
+          "description": "The deck's topic tag (2-4 hyphenated lowercase nouns). Copy the CURRENT topic unchanged unless the new content requires a different one."
+        },
+        "desc": {
+          "type": "string",
+          "description": "The deck's description. Copy the CURRENT description unchanged unless the instruction explicitly asked to change it."
+        }
+      },
+      "additionalProperties": false
+    },
+    "cards_to_add": {
+      "type": "array",
+      "description": "Brand-new flashcards to append. Leave EMPTY unless the instruction explicitly asked to add card(s).",
+      "items": {
+        "type": "object",
+        "required": ["front", "back"],
+        "properties": {
+          "front": { "type": "string", "description": "Front side: a term, concept, question or prompt. Keep it short (max ~25 words)." },
+          "back": { "type": "string", "description": "Back side: the definition, answer or explanation. Concise but complete (max ~40 words)." }
+        },
+        "additionalProperties": false
+      }
+    },
+    "cards_to_remove_ids": {
+      "type": "array",
+      "description": "IDs (copied verbatim from the current cards list below) of cards to delete. Leave EMPTY unless the instruction explicitly asked to remove card(s).",
+      "items": { "type": "string" }
+    },
+    "cards_to_update": {
+      "type": "array",
+      "description": "Existing cards to modify in place. Include ONLY the cards the instruction actually asked to change - never rewrite untouched cards.",
+      "items": {
+        "type": "object",
+        "required": ["id", "front", "back"],
+        "properties": {
+          "id": { "type": "string", "description": "The id of the existing card being updated, copied verbatim from the current list." },
+          "front": { "type": "string", "description": "The updated front side." },
+          "back": { "type": "string", "description": "The updated back side." }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

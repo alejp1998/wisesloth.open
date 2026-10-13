@@ -1,0 +1,195 @@
+<% if (typeof isHelpModal === 'undefined') { %>
+    <% var isHelpModal = false %>
+<% } %>
+
+<% if (!isHelpModal) { %>
+    <!-- Modify title in meta tag -->
+    <script class="title-metadata-js" nonce="<%=nonce%>">
+        document.title = "Live Battle | WiseSloth.open";
+    </script>
+
+    <!-- Include hero header -->
+    <% const heroTitleEn = "Live Battle" %>
+    <% const heroTitleEs = "Live Battle" %>
+    <% const heroSubtitleEn = "" %>
+    <% const heroSubtitleEs = "" %>
+    <% const containerId = "" %>
+    <%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+<% } %>
+
+<div class="container">
+    <div class="section">
+        <h1 class="title is-2">
+            <span class="icon has-text-link"><i class="fas fa-bolt"></i></span>
+            <span lang="en">Live Battle Mode</span>
+            <span lang="es">Modo Live Battle</span>
+        </h1>
+        <h2 class="subtitle is-4">
+            <span lang="en">Challenge your friends in real-time quiz competitions! The fastest correct answers win the most points.</span>
+            <span lang="es">¡Desafía a tus amigos en competencias de quiz en tiempo real! Las respuestas correctas más rápidas ganan más puntos.</span>
+        </h2>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">How it works</span>
+                <span lang="es">Cómo funciona</span>
+            </h1>
+        </div>
+        <br>
+
+        <div class="columns mx-0 is-multiline">
+            <!-- Step 1: Create -->
+            <div class="column is-6">
+                <div class="box" style="height: 100%;">
+                    <div class="has-text-centered mb-4">
+                        <span class="icon is-large has-text-link">
+                            <i class="fas fa-3x fa-plus-circle"></i>
+                        </span>
+                    </div>
+                    <h2 class="title is-4 has-text-centered">
+                        <span lang="en">1. Create a Battle</span>
+                        <span lang="es">1. Crear una Batalla</span>
+                    </h2>
+                    <p class="subtitle is-5 has-text-centered">
+                        <span lang="en">Click the <i class="fas fa-play"></i> button on any quiz, go to the Live Battle tab, and create your battle. You'll get a unique 6-letter code.</span>
+                        <span lang="es">Haz clic en el botón <i class="fas fa-play"></i> de cualquier quiz, ve a la pestaña Live Battle y crea tu batalla. Obtendrás un código único de 6 letras.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2: Share -->
+            <div class="column is-6">
+                <div class="box" style="height: 100%;">
+                    <div class="has-text-centered mb-4">
+                        <span class="icon is-large has-text-success">
+                            <i class="fas fa-3x fa-share-alt"></i>
+                        </span>
+                    </div>
+                    <h2 class="title is-4 has-text-centered">
+                        <span lang="en">2. Share the Code</span>
+                        <span lang="es">2. Compartir el Código</span>
+                    </h2>
+                    <p class="subtitle is-5 has-text-centered">
+                        <span lang="en">Share the battle code with your friends. They can join from the home page or by clicking the <i class="fas fa-bolt"></i> Live Battle button.</span>
+                        <span lang="es">Comparte el código de batalla con tus amigos. Pueden unirse desde la página de inicio o haciendo clic en el botón <i class="fas fa-bolt"></i> Live Battle.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 3: Compete -->
+            <div class="column is-6">
+                <div class="box" style="height: 100%;">
+                    <div class="has-text-centered mb-4">
+                        <span class="icon is-large has-text-warning">
+                            <i class="fas fa-3x fa-bolt"></i>
+                        </span>
+                    </div>
+                    <h2 class="title is-4 has-text-centered">
+                        <span lang="en">3. Compete in Real-Time</span>
+                        <span lang="es">3. Competir en Tiempo Real</span>
+                    </h2>
+                    <p class="subtitle is-5 has-text-centered">
+                        <span lang="en">Answer questions as fast as you can! Faster correct answers earn more points. Everyone sees the same question at the same time.</span>
+                        <span lang="es">¡Responde las preguntas lo más rápido posible! Las respuestas correctas más rápidas ganan más puntos. Todos ven la misma pregunta al mismo tiempo.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 4: Win -->
+            <div class="column is-6">
+                <div class="box" style="height: 100%;">
+                    <div class="has-text-centered mb-4">
+                        <span class="icon is-large has-text-danger">
+                            <i class="fas fa-3x fa-trophy"></i>
+                        </span>
+                    </div>
+                    <h2 class="title is-4 has-text-centered">
+                        <span lang="en">4. See Who Wins!</span>
+                        <span lang="es">4. ¡Ver Quién Gana!</span>
+                    </h2>
+                    <p class="subtitle is-5 has-text-centered">
+                        <span lang="en">After each question, see the leaderboard update. At the end, the player with the highest score wins!</span>
+                        <span lang="es">Después de cada pregunta, ve cómo se actualiza la clasificación. Al final, ¡el jugador con la puntuación más alta gana!</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">Key Features</span>
+                <span lang="es">Características Clave</span>
+            </h1>
+        </div>
+        <br>
+
+        <div class="columns mx-0 is-multiline">
+            <div class="column is-4">
+                <div class="has-text-centered">
+                    <span class="icon is-large has-text-info">
+                        <i class="fas fa-2x fa-users"></i>
+                    </span>
+                    <h3 class="title is-5 mt-3">
+                        <span lang="en">Up to 100 players</span>
+                        <span lang="es">Hasta 100 jugadores</span>
+                    </h3>
+                    <p class="is-size-6">
+                        <span lang="en">Perfect for classrooms, parties, or large groups!</span>
+                        <span lang="es">¡Perfecto para aulas, fiestas o grupos grandes!</span>
+                    </p>
+                </div>
+            </div>
+            <div class="column is-4">
+                <div class="has-text-centered">
+                    <span class="icon is-large has-text-success">
+                        <i class="fas fa-2x fa-clock"></i>
+                    </span>
+                    <h3 class="title is-5 mt-3">
+                        <span lang="en">Configurable timing</span>
+                        <span lang="es">Tiempo configurable</span>
+                    </h3>
+                    <p class="is-size-6">
+                        <span lang="en">Set 20-90 seconds per question to match your needs.</span>
+                        <span lang="es">Configura 20-90 segundos por pregunta según tus necesidades.</span>
+                    </p>
+                </div>
+            </div>
+            <div class="column is-4">
+                <div class="has-text-centered">
+                    <span class="icon is-large has-text-warning">
+                        <i class="fas fa-2x fa-sync-alt"></i>
+                    </span>
+                    <h3 class="title is-5 mt-3">
+                        <span lang="en">Auto-reconnect</span>
+                        <span lang="es">Reconexión automática</span>
+                    </h3>
+                    <p class="is-size-6">
+                        <span lang="en">Lost connection? Just rejoin with the same name!</span>
+                        <span lang="es">¿Perdiste la conexión? ¡Simplemente vuelve a unirte con el mismo nombre!</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% if (!isHelpModal) { %>
+        <div class="section">
+            <div class="box">
+                <h1 class="title is-3 has-text-centered">
+                    <span lang="en">Ready to battle?</span>
+                    <span lang="es">¿Listo para la batalla?</span>
+                </h1>
+                <br>
+                <a class="button is-link is-rounded is-large is-fullwidth open-modal-livebattle-button">
+                    <span class="icon"><i class="fas fa-bolt"></i></span>
+                    <span lang="en">Join a Live Battle</span>
+                    <span lang="es">Unirse a una Live Battle</span>
+                </a>
+            </div>
+        </div>
+    <% } %>
+</div>

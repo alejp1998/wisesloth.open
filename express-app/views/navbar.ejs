@@ -1,0 +1,281 @@
+<nav class="nav" role="navigation" aria-label="main navigation" id="main-navbar">
+  <div class="nav__row">
+    <div class="nav__brand">
+      <a class="nav__brand-link" href="/">
+        <img src="/images/sloth-logo.webp" alt="WiseSloth.open Logo" class="nav__logo" width="34" height="28" loading="lazy">
+        <span class="nav__brand-text">WiseSloth.open</span>
+      </a>
+      <div class="nav__brand-actions">
+        <a class="nav__btn nav__btn--primary" href="/tests/new" title="Create a new quiz">
+          <span class="nav__btn-icon"><i class="fas fa-plus"></i></span>
+          <span lang="en">Test</span>
+          <span lang="es">Test</span>
+        </a>
+        <div class="nav__btn nav__btn--link open-modal-livebattle-button" title="Join a live battle">
+          <span lang="en">Join</span>
+          <span lang="es">Join</span>
+          <span class="nav__btn-icon"><i class="fas fa-bolt"></i></span>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="nav-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div id="navMenu" class="nav-menu">
+    <!-- Mobile-only top action row: quick create, join, close -->
+    <div class="nav__menu-topbar is-hidden-desktop">
+      <a class="nav__menu-action nav__menu-action--create" href="/tests/new">
+        <span class="nav__menu-action-icon"><i class="fas fa-plus"></i></span>
+        <span lang="en">Create</span>
+        <span lang="es">Crear</span>
+      </a>
+      <div class="nav__menu-action nav__menu-action--join open-modal-livebattle-button">
+        <span lang="en">Join</span>
+        <span lang="es">Unirse</span>
+        <span class="nav__menu-action-icon"><i class="fas fa-bolt"></i></span>
+      </div>
+      <button type="button" class="nav__menu-action nav__menu-close" aria-label="Close menu">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="nav__start">
+      <% var isLoggedInStr = isLoggedIn ? "" : "is-hidden" %>
+      <% var isLoggedOutStr = !isLoggedIn ? "" : "is-hidden" %>
+      <% var isAdminStr = isAdmin ? "" : "is-hidden" %>
+
+      <!-- Explore dropdown (logged in) -->
+      <div class="nav__dropdown is-logged-in <%=isLoggedInStr%>">
+        <a class="nav__dropdown-toggle" href="/tests">
+          <span lang="en">Explore</span>
+          <span lang="es">Explorar</span>
+          <i class="fas fa-angle-down nav__dropdown-caret" aria-hidden="true"></i>
+        </a>
+        <div class="nav__dropdown-menu">
+          <a class="nav__dropdown-item" href="/tests">
+            <span class="icon"><i class="fas fa-globe"></i></span>
+            <span lang="en">All Quizzes</span>
+            <span lang="es">Todos los Tests</span>
+          </a>
+          <a class="nav__dropdown-item" href="/users">
+            <span class="icon"><i class="fas fa-users"></i></span>
+            <span lang="en">Users</span>
+            <span lang="es">Usuarios</span>
+          </a>
+          <hr class="nav__dropdown-divider">
+          <a class="nav__dropdown-item" href="/tests?type=liked">
+            <span class="icon has-text-danger"><i class="fas fa-heart"></i></span>
+            <span lang="en">Liked</span>
+            <span lang="es">Favoritos</span>
+          </a>
+          <a class="nav__dropdown-item" href="/tests?type=tried">
+            <span class="icon has-text-info"><i class="fas fa-history"></i></span>
+            <span lang="en">Tried</span>
+            <span lang="es">Intentados</span>
+          </a>
+          <a class="nav__dropdown-item" href="/tests?type=following">
+            <span class="icon has-text-link"><i class="fas fa-user-friends"></i></span>
+            <span lang="en">Following</span>
+            <span lang="es">Siguiendo</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- My stuff dropdown (logged in) -->
+      <div class="nav__dropdown is-logged-in <%=isLoggedInStr%>">
+        <a class="nav__dropdown-toggle" href="/tests?type=mine">
+          <span lang="en">My Stuff</span>
+          <span lang="es">Mi Espacio</span>
+          <i class="fas fa-angle-down nav__dropdown-caret" aria-hidden="true"></i>
+        </a>
+        <div class="nav__dropdown-menu">
+          <a class="nav__dropdown-item" href="/tests?type=mine">
+            <span class="icon has-text-primary"><i class="fas fa-folder"></i></span>
+            <span lang="en">My Quizzes</span>
+            <span lang="es">Mis Tests</span>
+          </a>
+          <a class="nav__dropdown-item" href="/results?type=mine">
+            <span class="icon has-text-warning"><i class="fas fa-trophy"></i></span>
+            <span lang="en">My Results</span>
+            <span lang="es">Mis Resultados</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Simple link for logged out -->
+      <a class="nav__link is-logged-out <%=isLoggedOutStr%>" href="/tests">
+        <span lang="en">Explore</span>
+        <span lang="es">Explorar</span>
+      </a>
+
+      <!-- Mobile-only quick links -->
+      <div class="nav__mobile-links is-hidden-desktop">
+        <a class="nav__dropdown-item" href="/tests/new">
+          <span class="icon has-text-primary"><i class="fas fa-plus"></i></span>
+          <span lang="en">Create a Quiz</span>
+          <span lang="es">Crear un Test</span>
+        </a>
+
+        <div class="nav__dropdown-item open-modal-livebattle-button" style="cursor: pointer;">
+          <span class="icon has-text-warning"><i class="fas fa-bolt"></i></span>
+          <span lang="en">Live Battles</span>
+          <span lang="es">Batallas en Vivo</span>
+        </div>
+        <a class="nav__dropdown-item" href="/community">
+          <span class="icon has-text-success"><i class="fas fa-globe"></i></span>
+          <span lang="en">Community</span>
+          <span lang="es">Comunidad</span>
+        </a>
+        <a class="nav__dropdown-item" href="/help">
+          <span class="icon has-text-info"><i class="fas fa-question-circle"></i></span>
+          <span lang="en">Help</span>
+          <span lang="es">Ayuda</span>
+        </a>
+        <a class="nav__dropdown-item" href="/about">
+          <span class="icon has-text-link"><i class="fas fa-info-circle"></i></span>
+          <span lang="en">About</span>
+          <span lang="es">Acerca de</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav__end">
+
+      <!-- Search bar -->
+      <div class="nav__search" id="search-input-navbar-container">
+        <input class="nav__search-input" id="search-input-navbar" type="text" placeholder="Search quizzes" autocomplete="off">
+        <button type="button" class="nav__search-btn" id="search-button-navbar">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+
+      <!-- Theme & Language toggles -->
+      <div class="nav__icons">
+        <button type="button" class="nav__icon-btn open-modal-changelog-button" title="What's New">
+          <i class="fas fa-gift" aria-hidden="true" style="color:#f39c12;"></i>
+        </button>
+
+        <% if (theme === "dark") { %>
+        <button type="button" class="nav__icon-btn" id="selected-theme" title="Dark mode">
+          <i class="fas fa-moon" aria-hidden="true" style="color:orchid;"></i>
+        </button>
+        <% } else if (theme === "light") { %>
+        <button type="button" class="nav__icon-btn" id="selected-theme" title="Light mode">
+          <i class="fas fa-sun" aria-hidden="true" style="color:darkorange;"></i>
+        </button>
+        <% } %>
+        <button type="button" class="nav__icon-btn" id="selected-lang" title="Change language">
+          <span lang="en">EN</span>
+          <span lang="es">ES</span>
+        </button>
+      </div>
+
+      <!-- User profile -->
+      <% var username = session.user ? session.user.username : "" %>
+      <div class="nav__user">
+        <!-- Logged in user link -->
+        <% if (isLoggedIn) { %>
+        <a class="nav__user-link logged-in-user-link" href="/users/<%= username %>">
+          <span class="logged-in-user-icon nav__user-icon">
+            <% if (isAdmin) { %><i class="fa fa-crown"></i>
+            <% } else { %><i class="fa fa-user"></i><% } %>
+          </span>
+          <% let shortenedUsername = username;
+          if (shortenedUsername.length > 12) {
+            shortenedUsername = shortenedUsername.slice(0, 12) + "...";
+          } %>
+          <span class="logged-in-user-username nav__user-name"> <%= shortenedUsername %> </span>
+        </a>
+
+        <!-- Logout button -->
+        <button type="button" title="Logout" class="nav__icon-btn logout-button" id="navbar-logout-button" aria-label="Sign out">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+
+        <a class="nav__icon-btn" href="/settings" title="Settings"><i class="fas fa-cog"></i></a>
+        <% } else { %>
+        <a class="button is-link" href="/login">Sign in</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+
+<!-- Tips & Tricks Modal -->
+<div class="modal" id="modal-tips">
+  <div class="modal-background"></div>
+  <div class="modal-content" style="min-width: 60%;">
+    <% var isHelpModal = true; %>
+    <%- include('general/tips', { isHelpModal }) %>
+  </div>
+</div>
+
+<!-- FAQs Modal -->
+<div class="modal" id="modal-faq">
+  <div class="modal-background"></div>
+  <div class="modal-content" style="min-width: 60%;">
+    <% var isHelpModal = true; %>
+    <%- include('general/faq', { isHelpModal }) %>
+  </div>
+</div>
+
+<!-- Modal theme selector (commented out 2026-08-16: language & theme buttons now toggle directly) -->
+<!-- <div class="modal" id="modal-customizer">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <div class="box">
+      <h3 class="title is-3">
+        <span lang="en">Choose a language</span>
+        <span lang="es">Selecciona un idioma</span>
+      </h3>
+      <div class="columns">
+        <div class="column is-narrow">
+          <% if (lang === "en") { %>
+          <button class="button is-link" id="en-button">
+          <% } else { %>
+          <button class="button" id="en-button">
+          <% } %>
+            <span>English (EN)</span>
+          </button>
+        </div>
+        <div class="column is-narrow">
+          <% if (lang === "es") { %>
+          <button class="button is-link" id="es-button">
+          <% } else { %>
+          <button class="button" id="es-button">
+          <% } %>
+            <span>Spanish (ES)</span>
+          </button>
+        </div>
+      </div>
+      <h3 class="title is-3">
+        <span lang="en">Choose a theme</span>
+        <span lang="es">Selecciona un tema</span>
+      </h3>
+      <div class="columns">
+        <div class="column is-narrow">
+          <button data-scheme="light" class="button is-light theme-selector" aria-label="Light mode">
+            <span class="icon">
+              <i class="fas fa-sun" aria-hidden="true" style="color:darkorange;"></i>
+            </span>
+            <span>Light</span>
+          </button>
+        </div>
+        <div class="column is-narrow">
+          <button data-scheme="dark" class="button is-dark theme-selector" aria-label="Dark mode">
+            <span class="icon">
+              <i class="fas fa-moon" aria-hidden="true" style="color:orchid;"></i>
+            </span>
+            <span>Dark</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "information_synthesizer.schema.json",
+  "title": "Information Synthesizer Schema",
+  "description": "Schema for synthesizing search results into structured information for quiz generation",
+  "type": "object",
+  "required": ["key_information", "recent_developments", "statistics_and_data", "notable_examples", "summary"],
+  "properties": {
+    "key_information": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of important facts or developments extracted from search results",
+      "examples": [
+        ["Important fact or development 1", "Important fact or development 2"]
+      ]
+    },
+    "recent_developments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of recent developments with dates or timeframes",
+      "examples": [
+        ["In Q3 2025, AI models achieved...", "As of November 2025, the latest research shows..."]
+      ]
+    },
+    "statistics_and_data": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of relevant statistics, numbers, or data points",
+      "examples": [
+        ["85% of users reported...", "The market grew by 23% in 2025"]
+      ]
+    },
+    "notable_examples": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of concrete, real-world examples",
+      "examples": [
+        ["OpenAI's GPT-5 demonstrated...", "Tesla's latest autonomous driving update..."]
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "description": "2-3 sentence summary of the most important current information that would help create relevant, up-to-date quiz questions",
+      "minLength": 50,
+      "maxLength": 500
+    }
+  }
+}

@@ -1,0 +1,226 @@
+<!-- ============================================ -->
+<!-- TEST EDIT PAGE                              -->
+<!-- Edit existing test: modify questions,       -->
+<!-- correct answers, add/remove options, images -->
+<!-- ============================================ -->
+
+<!-- ============================================ -->
+<!-- PAGE METADATA                                -->
+<!-- ============================================ -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Edit: <%=test.name%> | WiseSloth.open";
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content",
+    "Edit page for WiseSloth.open: modify correct answers, add/remove options and questions, and add images in test <%=test.name%>.");
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+</script>
+
+<!-- ============================================ -->
+<!-- STATE INITIALIZATION                         -->
+<!-- ============================================ -->
+<%
+  // Save test context temporarily (to avoid circular JSON)
+  const tmpContext = test.context;
+  test.context = "";
+
+  // View configuration
+  const viewType = "EDIT";
+  const isAuthor = session.user && test.author && (session.user.id === test.author.id);
+  const hideQuiz = false;
+
+  // Control panel variables
+  const isSequential = false;
+  let nSeconds = 0;
+  const quizResults = [];
+  const context = tmpContext;
+%>
+
+<script class="test-edit-js" data-n="0" nonce="<%=nonce%>">
+  // Initialize test data on frontend
+  test = <%- safeJson(test) %>;
+
+  // Initialize tracking arrays
+  isTestEdited = false;
+  newQuizzesIds = [];
+  changedQuizzesIds = [];
+  deletedQuizzesIds = [];
+</script>
+
+<% test.context = tmpContext; %>
+
+<!-- ============================================ -->
+<!-- PAGE INITIALIZATION SCRIPT                   -->
+<!-- ============================================ -->
+<script class="test-edit-js" data-n="100" nonce="<%=nonce%>">
+  // Initialize edit page when all scripts are loaded
+  (function initEditPage() {
+    const waitForScripts = () => {
+      if (isTestEditJSLoaded && isAddImageJSLoaded) {
+        addAllEditTestEventListeners();
+        addImageEvents();
+        isEditTestInitialized = true;
+      } else {
+        setTimeout(waitForScripts, 500);
+      }
+    };
+
+    if (!isEditTestInitialized) {
+      if (document.readyState === "complete") {
+        waitForScripts();
+      } else {
+        document.addEventListener("DOMContentLoaded", () => {
+          addAllEditTestEventListeners();
+          addImageEvents();
+          isEditTestInitialized = true;
+        });
+      }
+    } else {
+      addAllEditTestEventListeners();
+      addImageEvents();
+    }
+  })();
+</script>
+
+<!-- ============================================ -->
+<!-- EXTERNAL DEPENDENCIES                        -->
+<!-- ============================================ -->
+
+<!-- FilePond - File Upload -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/filepond@4.30.6/dist/filepond.min.css" class="test-edit-css" id="filepond-css">
+<script src="https://cdn.jsdelivr.net/npm/filepond@4.30.6/dist/filepond.min.js" class="test-edit-js" id="filepond-js" data-n="1"></script>
+<script src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-size@2.2.8/dist/filepond-plugin-file-validate-size.min.js" class="test-edit-js" id="filepond-validate-size-js" data-n="2"></script>
+<script src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-type@1.2.9/dist/filepond-plugin-file-validate-type.min.js" class="test-edit-js" id="filepond-validate-type-js" data-n="3"></script>
+
+<!-- Browser Image Compression -->
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.min.js" class="test-edit-js" id="browser-image-compression-js" data-n="4"></script>
+
+<!-- ============================================ -->
+<!-- MAIN CONTENT                                 -->
+<!-- ============================================ -->
+<br>
+<section id="test-container">
+
+  <!-- ---------------------------------------- -->
+  <!-- HELP NOTIFICATION                        -->
+  <!-- ---------------------------------------- -->
+  <div class="message is-warning">
+    <div class="message-header">
+      <p class="is-size-4">
+        <span lang="en">&#128064; Review and edit &#9997;</span>
+        <span lang="es">&#128064; Revisa y edita &#9997;</span>
+      </p>
+      <button class="delete" aria-label="delete"></button>
+    </div>
+    <div class="message-body">
+      <p class="is-size-6">
+        <span lang="en">Edit correct answers by clicking on them.</span>
+        <span lang="es">Edita respuestas correctas haciendo clic en ellas.</span>
+      </p>
+      <p class="is-size-6">
+        <span lang="en">Edit <i class="fas fa-edit"></i>, delete <i class="fas fa-trash"></i> or add <i class="fas fa-plus"></i> questions.</span>
+        <span lang="es">Edita <i class="fas fa-edit"></i>, elimina <i class="fas fa-trash"></i> o añade <i class="fas fa-plus"></i> preguntas.</span>
+      </p>
+      <p class="is-size-6">
+        <span lang="en">Add images where needed.</span>
+        <span lang="es">Añade imágenes donde sea necesario.</span>
+      </p>
+      <p class="is-size-6">
+        <b lang="en">Don't forget to save your changes! <i class="fas fa-save"></i></b>
+        <b lang="es">¡No olvides guardar tus cambios! <i class="fas fa-save"></i></b>
+      </p>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------- -->
+  <!-- TEST CARD                                -->
+  <!-- ---------------------------------------- -->
+  <div class="flex-container">
+    <%- include('../cards/test', { viewType, test }) %>
+  </div>
+
+  <!-- ---------------------------------------- -->
+  <!-- GENERAL AI EDIT                          -->
+  <!-- ---------------------------------------- -->
+  <%- include('../auxiliary/general-ai-edit', { test, isAuthor, isAdmin }) %>
+
+  <!-- ---------------------------------------- -->
+  <!-- CONTROL PANEL                            -->
+  <!-- ---------------------------------------- -->
+  <%- include('../auxiliary/test-control-panel', { viewType, isSequential, test, nSeconds, quizResults }) %>
+
+  <!-- ---------------------------------------- -->
+  <!-- CONTEXT MODAL                            -->
+  <!-- ---------------------------------------- -->
+  <%- include('../auxiliary/modal-context', { context }) %>
+
+  <!-- ---------------------------------------- -->
+  <!-- SAVE AND VIEW CTA (Desktop only)         -->
+  <!-- ---------------------------------------- -->
+  <div class="box is-hidden-touch">
+    <div class="columns is-vcentered">
+      <div class="column has-text-centered">
+        <p class="title is-4">
+          <span lang="en">Ready? Save your changes and view the test!</span>
+          <span lang="es">¿Listo? ¡Guarda tus cambios y ve el test!</span>
+        </p>
+      </div>
+      <div class="column has-text-centered">
+        <button class="save-view-button button is-link is-light is-medium is-rounded is-fullwidth">
+          <span class="icon is-small"><i class="fas fa-save"></i></span>
+          <span lang="en">SAVE AND VIEW</span>
+          <span lang="es">GUARDAR Y VER</span>
+          <span class="icon is-small"><i class="fas fa-eye"></i></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------- -->
+  <!-- QUIZ LIST                                -->
+  <!-- ---------------------------------------- -->
+  <div id="quiz-els">
+    <% for (const i in test.quizzes) { %>
+    <% const quiz = test.quizzes[i]; %>
+    <% const n = Number(i) + 1; %>
+
+    <!-- Add Question Button (Before Quiz) -->
+    <div id="add-quiz-container-<%=quiz.id%>" class="add-quiz-container">
+      <button id="add-quiz-button-<%=quiz.id%>" class="add-quiz-button button is-link is-rounded" data-quiz-number="<%=quiz.number%>">
+        <span class="icon"><i class="fas fa-plus"></i></span>
+        <span>
+          <p lang="en">Add question</p>
+          <p lang="es">Añadir pregunta</p>
+        </span>
+      </button>
+    </div>
+
+    <!-- Quiz Box -->
+    <%- include('../auxiliary/test-quiz', { viewType, quiz, n, hideQuiz }) %>
+    <% } %>
+
+    <!-- Add Question Button (After Last Quiz) -->
+    <div id="add-quiz-container-last" class="add-quiz-container">
+      <button id="add-quiz-button-last" class="add-quiz-button button is-link is-rounded" data-quiz-number="-1">
+        <span class="icon"><i class="fas fa-plus"></i></span>
+        <span>
+          <p lang="en">Add question</p>
+          <p lang="es">Añadir pregunta</p>
+        </span>
+      </button>
+    </div>
+
+    <!-- Hidden Quiz Template (for cloning) -->
+    <%- include('../auxiliary/quiz-edit-example') %>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- MODALS                                       -->
+<!-- ============================================ -->
+<%- include('../auxiliary/modal-edit-quiz') %>
+
+<!-- ============================================ -->
+<!-- PAGE SCRIPTS                                 -->
+<!-- ============================================ -->
+<script src="/scripts/tests/add-image-to-quiz.js" class="test-edit-js" id="add-image-to-quiz-js" data-n="5"></script>
+<script src="/scripts/tests/test-edit.js?v=20261013-byok" class="test-edit-js" id="test-edit-js" data-n="6"></script>

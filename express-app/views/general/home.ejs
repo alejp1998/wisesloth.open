@@ -1,0 +1,503 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "WiseSloth.open: FREE AI Quizzes & Live Battles!";
+</script>
+
+<!-- Home stylesheet -->
+<link rel="stylesheet" href="/home.css?v=20260816-stats14" />
+
+<!-- The rest of the HTML structure is identical to the previous version -->
+<!-- ===== HERO SECTION ===== -->
+<section class="hero is-fullheight-with-navbar">
+  <!-- ===== TOP STATS COUNTER BAR with THEME TOGGLE ===== -->
+  <header class="stats-bar">
+    <div
+      class="container is-flex is-justify-content-space-between is-align-items-center stats-bar-inner"
+    >
+      <div class="stats-item" data-href="/community">
+        <span class="stats-num stat-animate" data-target="<%= nUsers %>"><%= nUsers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') %></span>
+        <span class="stats-label">Users</span>
+      </div>
+      <span class="stats-sep is-hidden-touch">•</span>
+      <div class="stats-item" data-href="/tests">
+        <span class="stats-num stat-animate" data-target="<%= nQuizQuestionsCreated %>"><%= nQuizQuestionsCreated.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') %></span>
+        <span class="stats-label">Questions</span>
+      </div>
+      <span class="stats-sep is-hidden-touch">•</span>
+      <div class="stats-item is-hidden-touch" data-href="/tests">
+        <span class="stats-num stat-animate" data-target="<%= nTestsCreated %>"><%= nTestsCreated.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') %></span>
+        <span class="stats-label">Quizzes</span>
+      </div>
+      <span class="stats-sep is-hidden-touch">•</span>
+      <div class="stats-item" data-href="/results">
+        <span class="stats-num stat-animate" data-target="<%= nQuizQuestionsAnswered %>"><%= nQuizQuestionsAnswered.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') %></span>
+        <span class="stats-label">Answers</span>
+      </div>
+      <span class="stats-sep is-hidden-touch">•</span>
+      <div class="stats-item is-hidden-touch" data-href="/results">
+        <span class="stats-num stat-animate" data-target="<%= nTestsTried %>"><%= nTestsTried.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') %></span>
+        <span class="stats-label">Results</span>
+      </div>
+    </div>
+
+  </header>
+
+  <div class="hero-bg-blob one is-hidden-touch"></div>
+  <div class="hero-bg-blob two is-hidden-touch"></div>
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <img
+        src="/images/sloth-logo.webp"
+        alt="WiseSloth.open logo"
+        class="logo--small is-hidden-touch"
+        width="200"
+        height="167"
+      />
+      <h1 class="title is-size-1-desktop is-size-2-touch">
+        <span lang="en"
+          >Master Any Subject with
+          <span class="gradient-text">AI Study Tools!</span></span
+        >
+        <span lang="es"
+          >¡Domina Cualquier Tema con
+          <span class="gradient-text">Herramientas de Estudio IA!</span></span
+        >
+      </h1>
+      <h2 class="subtitle is-hidden-touch">
+        <span lang="en"
+          >Quizzes, flashcards, live battles, and AI edits that adapt to you
+          &mdash; all in one place.</span
+        >
+        <span lang="es"
+          >Tests, flashcards, batallas en vivo y ediciones con IA que se
+          adaptan a ti &mdash; todo en un solo lugar.</span
+        >
+      </h2>
+      <a class="button is-large cta-main magnetic-btn mt-6" href="/tests/new">
+        <span lang="en">Create Your Quiz</span>
+        <span lang="es">¡Crea tu Test!</span>
+      </a>
+      <div class="hero-pills is-hidden-touch">
+        <span class="hero-pill"><i class="fas fa-robot"></i> <span lang="en">AI Quizzes</span><span lang="es">Tests IA</span></span>
+        <span class="hero-pill"><i class="fas fa-layer-group"></i> <span lang="en">Flashcards</span><span lang="es">Flashcards</span></span>
+        <span class="hero-pill"><i class="fas fa-magic"></i> <span lang="en">AI Editing</span><span lang="es">Edición IA</span></span>
+        <span class="hero-pill"><i class="fas fa-bolt"></i> <span lang="en">Live Battles</span><span lang="es">Batallas en Vivo</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EVERYTHING YOU CAN DO (BENTO GRID) ===== -->
+<section class="section bento-section fade-in-section">
+  <div class="container has-text-centered">
+    <h2 class="title is-size-2 is-spaced">
+      <span lang="en"
+        >One App, <span class="gradient-text">Every Study Tool</span></span
+      >
+      <span lang="es"
+        >Una App, <span class="gradient-text">Todas las Herramientas</span></span
+      >
+    </h2>
+    <p class="subtitle mb-6">
+      <span lang="en"
+        >From AI-generated quizzes to flip-card decks, live battles, and
+        instant AI edits &mdash; built to make studying click.</span
+      >
+      <span lang="es"
+        >Desde tests generados con IA hasta mazos de flashcards, batallas en
+        vivo y ediciones instantáneas &mdash; hecho para que estudiar
+        encaje.</span
+      >
+    </p>
+
+    <div class="bento-grid">
+      <!-- AI Quiz Generation -->
+      <div class="bento-card bento-large">
+        <div class="bento-icon"><i class="fas fa-robot"></i></div>
+        <h3 class="bento-title">
+          <span lang="en">AI Quiz Generation</span>
+          <span lang="es">Generación de Tests con IA</span>
+        </h3>
+        <p class="bento-text">
+          <span lang="en"
+            >Paste your notes, upload a PDF, or drop in an old exam &mdash;
+            get a full multiple-choice quiz in seconds.</span
+          >
+          <span lang="es"
+            >Pega tus apuntes, sube un PDF o un examen antiguo &mdash;
+            obtén un test completo en segundos.</span
+          >
+        </p>
+        <div class="bento-mock quiz-mock" aria-hidden="true">
+          <div class="quiz-mock-q">What powers cellular respiration?</div>
+          <div class="quiz-mock-opt is-correct"><i class="fas fa-check-circle"></i> Mitochondria</div>
+          <div class="quiz-mock-opt">Ribosomes</div>
+          <div class="quiz-mock-opt">Golgi apparatus</div>
+        </div>
+      </div>
+
+      <!-- Flashcards (interactive flip demo) -->
+      <div class="bento-card bento-large">
+        <div class="bento-icon"><i class="fas fa-layer-group"></i></div>
+        <h3 class="bento-title">
+          <span lang="en">Flip-Card Flashcards</span>
+          <span lang="es">Flashcards con Volteo</span>
+        </h3>
+        <p class="bento-text">
+          <span lang="en">Turn any material into a study deck. Flip each card to check yourself.</span>
+          <span lang="es">Convierte cualquier material en un mazo de estudio. Voltea cada tarjeta para comprobarte.</span>
+        </p>
+        <div class="bento-mock flip-demo" id="home-flip-demo" role="button" tabindex="0" aria-label="Flip demo flashcard">
+          <div class="flip-demo-inner">
+            <div class="flip-demo-face flip-demo-front">
+              <span lang="en">What is photosynthesis?</span>
+              <span lang="es">¿Qué es la fotosíntesis?</span>
+            </div>
+            <div class="flip-demo-face flip-demo-back">
+              <span lang="en">How plants turn light into energy</span>
+              <span lang="es">Cómo las plantas convierten la luz en energía</span>
+            </div>
+          </div>
+          <span class="flip-demo-hint">
+            <i class="fas fa-sync-alt"></i>
+            <span lang="en">Tap to flip</span>
+            <span lang="es">Toca para voltear</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- AI Editing -->
+      <div class="bento-card bento-medium">
+        <div class="bento-icon"><i class="fas fa-magic"></i></div>
+        <h3 class="bento-title">
+          <span lang="en">Edit Anything with AI</span>
+          <span lang="es">Edita Todo con IA</span>
+        </h3>
+        <p class="bento-text">
+          <span lang="en">Tweak one question, or the whole test &mdash; just describe the change.</span>
+          <span lang="es">Ajusta una pregunta, o todo el test &mdash; solo describe el cambio.</span>
+        </p>
+        <div class="bento-mock ai-edit-mock" aria-hidden="true">
+          <i class="fas fa-magic"></i>
+          <span class="typewriter-wrap">
+            <span class="typewriter" lang="en" data-text="Add 2 more questions about mitochondria..."></span>
+            <span class="typewriter" lang="es" data-text="Añade 2 preguntas más sobre mitocondrias..."></span>
+            <span class="typewriter-cursor">|</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Skills & Preferences -->
+      <div class="bento-card bento-small">
+        <div class="bento-icon"><i class="fas fa-sliders-h"></i></div>
+        <h3 class="bento-title">
+          <span lang="en">Your Style, Every Time</span>
+          <span lang="es">Tu Estilo, Siempre</span>
+        </h3>
+        <p class="bento-text">
+          <span lang="en">Set your tone, difficulty and focus once &mdash; the AI remembers.</span>
+          <span lang="es">Configura tono, dificultad y enfoque una vez &mdash; la IA lo recuerda.</span>
+        </p>
+      </div>
+
+      <!-- Live Battles -->
+      <div class="bento-card bento-small open-modal-livebattle-button" style="cursor: pointer;">
+        <div class="bento-icon"><i class="fas fa-bolt"></i></div>
+        <h3 class="bento-title">
+          <span lang="en">Live Battles</span>
+          <span lang="es">Batallas en Vivo</span>
+        </h3>
+        <p class="bento-text">
+          <span lang="en">Race friends in real time. Fastest, sharpest mind wins.</span>
+          <span lang="es">Compite con amigos en tiempo real. Gana la mente más rápida.</span>
+        </p>
+      </div>
+
+      <!-- Self-hosted AI configuration -->
+      <div class="bento-card bento-medium">
+        <div class="bento-icon"><i class="fas fa-brain"></i></div>
+        <h3 class="bento-title">
+          <span lang="en">Your AI, Your Choice</span>
+          <span lang="es">Tu IA, Tú Eliges</span>
+        </h3>
+        <p class="bento-text">
+          <span lang="en">Use your host's configured model with their API key, or add your own key in Settings.</span>
+          <span lang="es">Usa el modelo configurado por tu anfitrión con su clave API, o añade tu propia clave en Ajustes.</span>
+        </p>
+      </div>
+
+      <!-- Free, no ads -->
+      <div class="bento-card bento-medium">
+        <div class="bento-icon"><i class="fas fa-heart"></i></div>
+        <h3 class="bento-title">
+          <span lang="en">Free, No Ads</span>
+          <span lang="es">Gratis, Sin Anuncios</span>
+        </h3>
+        <p class="bento-text">
+          <span lang="en">Open-source software with no ads or subscriptions. You control your instance and API costs.</span>
+          <span lang="es">Software de código abierto sin anuncios ni suscripciones. Tú controlas tu instancia y los costes de la API.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AUDIENCE (Students vs Educators) ===== -->
+<section class="section fade-in-section">
+  <div class="container">
+    <h2 class="title is-size-2 has-text-centered mb-6">
+      <span lang="en">Who is WiseSloth.open For?</span>
+      <span lang="es">¿Para Quién es WiseSloth.open?</span>
+    </h2>
+    <p class="subtitle is-size-5 has-text-centered mb-6">
+      <span lang="en"
+        >Whether you're a student mastering subjects or an educator enhancing
+        learning, WiseSloth.open is your ultimate tool.</span
+      >
+      <span lang="es"
+        >Tanto si eres estudiante como educador, WiseSloth.open es tu herramienta
+        definitiva.</span
+      >
+    </p>
+
+    <div class="columns is-variable is-5-desktop is-centered">
+      <div class="column is-5-desktop">
+        <div class="interactive-card">
+          <h3 class="title is-size-4 has-text-centered mb-5">
+            <span class="icon mr-2"><i class="fas fa-user-graduate"></i></span>
+            <span lang="en"
+              >For Students:
+              <span class="gradient-text">Ace Your Exams</span></span
+            >
+            <span lang="es"
+              >Estudiantes:
+              <span class="gradient-text">¡Bordad Exámenes!</span></span
+            >
+          </h3>
+          <ul>
+            <li>
+              <i class="fas fa-check-circle"></i
+              ><span lang="en">Master concepts with ease</span
+              ><span lang="es">Dominad conceptos fácilmente</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i
+              ><span lang="en">Engage in fun competition</span
+              ><span lang="es">Competid de forma divertida</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i
+              ><span lang="en">Track your learning growth</span
+              ><span lang="es">Seguid vuestro progreso</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="column is-5-desktop">
+        <div class="interactive-card">
+          <h3 class="title is-size-4 has-text-centered mb-5">
+            <span class="icon mr-2"
+              ><i class="fas fa-chalkboard-teacher"></i
+            ></span>
+            <span lang="en"
+              >For Educators:
+              <span class="gradient-text">Supercharge Teaching</span></span
+            >
+            <span lang="es"
+              >Educadores:
+              <span class="gradient-text">¡Potenciad la Enseñanza!</span></span
+            >
+          </h3>
+          <ul>
+            <li>
+              <i class="fas fa-check-circle"></i
+              ><span lang="en">Create materials effortlessly</span
+              ><span lang="es">Cread material sin esfuerzo</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i
+              ><span lang="en">Quickly diagnose knowledge gaps</span
+              ><span lang="es">Diagnosticad brechas rápido</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i
+              ><span lang="en">Increase student engagement</span
+              ><span lang="es">Involucrad a los alumnos</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FINAL CALL TO ACTION ===== -->
+<section class="section fade-in-section">
+  <div class="container has-text-centered">
+    <h2 class="title is-size-2 has-text-weight-bold">
+      <span lang="en">Ready to Get Started?</span>
+      <span lang="es">¿Listo Para Empezar?</span>
+    </h2>
+    <p class="subtitle mt-4 mb-6">
+      <span lang="en"
+        >Join thousands of learners and educators. It's free!</span
+      >
+      <span lang="es"
+        >Únete a miles de estudiantes y educadores. ¡Es gratis!</span
+      >
+    </p>
+    <div class="buttons is-centered">
+      <a class="button is-primary is-light is-medium" href="/tests/new">
+        <span lang="en">Create Your First Quiz</span>
+        <span lang="es">Crea Tu Primer Test</span>
+      </a>
+      <a class="button is-link is-light is-medium" href="/community">
+        <span lang="en">Explore the Community</span>
+        <span lang="es">Explora la Comunidad</span>
+      </a>
+      <a
+        class="button is-dark is-light is-medium is-hidden-touch"
+        href="/about"
+      >
+        <span lang="en">Learn more about WiseSloth.open</span>
+        <span lang="es">Conoce Más</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== JAVASCRIPT FOR ANIMATIONS (scroll reveal, counters, magnetic) =====
+     Exposed as a re-runnable function so these effects also work when the home
+     page is loaded via AJAX navigation (handleCurrentState re-executes this
+     script). Guards make it idempotent per DOM element. -->
+<script class="home-js" nonce="<%=nonce%>">
+  window.initHomeAnimations = function () {
+    // ===== ANIMATED NUMBER COUNTER =====
+    const animateCounters = () => {
+      const counters = document.querySelectorAll('.stat-animate');
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const duration = 2000;
+        let start = 0;
+        const step = (timestamp) => {
+          if (!start) start = timestamp;
+          const progress = timestamp - start;
+          const current = Math.min(Math.floor((progress / duration) * target), target);
+          counter.textContent = current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+          if (current < target) {
+            requestAnimationFrame(step);
+          } else {
+            counter.textContent = target.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+          }
+        };
+        requestAnimationFrame(step);
+      });
+    };
+
+    // Check if animation has been shown in this session
+    const hasAnimationBeenShown = sessionStorage.getItem('statsAnimationShown') === 'true';
+
+    const statsBar = document.querySelector('.stats-bar');
+    if (statsBar && !statsBar.dataset.observed) {
+      statsBar.dataset.observed = '1';
+      const counterObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (!hasAnimationBeenShown) {
+              animateCounters();
+              sessionStorage.setItem('statsAnimationShown', 'true');
+            }
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.8 });
+      counterObserver.observe(statsBar);
+    }
+
+    // ===== FADE-IN SECTIONS ON SCROLL (only observe fresh, unobserved sections) =====
+    const fadeInSections = document.querySelectorAll('.fade-in-section:not([data-observed])');
+    if (fadeInSections.length) {
+      const sectionObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      fadeInSections.forEach(section => {
+        section.setAttribute('data-observed', '1');
+        sectionObserver.observe(section);
+      });
+    }
+
+    // ===== MAGNETIC BUTTON EFFECT (bind once per element) =====
+    const magneticButton = document.querySelector('.magnetic-btn');
+    if (magneticButton && !magneticButton.dataset.magneticBound) {
+      magneticButton.dataset.magneticBound = '1';
+      magneticButton.addEventListener('mousemove', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        this.style.transition = 'transform 0.1s linear';
+        this.style.transform = `translate(${x / 20}px, ${y / 20}px)`;
+      });
+      magneticButton.addEventListener('mouseleave', function() {
+        this.style.transition = 'transform 0.3s ease-out';
+        this.style.transform = 'translate(0, 0)';
+      });
+    }
+
+    // ===== FLASHCARD FLIP DEMO (bento grid) =====
+    const flipDemo = document.getElementById('home-flip-demo');
+    if (flipDemo && !flipDemo.dataset.bound) {
+      flipDemo.dataset.bound = '1';
+      const toggleFlip = () => flipDemo.classList.toggle('is-flipped');
+      flipDemo.addEventListener('click', toggleFlip);
+      flipDemo.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleFlip();
+        }
+      });
+    }
+
+    // ===== AI-EDIT TYPEWRITER DEMO (bento grid) =====
+    const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('.typewriter:not([data-bound])').forEach(function (el) {
+      el.dataset.bound = '1';
+      const text = el.dataset.text || '';
+      if (reducedMotion || !text) {
+        el.textContent = text;
+        return;
+      }
+      let i = 0;
+      let deleting = false;
+      const tick = () => {
+        el.textContent = text.slice(0, i);
+        if (!deleting && i < text.length) {
+          i++;
+          setTimeout(tick, 45);
+        } else if (!deleting) {
+          deleting = true;
+          setTimeout(tick, 1800);
+        } else if (i > 0) {
+          i--;
+          setTimeout(tick, 20);
+        } else {
+          deleting = false;
+          setTimeout(tick, 500);
+        }
+      };
+      tick();
+    });
+  };
+
+  // Run on full page load (and re-run on every AJAX render of the home page)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { window.initHomeAnimations(); });
+  } else {
+    window.initHomeAnimations();
+  }
+</script>

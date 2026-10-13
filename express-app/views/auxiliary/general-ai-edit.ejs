@@ -1,0 +1,72 @@
+<!-- ============================================================ -->
+<!-- GENERAL (WHOLE-TEST/DECK) AI EDIT                            -->
+<!-- Freeform instruction box: "add 2 more questions about X",    -->
+<!-- "remove question 3", "change the description"... Shared      -->
+<!-- partial included on the show/edit views for both knowledge   -->
+<!-- tests and flashcard decks (author/admin only).                -->
+<!-- Also hosts the minimal action row (edit page / PDF / DOCX)    -->
+<!-- so authors have one clean panel instead of scattered boxes.  -->
+<!-- ============================================================ -->
+<% if ((isAuthor || isAdmin) && test.type !== 'personality') { %>
+<div class="panel ai-panel general-ai-edit-box qe-ai-box" data-test-id="<%=test.id%>" data-test-type="<%=test.type%>">
+  <div class="ai-panel-head">
+    <span class="ai-panel-title">
+      <span class="icon is-small"><i class="fas fa-magic"></i></span>
+      <span lang="en">Edit with AI</span>
+      <span lang="es">Editar con IA</span>
+    </span>
+
+    <!-- Minimal action row: edit page (PDF/DOCX live in the action bar) -->
+    <span class="ai-panel-actions">
+      <a href="/tests/<%=test.id%>/edit" class="ai-action-btn" title="Edit questions">
+        <i class="fas fa-pen-nib"></i>
+        <span lang="en">Edit</span>
+        <span lang="es">Editar</span>
+      </a>
+    </span>
+  </div>
+
+  <p class="help ai-panel-hint">
+    <% if (test.type === 'flashcards') { %>
+    <span lang="en">Describe a change: "add 2 more cards about X", "remove card 3", "change the description"...</span>
+    <span lang="es">Describe un cambio: "añade 2 tarjetas más sobre X", "elimina la tarjeta 3", "cambia la descripción"...</span>
+    <% } else { %>
+    <span lang="en">Describe a change: "add 2 more questions about X", "remove question 3", "change the description"...</span>
+    <span lang="es">Describe un cambio: "añade 2 preguntas más sobre X", "elimina la pregunta 3", "cambia la descripción"...</span>
+    <% } %>
+  </p>
+  <div class="field has-addons">
+    <div class="control is-expanded has-icons-left">
+      <span class="icon is-left is-small"><i class="fas fa-pen-nib"></i></span>
+      <input class="input general-ai-edit-instruction" type="text" autocomplete="off" maxlength="500"
+        placeholder="e.g. Add 2 more questions about X / Remove question 3...">
+    </div>
+    <div class="control">
+      <button type="button" class="button ai-generate-btn general-ai-edit-apply">
+        <span class="icon is-small"><i class="fas fa-magic"></i></span>
+        <span lang="en">Generate</span>
+        <span lang="es">Generar</span>
+      </button>
+    </div>
+  </div>
+  <p class="general-ai-edit-status is-size-7"></p>
+
+  <!-- Review panel: populated + shown once a proposed diff comes back -->
+  <div class="general-ai-edit-review is-hidden">
+    <hr>
+    <p class="general-ai-edit-summary title is-6"></p>
+    <div class="general-ai-edit-changes content is-size-7"></div>
+    <div class="buttons">
+      <button type="button" class="button ai-confirm-btn general-ai-edit-confirm">
+        <span class="icon is-small"><i class="fas fa-check"></i></span>
+        <span lang="en">Apply changes</span>
+        <span lang="es">Aplicar cambios</span>
+      </button>
+      <button type="button" class="button ai-discard-btn general-ai-edit-discard">
+        <span lang="en">Discard</span>
+        <span lang="es">Descartar</span>
+      </button>
+    </div>
+  </div>
+</div>
+<% } %>

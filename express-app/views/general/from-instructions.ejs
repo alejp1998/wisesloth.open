@@ -1,0 +1,185 @@
+<% if (typeof isHelpModal === 'undefined') { %>
+    <% var isHelpModal = false %>
+<% } %>
+
+<% if (!isHelpModal) { %>
+    <!-- Modify title in meta tag -->
+    <script class="title-metadata-js" nonce="<%=nonce%>">
+        document.title = "From Scratch | WiseSloth.open";
+    </script>
+
+    <!-- Include hero header -->
+    <% const heroTitleEn = "From Scratch" %>
+    <% const heroTitleEs = "Desde Cero" %>
+    <% const heroSubtitleEn = "" %>
+    <% const heroSubtitleEs = "" %>
+    <% const containerId = "" %>
+    <%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+<% } %>
+
+<div class="container">
+    <div class="section">
+        <h1 class="title is-2">
+            <span lang="en">How to create a test from scratch</span>
+            <span lang="es">Cómo crear un test desde cero</span>
+        </h1>
+        <h2 class="subtitle is-4">
+            <span lang="en">Create a quiz with just some guidelines: test your knowledge about your favorite movie or book, or create a fun quiz for your friends!</span>
+            <span lang="es">Crea un test con solo algunas pautas: ¡pon a prueba tus conocimientos sobre tu película o libro favorito, o crea un test divertido para tus amigos!</span>
+        </h2>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">Some tips to follow</span>
+                <span lang="es">Algunos consejos a seguir</span>
+            </h1>
+        </div>
+        <br>
+
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-7">
+                <h2 class="title is-5">
+                    <span lang="en">Tip 1: Provide clear and descriptive instructions</span>
+                    <span lang="es">Consejo 1: Proporciona instrucciones claras y descriptivas</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Give clear and detailed instructions on the topic or subject you want the quiz to cover. You can also indicate the type of questions you want, such as multiple-choice, true/false, or short answer questions, as well as difficulty level and other preferences.</span>
+                    <span lang="es">Da instrucciones claras y detalladas sobre el tema o materia que deseas que cubra el test. También puedes indicar el tipo de preguntas que deseas, como preguntas de opción múltiple, verdadero/falso o de respuesta corta, así como el nivel de dificultad y otras preferencias.</span>
+                    <strong lang="en" class="is-size-6">The more detailed the instructions, the better the quiz will adapt to your needs.</strong>
+                    <strong lang="es" class="is-size-6">Cuanto más detalladas sean las instrucciones, mejor se adaptará el test a tus necesidades.</strong>
+                </p>
+                <br>
+                <h2 class="title is-5">
+                    <span lang="en">Tip 2: Include examples or sample questions</span>
+                    <span lang="es">Consejo 2: Incluye ejemplos o preguntas de muestra</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">To help the quiz creator understand your requirements better, you can include examples or sample questions that you would like to see in the quiz. This will give the creator a better idea of the type of questions you are looking for and the level of difficulty you prefer.</span>
+                    <span lang="es">Para ayudar al creador del test a comprender mejor tus requisitos, puedes incluir ejemplos o preguntas de muestra que te gustaría ver en el test. Esto le dará al creador una mejor idea del tipo de preguntas que estás buscando y el nivel de dificultad que prefieres.</span>
+                </p>
+                <br>
+                <h2 class="title is-5">
+                    <span lang="en">Tip 3: Do not ask about events too recent</span>
+                    <span lang="es">Consejo 3: No preguntes sobre eventos demasiado recientes</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Avoid asking questions about events that have occurred too recently, as the quiz creator may not have enough information to generate accurate questions. Stick to topics or subjects that are well-known and have been around for some time to ensure the quiz is of high quality.</span>
+                    <span lang="es">Evita hacer preguntas sobre eventos que hayan ocurrido demasiado recientemente, ya que el creador del test puede no tener suficiente información para generar preguntas precisas. Mantente en temas o materias conocidos y que hayan estado presentes durante algún tiempo para asegurar que el test sea de alta calidad.</span>
+                    <strong lang="en" class="is-size-6">You can
+                        <a href="/from-notes-or-text">create the quiz from notes or text</a>
+                     if you need to include recent events.</strong>
+                    <strong lang="es" class="is-size-6">Puedes
+                        <a href="/from-notes-or-text">crear el test a partir de apuntes o texto</a>
+                     si necesitas incluir eventos recientes.</strong>
+                </p>
+            </div>
+            <div class="column is-5">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img class="preview-image" src="/images/creativity.webp" alt="Creativity" loading="lazy">
+                        </figure>
+                    </div>
+                    <div class="card-content has-text-centered">
+                        <h3 class="title is-5">
+                            <span lang="en">Be creative!</span>
+                            <span lang="es">¡Sé creativo!</span>
+                        </h3>
+                        <h3 class="subtitle is-6">
+                            <span lang="en">Create a quiz that matches your interests and preferences</span>
+                            <span lang="es">Crea un test que se adapte a tus intereses y preferencias</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">Steps to create the quiz</span>
+                <span lang="es">Pasos para crear el test</span>
+            </h1>
+        </div>
+        <br>
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-5">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img class="preview-image" src="/images/instructions-from-scratch.png" alt="Screenshot - From Scratch" loading="lazy">
+                        </figure>
+                    </div>
+                    <div class="card-content has-text-centered">
+                        <h3 class="title is-5">
+                            <span lang="en">Screenshot - From Scratch</span>
+                            <span lang="es">Screenshot - Desde Cero</span>
+                        </h3>
+                        <h3 class="subtitle is-6">
+                            <span lang="en">Create a quiz about Spain's geography</span>
+                            <span lang="es">Crea un test sobre la geografía de España</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-7">
+                <h2 class="title is-5">
+                    <span lang="en">Step 1: Select language, number of questions and options per question</span>
+                    <span lang="es">Paso 1: Selecciona el idioma, el número de preguntas y opciones por pregunta</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Choose the language of the quiz, the number of questions you want, and the number of options per question.</span>
+                    <span lang="es">Elige el idioma del test, el número de preguntas que deseas y el número de opciones por pregunta.</span>
+                </p>
+                <br>
+                <h2 class="title is-5">
+                    <span lang="en">Step 2: Provide guidelines and instructions</span>
+                    <span lang="es">Paso 2: Proporciona pautas e instrucciones</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Enter the guidelines and instructions for the quiz. You can provide a brief description of the topic or subject you want the quiz to cover, as well as any specific requirements or preferences you have.</span>
+                    <span lang="es">Ingresa las pautas e instrucciones para el test. Puedes proporcionar una breve descripción del tema o materia que deseas que cubra el test, así como cualquier requisito o preferencia específica que tengas.</span>
+                </p>
+                <br>
+                <h2 class="title is-5">
+                    <span lang="en">Step 3: Create the quiz</span>
+                    <span lang="es">Paso 3: Crea el test</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Click on the button to generate the quiz from the selected pages. WiseSloth.open will extract the questions and answers from the pages and create the interactive quiz for you. This might take a few seconds depending on the number of questions.</span>
+                    <span lang="es">Haz clic en el botón para generar el test a partir de las páginas seleccionadas. WiseSloth.open extraerá las preguntas y respuestas de las páginas y creará el test interactivo para ti. Esto puede tardar unos segundos dependiendo del número de preguntas.</span>
+                </p>
+                <br>
+
+                <h2 class="title is-5">
+                    <span lang="en">Step 4: Review and edit the quiz</span>
+                    <span lang="es">Paso 4: Revisa y edita el test</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Review the quiz to make sure all questions and answers are correct. You can edit the questions, answers, and options if needed. Once you are satisfied with the quiz, you can save it and share it with others.</span>
+                    <span lang="es">Revisa el test para asegurarte de que todas las preguntas y respuestas son correctas. Puedes editar las preguntas, respuestas y opciones si es necesario. Una vez que estés satisfecho con el test, puedes guardarlo y compartirlo con otros.</span>
+                </p>
+            </div>
+        </div>
+        <br>
+    </div>
+
+    <% if (!isHelpModal) { %>
+        <div class="section">
+            <div class="box">
+                <h1 class="title is-3 has-text-centered">
+                    <span lang="en">Create an interactive quiz from scratch now!</span>
+                    <span lang="es">¡Crea un test interactivo desde cero ahora!</span>
+                </h1>
+                <br>
+                <a class="button is-link is-rounded is-large is-fullwidth" href="/tests/new?type=instructions">
+                    <span lang="en">Create Quiz</span>
+                    <span lang="es">Crear Test</span>
+                </a>
+            </div>
+        </div>
+    <% } %>
+</div>

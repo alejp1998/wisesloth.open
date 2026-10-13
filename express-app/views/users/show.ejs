@@ -1,0 +1,503 @@
+<% var isMyself = !!session.user && (session.user.id === user.id) %>
+<% var isIFollow =  !!session.user && (session.user.iFollowUsernames || []).includes(user.username); %>
+
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "<%= user.username %>'s Profile | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "<%= user.username %>'s Profile page for WiseSloth.open: authored tests, stats and more...");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Página de Perfil de <%= user.username %> para WiseSloth.open: tests creados, estadísticas y más...");
+
+  // Set as noindex
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+</script>
+
+<!-- Include hero header -->
+<% const heroTitleEn = isMyself ? "My Profile" : user.username + "'s Profile"; %>
+<% const heroTitleEs = isMyself ? "Mi Perfil" : "Perfil de " + user.username; %>
+<% const heroSubtitleEn = "Authored tests, stats and more..." %>
+<% const heroSubtitleEs = "Tests creados, estadísticas y más..." %>
+<% const containerId = "" %>
+<%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+
+<% const viewType = "SHOW" %>
+<section id="user-content" class="container">
+  <!-- Temporary user notification -->
+
+
+  <!-- Public tests created level badge -->
+  <% if ((user.authoredTestsCount > 0)) { %>
+  <% const levelNamesEn = ["Noob", "Beginner", "Intermediate", "Advanced", "Master", "Wise Sloth"]; %>
+  <% const levelNamesEs = ["Noob", "Principiante", "Intermedio", "Avanzado", "Maestro", "Wise Sloth"]; %>
+  <% let levelMessagesEn = []; %>
+  <% let levelMessagesEs = []; %>
+  <% if (isMyself) {
+  levelMessagesEn = [
+    "Come on! Share some of your aaaawesome tests!",
+    "You're on the right track! Keep sharing your tests!",
+    "Great job! You're helping the community grow with your tests!",
+    "Wow! You're a test creator machine! Keep it up!",
+    "You're a test master! Keep sharing your knowledge!",
+    "You maxed it out! You're a true wise sloth!"
+  ];
+  levelMessagesEs = [
+    "¡Vamos! ¡Comparte algunos de tus increíbles tests!",
+    "¡Vas por buen camino! ¡Sigue compartiendo tus tests!",
+    "¡Gran trabajo! ¡Estás ayudando a la comunidad a crecer con tus tests!",
+    "¡Guau! ¡Eres una máquina de crear tests! ¡Sigue así!",
+    "¡Eres un maestro de los tests! ¡Sigue compartiendo tu conocimiento!",
+    "¡Lo has maxeado! ¡Eres un verdadero wise sloth!"
+  ];
+  } else {
+  levelMessagesEn = [
+    "On his way to become a test creator!",
+    "A test creator in the making!",
+    "A key contributor to the community!",
+    "A test creator machine!",
+    "A test master!",
+    "A true wise sloth!"
+  ];
+  levelMessagesEs = [
+    "¡En camino de convertirse en un creador de tests!",
+    "¡Un creador de tests en ciernes!",
+    "¡Un contribuyente clave para la comunidad!",
+    "¡Una máquina de crear tests!",
+    "¡Un maestro de los tests!",
+    "¡Un verdadero wise sloth!"
+  ];
+  } %>
+
+  <% const levelEmojis = ["🤨", "🧠", "🤓", "🧐", "🧙‍♂️", "<img src='/images/sloth-logo.webp' alt='' style='height: 1em; vertical-align: middle;'>"]; %>
+  <% const levelColors = ["is-danger", "is-warning", "is-info", "is-success", "is-primary", "is-link"]; %>
+  <% const levelThresholds = [1, 5, 20, 50, 100, 1000]; %>
+  <% const levelIndex = levelThresholds.findIndex(threshold => user.publicAuthoredTestsCount < threshold); %>
+  <div class="notification is-light <%= levelColors[levelIndex] %> is-hidden-touch">
+    <button class="delete" aria-label="delete"></button>
+    <div class="columns is-vcentered">
+      <!-- SHOW A LEVEL MESSAGE: LEVEL 1, LEVEL 2, LEVEL 3, LEVEL 4, LEVEL 5, LEVEL MAX -->
+      <div class="column has-text-left">
+        <p class="title is-5">
+          <span lang="en"><%= levelMessagesEn[levelIndex] %></span>
+          <span lang="es"><%= levelMessagesEs[levelIndex] %></span>
+        </p>
+        <p class="subtitle is-6">
+          <% if (isMyself) { %>
+          <span lang="en">Thank you for your contribution!</span>
+          <span lang="es">¡Gracias por tu contribución!</span>
+          <% } else { %>
+          <span lang="en">Thanks for sharing your tests, <%= user.username %>!</span>
+          <span lang="es">¡Gracias por compartir tus tests, <%= user.username %>!</span>
+          <% } %>
+        </p>
+      </div>
+      <!-- SHOW A LEVEL BADGE: LEVEL 1, LEVEL 2, LEVEL 3, LEVEL 4, LEVEL 5 -->
+      <div class="column is-narrow has-text-centered">
+        <div class="level-badge">
+          <span class="icon"><%- levelEmojis[levelIndex] %></span>
+          <b lang="en"><%= levelNamesEn[levelIndex] %></b>
+          <b lang="es"><%= levelNamesEs[levelIndex] %></b>
+        </div>
+        <p class="is-size-6">
+          <span lang="en">Lv. <%= levelIndex %></span>
+          <span lang="es">Nv. <%= levelIndex %></span>
+          <i class="fas fa-globe-europe"></i>
+          <span lang="en"><%= user.publicAuthoredTestsCount %>/<%= levelThresholds[levelIndex] %></span>
+          <span lang="es"><%= user.publicAuthoredTestsCount %>/<%= levelThresholds[levelIndex] %></span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  <% if (isMyself) { %>
+  <!-- Encourage user to create a test -->
+  <% if (user.authoredTestsCount === 0) { %>
+  <div class="notification is-link is-light">
+    <div class="columns is-vcentered">
+      <div class="column has-text-left">
+        <p class="title is-5">
+          <span lang="en">Create your first test with AI in seconds &#128640;</span>
+          <span lang="es">Crea tu primer test con IA en segundos &#128640;</span>
+        </p>
+        <p class="subtitle is-6">
+          <span lang="en">Effortlessly, about any content, and in any language.</span>
+          <span lang="es">Sin esfuerzo, sobre cualquier contenido, y en cualquier idioma.</span>
+        </p>
+      </div>
+      <div class="column is-narrow has-text-centered">
+        <a href="/tests/new" class="button is-medium is-link is-link is-rounded is-fullwidth">
+          <span class="icon"><i class="fas fa-plus"></i></span>
+          <span lang="en">Test</span>
+          <span lang="es">Test</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  <% } %>
+
+  <!-- Include user card -->
+  <div class="container">
+    <div class="flex-container user-card-wrap">
+      <%- include('../cards/user', { viewType, user }) %>
+    </div>
+  </div>
+
+  <!-- Encourage user to follow this user -->
+  <% if (false && (!!session.user && !isMyself && !isIFollow)) { %>
+  <div class="notification is-link is-light is-hidden-touch">
+    <div class="columns is-vcentered">
+      <div class="column has-text-left">
+        <p class="title is-4">
+          <span lang="en">Like my tests?</span>
+          <span lang="es">¿Te gustan mis tests?</span>
+        </p>
+        <p class="subtitle is-5">
+          <span lang="en">Follow me to see more!</span>
+          <span lang="es">¡Sígueme para ver más!</span>
+        </p>
+      </div>
+      <div class="column is-narrow">
+        <a class="button is-medium is-fullwidth is-rounded is-link follow-button" data-user-username="<%=user.username%>" data-is-followed="<%=isIFollow%>">
+          <span class="icon"><i class="fas fa-user-plus" style="color: var(--success-color);"></i></span>
+          <span lang="en">FOLLOW!</span>
+          <span lang="es">¡SEGUIR!</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  <div class="columns mx-0 profile-columns">
+    <% if (isMyself || isAdmin) { %>
+    <div class="column is-5">
+    <% } else { %>
+    <div class="column">
+    <% } %>
+
+      <!-- Skills & Preferences (minimal: just the title with a button to open the modal at its right) -->
+      <% if (isMyself) { %>
+      <div class="profile-panel" id="skills-editor-container"
+           data-defaults='<%= JSON.stringify(DEFAULT_SKILLS) %>'>
+        <div class="profile-skills-header">
+          <h3 class="title is-5">
+            <i class="fas fa-star" style="color: var(--warning-color);"></i>
+            <span lang="en">Skills &amp; Preferences</span>
+            <span lang="es">Habilidades y Preferencias</span>
+          </h3>
+          <button type="button" id="open-skills-modal-btn" class="creation-skills-btn"
+                  title="Skills &amp; preferences">
+            <i class="fas fa-sliders-h"></i>
+            <span class="skill-type-count" id="skills-profile-count"></span>
+          </button>
+        </div>
+      </div>
+      <!-- Skills & Preferences modal -->
+      <%- include('../auxiliary/modal-skills') %>
+      <% } %>
+
+      <div class="profile-panel">
+        <div class="profile-panel-header">
+          <h3 class="title is-5">
+            <span class="icon"><i class="fas fa-edit"></i></span>
+            <% if (isMyself) { %>
+            <span lang="en">My Tests</span>
+            <span lang="es">Mis Tests</span>
+            <% } else { %>
+            <span lang="en">Authored Tests</span>
+            <span lang="es">Tests Creados</span>
+            <% } %>
+          </h3>
+        </div>
+        <% if (user.authoredTestsCount > 0) { %>
+        <a href="/tests?username=<%=user.username%>" class="see-all-button button is-link is-light">
+          <span lang="en">See all (<%= user.authoredTestsCount %>)</span>
+          <span lang="es">Ver todos (<%= user.authoredTestsCount %>)</span>
+        </a>
+        <ul>
+          <% user.authoredTests.forEach(test => { %>
+          <li><a href="/tests/<%= test.id %>"><%= test.name %></a></li>
+          <% }) %>
+        </ul>
+        <!-- Let user know that inactive tests with no results in the last 30 days will be automatically deleted -->
+        <% if (isMyself || isAdmin) { %>
+        <br>
+        <p class="is-size-7 has-text-centered">
+          <span class="icon is-small"><i class="fas fa-exclamation-triangle"></i></span>
+          <span lang="en">Tests with no results will be deleted after 30 days.</span>
+          <span lang="es">Tests sin resultados serán eliminados tras 30 días.</span>
+        </p>
+        <% } %>
+        <% } else { %>
+        <div class="panel-empty">
+          <% if (isMyself) { %>
+          <span class="icon"><i class="fas fa-file-alt"></i></span>
+          <span lang="en">No authored tests yet.</span>
+          <span lang="es">Aún no has creado tests.</span>
+          <% } else { %>
+          <span class="icon"><i class="fas fa-file-alt"></i></span>
+          <span lang="en">No tests visible for you. &#128533;</span>
+          <span lang="es">No hay tests visibles para ti. &#128533;</span>
+          <% } %>
+        </div>
+        <% } %>
+      </div>
+
+      <% if (isMyself || isAdmin) { %>
+      <div class="profile-panel">
+        <div class="profile-panel-header">
+          <h3 class="title is-5">
+            <span class="icon"><i class="fas fa-heart" style="color: #e25555;"></i></span>
+            <span lang="en">Liked Tests</span>
+            <span lang="es">Tests Favoritos</span>
+          </h3>
+        </div>
+        <% if (user.favoriteTestsCount > 0) { %>
+        <a href="/tests?type=liked" class="see-all-button button is-link is-light">
+          <span lang="en">See all (<%= user.favoriteTestsCount %>)</span>
+          <span lang="es">Ver todos (<%= user.favoriteTestsCount %>)</span>
+        </a>
+        <ul>
+          <% user.favoriteTests.forEach(test => { %>
+          <li><a href="/tests/<%= test.id %>"><%= test.name %></a></li>
+          <% }) %>
+        </ul>
+        <% } else { %>
+        <div class="panel-empty">
+          <% if (isMyself) { %>
+          <span class="icon"><i class="fas fa-heart"></i></span>
+          <span lang="en">You haven't liked any test yet.</span>
+          <span lang="es">Aún no has marcado ningún test como favorito.</span>
+          <% } else { %>
+          <span class="icon"><i class="fas fa-heart"></i></span>
+          <span lang="en">No tests liked by this user visible for you. &#128533;</span>
+          <span lang="es">No hay tests marcados como favoritos por este usuario visibles para ti. &#128533;</span>
+          <% } %>
+        </div>
+        <% } %>
+      </div>
+      <% } %>
+
+      <% if (!(isMyself || isAdmin)) { %>
+      <div class="profile-panel">
+        <div class="profile-panel-header">
+          <h3 class="title is-5">
+            <span class="icon"><i class="fas fa-user-friends"></i></span>
+            <span lang="en">Following</span>
+            <span lang="es">Siguiendo</span>
+          </h3>
+        </div>
+        <% if (user.iFollowCount > 0) { %>
+        <a href="/users?type=following&username=<%=user.username%>" class="see-all-button button is-link is-light">
+          <span lang="en">See all (<%= user.iFollowCount %>)</span>
+          <span lang="es">Ver todos (<%= user.iFollowCount %>)</span>
+        </a>
+        <ul>
+          <% user.iFollow.forEach(followedUser => { %>
+          <li><a href="/users/<%= followedUser.username %>"><%- followedUser.username %></a></li>
+          <% }) %>
+        </ul>
+        <% } else { %>
+        <div class="panel-empty">
+          <% if (isMyself) { %>
+          <span class="icon"><i class="fas fa-user-friends"></i></span>
+          <span lang="en">You don't follow anyone yet.</span>
+          <span lang="es">Aún no sigues a nadie.</span>
+          <% } else { %>
+          <span class="icon"><i class="fas fa-user-friends"></i></span>
+          <span lang="en">No users followed by this user visible for you. &#128533;</span>
+          <span lang="es">No hay usuarios seguidos por este usuario visibles para ti. &#128533;</span>
+          <% } %>
+        </div>
+        <% } %>
+      </div>
+
+      <div class="profile-panel">
+        <div class="profile-panel-header">
+          <h3 class="title is-5">
+            <span class="icon"><i class="fas fa-user-friends fa-flip-horizontal"></i></span>
+            <span lang="en">Followers</span>
+            <span lang="es">Seguidores</span>
+          </h3>
+        </div>
+        <% if (user.followMeCount > 0) { %>
+        <a href="/users?type=followers&username=<%=user.username%>" class="see-all-button button is-link is-light">
+          <span lang="en">See all (<%= user.followMeCount %>)</span>
+          <span lang="es">Ver todos (<%= user.followMeCount %>)</span>
+        </a>
+        <ul>
+          <% user.followMe.forEach(follower => { %>
+          <li><a href="/users/<%= follower.username %>"><%- follower.username %></a></li>
+          <% }) %>
+        </ul>
+        <% } else { %>
+        <div class="panel-empty">
+          <% if (isMyself) { %>
+          <span class="icon"><i class="fas fa-user-friends fa-flip-horizontal"></i></span>
+          <span lang="en">You don't have any followers yet.</span>
+          <span lang="es">Aún no tienes seguidores.</span>
+          <% } else { %>
+          <span class="icon"><i class="fas fa-user-friends fa-flip-horizontal"></i></span>
+          <span lang="en">No followers visible for you. &#128533;</span>
+          <span lang="es">No hay seguidores visibles para ti. &#128533;</span>
+          <% } %>
+        </div>
+        <% } %>
+      </div>
+      <% } %>
+
+      <!-- Give the user the option to delete their account -->
+      <% if (isMyself) { %>
+      <div class="profile-panel" style="border-color: rgba(241, 70, 104, 0.25);">
+        <div class="profile-panel-header">
+          <h3 class="title is-5">
+            <span class="icon" style="background: rgba(241, 70, 104, 0.1); color: #e25555;"><i class="fas fa-trash-alt"></i></span>
+            <span lang="en">Delete Account</span>
+            <span lang="es">Eliminar Cuenta</span>
+          </h3>
+        </div>
+        <div class="panel-empty" style="align-items: flex-start; flex-direction: column; gap: 0.15rem;">
+          <span lang="en">If you had enough... &#128532;</span>
+          <span lang="es">Si ya has tenido suficiente... &#128532;</span>
+          <span lang="en">&#128546; We will miss you!</span>
+          <span lang="es">&#128546; ¡Te echaremos de menos!</span>
+        </div>
+        <% const delType = "user"; %>
+        <% let delMsg = "Delete your profile " + user.username + "?" + " This will delete all your info including non-public tests, results, favorites, and followers."; %>
+        <% if (lang === "es") { %>
+        <% delMsg = "¿Eliminar tu perfil " + user.username + "?" + " Esto eliminará toda tu información incluyendo tests no públicos, resultados, favoritos y seguidores."; %>
+        <% } %>
+        <div class="see-all-button button is-danger is-light delete-item-button" data-item-id="<%=user.username%>" data-delete-type="<%=delType%>" data-delete-msg="<%=delMsg%>" title="Delete Account">
+          <span class="icon"><i class="fas fa-trash-alt"></i></span>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+    <% if (isMyself || isAdmin) { %>
+      <% function correctPercentage(score,nQuestions) { return Math.round((score/nQuestions)*100); } %>
+      <% function getWeigthedScore(nSeconds,nQuestions,score) { return 100000*(score/nQuestions) + 50*nQuestions - nSeconds; } %>
+      <div class="column is-7">
+        <div class="box" style="position: relative;" >
+          <h3 class="title is-4">
+            <span class="icon"><i class="fas fa-trophy"></i></span>
+            <span lang="en">Results</span>
+            <span lang="es">Resultados</span>
+          </h3>
+          <% if (user.testResultsCount > 0) { %>
+          <a href="/results?username=<%=user.username%>" class="see-all-button button is-link">
+            <span lang="en">See all (<%= user.testResultsCount %>)</span>
+            <span lang="es">Ver todos (<%= user.testResultsCount %>)</span>
+          </a>
+          <div class="table-container">
+            <table class="table is-fullwidth is-hoverable">
+              <thead>
+                <tr>
+                  <th class="sortable descending" data-type="text"><span lang="en">Title</span><span lang="es">Título</span> <span class="sort-icon"><i class="fas fa-angle-down"></i></span></th>
+                  <th class="has-text-right sortable descending" style="color: var(--link-color);" data-type="date"><span lang="en">Date</span><span lang="es">Fecha</span>  <span class="sort-icon"><i class="fas fa-angle-down"></i></span></th>
+                  <th class="has-text-right sortable descending" data-type="number"><span lang="en">Dur</span><span lang="es">Dur</span>  <span class="sort-icon"><i class="fas fa-angle-down"></i></span></th>
+                  <th class="has-text-right sortable descending" data-type="number"><span lang="en">Score</span><span lang="es">Nota</span>  <span class="sort-icon"><i class="fas fa-angle-down"></i></span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% user.testResults.forEach(result => { %>
+                <tr class="is-clickable" data-href="/results/<%= result.id %>">
+                  <td data-value="<%= result.test ? result.test.name : "ZZZZZZZZZ" %>">
+                    <% if (result.test) { %>
+                    <a href="/tests/<%= result.test.id %>"><%= result.test.name %></a>
+                    <% } else { %>
+                    <span lang="en">Unavailable</span>
+                    <span lang="es">No disponible</span>
+                    <% } %>
+                  </td>
+                  <td class="has-text-right" data-value="<%= result.updatedAt.toISOString() %>"><%= formatTimeAgo(result.updatedAt, lang) %></td>
+                  <% const minutes = Math.floor(result.nSeconds / 60); %>
+                  <% const seconds = Math.floor(result.nSeconds) % 60; %>
+                  <% const formattedTime = `${minutes ? minutes.toString()+"m" : ""} ${seconds.toString()}s`; %>
+                  <td class="has-text-right dur-tag" data-value="<%= result.nSeconds %>"><%= formattedTime %></td>
+                  <% var correctPercentageVal = correctPercentage(result.score,result.nQuestions) %>
+                  <td class="has-text-right" data-value="<%= getWeigthedScore(result.nSeconds, result.nQuestions, result.score) %>">
+                    <% const pillClass = correctPercentageVal >= 60 ? "is-good" : (correctPercentageVal >= 40 ? "is-mid" : "is-low"); %>
+                    <span class="score-pill <%=pillClass%>"><%= correctPercentageVal %>%</span>
+                    <span class="is-size-7 has-text-grey"><%= result.score %>/<%= result.nQuestions %></span>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } else { %>
+          <p lang="en">You haven't taken any tests yet.</p>
+          <p lang="es">Aún no has intentado ningún test.</p>
+          <% } %>
+        </div>
+
+        <!-- Following (under Results, for own/admin profiles) -->
+        <div class="profile-panel">
+          <div class="profile-panel-header">
+            <h3 class="title is-5">
+              <span class="icon"><i class="fas fa-user-friends"></i></span>
+              <span lang="en">Following</span>
+              <span lang="es">Siguiendo</span>
+            </h3>
+          </div>
+          <% if (user.iFollowCount > 0) { %>
+          <a href="/users?type=following&username=<%=user.username%>" class="see-all-button button is-link is-light">
+            <span lang="en">See all (<%= user.iFollowCount %>)</span>
+            <span lang="es">Ver todos (<%= user.iFollowCount %>)</span>
+          </a>
+          <ul>
+            <% user.iFollow.forEach(followedUser => { %>
+            <li><a href="/users/<%= followedUser.username %>"><%- followedUser.username %></a></li>
+            <% }) %>
+          </ul>
+          <% } else { %>
+          <div class="panel-empty">
+            <span class="icon"><i class="fas fa-user-friends"></i></span>
+            <span lang="en">You don't follow anyone yet.</span>
+            <span lang="es">Aún no sigues a nadie.</span>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Followers (under Results, for own/admin profiles) -->
+        <div class="profile-panel">
+          <div class="profile-panel-header">
+            <h3 class="title is-5">
+              <span class="icon"><i class="fas fa-user-friends fa-flip-horizontal"></i></span>
+              <span lang="en">Followers</span>
+              <span lang="es">Seguidores</span>
+            </h3>
+          </div>
+          <% if (user.followMeCount > 0) { %>
+          <a href="/users?type=followers&username=<%=user.username%>" class="see-all-button button is-link is-light">
+            <span lang="en">See all (<%= user.followMeCount %>)</span>
+            <span lang="es">Ver todos (<%= user.followMeCount %>)</span>
+          </a>
+          <ul>
+            <% user.followMe.forEach(follower => { %>
+            <li><a href="/users/<%= follower.username %>"><%- follower.username %></a></li>
+            <% }) %>
+          </ul>
+          <% } else { %>
+          <div class="panel-empty">
+            <span class="icon"><i class="fas fa-user-friends fa-flip-horizontal"></i></span>
+            <span lang="en">You don't have any followers yet.</span>
+            <span lang="es">Aún no tienes seguidores.</span>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+  </div>
+</section>
+
+<!-- ========== SKILLS / PREFERENCES SCRIPT ========== -->
+<script src="/scripts/user-skills.js?v=20260816-multi" class="user-skills-js" id="user-skills-lib-js"></script>
+<script class="user-skills-js" nonce="<%=nonce%>">
+  // Re-inits the skills editor on every (AJAX) render of this page
+  (function retrySkills() {
+    if (!window.UserSkills) return setTimeout(retrySkills, 200);
+    window.UserSkills.reload();
+  })();
+</script>

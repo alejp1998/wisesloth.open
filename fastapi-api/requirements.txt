@@ -1,0 +1,28 @@
+# FastAPI and ASGI
+fastapi==0.143.0
+uvicorn[standard]==0.34.3
+python-multipart==0.0.31
+httpx==0.28.1
+
+# Pydantic
+pydantic==2.12.5
+pydantic-settings==2.14.2
+
+# AI Services (LiteLLM for unified multi-provider support)
+litellm==1.105.0
+
+
+# Image Processing
+pillow==12.3.0
+
+# Environment
+python-dotenv==1.2.2
+
+# Configuration
+pyyaml==6.0.3
+
+# Development (for auto-reload)
+watchfiles==1.1.1
+
+# Patched ASGI dependency, pinned for reproducible runtime installs.
+starlette==1.3.1

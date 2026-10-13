@@ -1,0 +1,91 @@
+<div id="modal-edit-quiz-inline" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card quiz-edit-modal">
+    <header class="modal-card-head">
+      <p class="modal-card-title is-size-5" id="inline-edit-title">
+        <span class="icon is-small has-text-warning"><i class="fas fa-edit"></i></span>
+        <span lang="en">Edit question</span>
+        <span lang="es">Editar pregunta</span>
+      </p>
+      <button class="modal-delete delete" aria-label="close" data-inline-edit-close></button>
+    </header>
+    <section class="modal-card-body">
+      <!-- AI edit section (compact, minimal — no blue tint) -->
+      <div class="ai-edit-section qe-ai-box">
+        <div class="qe-ai-head">
+          <span class="icon is-small"><i class="fas fa-magic"></i></span>
+          <span class="qe-ai-title">
+            <span lang="en">Edit with AI</span>
+            <span lang="es">Editar con IA</span>
+          </span>
+        </div>
+        <div class="field has-addons">
+          <div class="control is-expanded has-icons-left">
+            <span class="icon is-left is-small"><i class="fas fa-pen-nib"></i></span>
+            <input id="inline-ai-edit-instruction" class="input is-small" type="text" autocomplete="off"
+              placeholder="e.g. Make it harder / Simplify / Translate to Spanish...">
+          </div>
+          <div class="control">
+            <button id="inline-ai-edit-button" class="button is-small ai-generate-btn" type="button">
+              <span class="icon is-small"><i class="fas fa-magic"></i></span>
+              <span lang="en">Apply</span>
+              <span lang="es">Aplicar</span>
+            </button>
+          </div>
+        </div>
+        <p class="help" id="inline-ai-edit-status"></p>
+      </div>
+
+      <!-- Question -->
+      <div class="field">
+        <label class="label is-size-6">
+          <span lang="en">Question</span>
+          <span lang="es">Pregunta</span>
+        </label>
+        <textarea id="inline-q-question" class="textarea is-small" rows="2"></textarea>
+      </div>
+
+      <!-- Options (compact rows with letter badges + correct toggle) -->
+      <label class="label is-size-6">
+        <span lang="en">Options</span>
+        <span lang="es">Opciones</span>
+      </label>
+      <% for (let optI = 1; optI <= 5; optI++) { %>
+      <div class="qe-option-row">
+        <label class="qe-option-letter" for="inline-q-correct-<%=optI%>" title="Mark as correct">
+          <%=String.fromCharCode(64 + optI)%>
+        </label>
+        <textarea id="inline-q-opt<%=optI%>" class="textarea is-small qe-option-input" rows="1"
+          placeholder="Option <%=String.fromCharCode(64 + optI)%>"></textarea>
+        <label class="qe-correct-toggle" title="Correct answer">
+          <input type="checkbox" id="inline-q-correct-<%=optI%>">
+          <span class="qe-correct-box"><i class="fas fa-check"></i></span>
+        </label>
+      </div>
+      <% } %>
+
+      <!-- Explanation -->
+      <div class="field" style="margin-top: 0.75rem;">
+        <label class="label is-size-6">
+          <span class="icon is-small has-text-info"><i class="fas fa-lightbulb"></i></span>
+          <span lang="en">Explanation</span>
+          <span lang="es">Explicación</span>
+        </label>
+        <textarea id="inline-q-exp" class="textarea is-small" rows="2"></textarea>
+      </div>
+    </section>
+    <footer class="modal-card-foot">
+      <div class="buttons">
+        <button id="inline-edit-save" class="button is-small ai-confirm-btn" type="button">
+          <span class="icon is-small"><i class="fas fa-check"></i></span>
+          <span lang="en">Save</span>
+          <span lang="es">Guardar</span>
+        </button>
+        <button class="button is-small ai-discard-btn" type="button" data-inline-edit-close>
+          <span lang="en">Cancel</span>
+          <span lang="es">Cancelar</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

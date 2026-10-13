@@ -1,0 +1,241 @@
+<% // Unpack the result data
+const test = result.test;
+const context = test.context;
+const quizResults = result.quizResults;
+let nSeconds = result.nSeconds;
+%>
+
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Result: <%=test.name%> | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Result page for WiseSloth.open: learn from your errors in " + "<%=test.name%>" + ".");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Página de resultado para WiseSloth.open: aprende de tus errores en " + "<%=test.name%>" + ".");
+
+  // Set as noindex
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+</script>
+
+<% const viewType = "RESULT" %>
+<% var isAuthor = session.user && test.author && test.author.username === session.user.username; %>
+<% var isExaminee = (session.user && result.examinee && (session.user.username === result.examinee.username)) || result.isTemporarilySaved; %>
+<% var isFavorite = session.user && (session.user.favoriteIds || []).includes(test.id); %>
+
+<!-- Result View Container -->
+<section class="hero is-fullheight-with-navbar result-hero">
+  <div class="hero-body">
+    <div class="container">
+
+          <!-- Test Header - Minimalistic (matching try view) -->
+          <a href="/tests/<%= test.id %>" class="try-header-link" onclick="event.preventDefault(); fetchBodyContent('/tests/<%= test.id %>');">
+            <div class="try-header" id="result-header-box">
+              <div class="try-header-info">
+                <p class="try-header-title"><%= test.name %></p>
+                <p class="try-header-meta"><%= test.author ? test.author.username : 'Anonymous' %></p>
+              </div>
+              <span class="try-header-arrow">
+                <i class="fas fa-chevron-right"></i>
+              </span>
+            </div>
+          </a>
+
+  <!-- Integrated result summary (score + phrase inline, no notification box) -->
+  <!-- Score is visible to everyone who can view the result; the motivational
+       phrasing is personal (only for the examinee), neutral for others. -->
+  <% if (test.type === 'knowledge') { %>
+  <% let resultClass=""; %>
+  <% let resultTitleEn=""; %>
+  <% let resultTitleEs=""; %>
+  <% let resultSubtitleEn=""; %>
+  <% let resultSubtitleEs=""; %>
+  <% let resultEmoji=""; %>
+
+  <% if (isExaminee) { %>
+  <% if (result.score === 0) { %>
+  <% resultClass = "is-danger"; %>
+  <% resultTitleEn = "You could have tried..."; %>
+  <% resultTitleEs = "Podrías haberlo intentado..."; %>
+  <% resultSubtitleEn = "Don't give up!"; %>
+  <% resultSubtitleEs = "¡No te rindas!"; %>
+  <% resultEmoji = "&#128529;"; %>
+  <% } else if (result.score/result.nQuestions < 0.5) { %>
+  <% resultClass = "is-danger"; %>
+  <% resultTitleEn = "You can do better..."; %>
+  <% resultTitleEs = "Puedes hacerlo mejor..."; %>
+  <% resultSubtitleEn = "Practice makes perfect!"; %>
+  <% resultSubtitleEs = "¡La práctica hace al maestro!"; %>
+  <% resultEmoji = "&#129300;"; %>
+  <% } else if (result.score/result.nQuestions < 0.7) { %>
+  <% resultClass = "is-warning"; %>
+  <% resultTitleEn = "Not so bad this time..."; %>
+  <% resultTitleEs = "No está mal esta vez..."; %>
+  <% resultSubtitleEn = "You're getting closer!"; %>
+  <% resultSubtitleEs = "¡Cada vez estás más cerca!"; %>
+  <% resultEmoji = "&#128170;"; %>
+  <% } else if (result.score/result.nQuestions < 0.9) { %>
+  <% resultClass = "is-success"; %>
+  <% resultTitleEn = "Good job!"; %>
+  <% resultTitleEs = "¡Buen trabajo!"; %>
+  <% resultSubtitleEn = "You're almost there!"; %>
+  <% resultSubtitleEs = "¡Ya casi lo tienes!"; %>
+  <% resultEmoji = "&#128526;"; %>
+  <% } else if (result.score/result.nQuestions < 1) { %>
+  <% resultClass = "is-success"; %>
+  <% resultTitleEn = "Very good!"; %>
+  <% resultTitleEs = "¡Muy bien!"; %>
+  <% resultSubtitleEn = "So close to perfection!"; %>
+  <% resultSubtitleEs = "¡Tan cerca de la perfección!"; %>
+  <% resultEmoji = "&#129299;"; %>
+  <% } else { %>
+  <% resultClass = "is-primary"; %>
+  <% resultTitleEn = "Perfect score!"; %>
+  <% resultTitleEs = "¡Puntuación perfecta!"; %>
+  <% resultSubtitleEn = "You're a legend!"; %>
+  <% resultSubtitleEs = "¡Eres una leyenda!"; %>
+  <% resultEmoji = "&#128081;"; %>
+  <% } %>
+  <% } else { %>
+  <!-- Neutral phrasing for viewers who are not the examinee -->
+  <% resultClass = result.score/result.nQuestions >= 0.7 ? "is-success" : (result.score/result.nQuestions >= 0.5 ? "is-warning" : "is-danger"); %>
+  <% resultTitleEn = "Result"; %>
+  <% resultTitleEs = "Resultado"; %>
+  <% resultSubtitleEn = `Score for ${result.examinee ? result.examinee.username : "this user"}`; %>
+  <% resultSubtitleEs = `Nota de ${result.examinee ? result.examinee.username : "este usuario"}`; %>
+  <% resultEmoji = "&#127891;"; %>
+  <% } %>
+  <% const pct = Math.round(result.score/result.nQuestions*100); %>
+  <div class="result-summary <%=resultClass%>">
+    <div class="result-summary-score">
+      <p class="result-summary-pct"><%=pct%>%</p>
+      <p class="result-summary-raw">
+        <span lang="en"><%=result.score%>/<%=result.nQuestions%> correct</span>
+        <span lang="es"><%=result.score%>/<%=result.nQuestions%> correctas</span>
+      </p>
+    </div>
+    <div class="result-summary-phrase">
+      <p class="result-summary-title"><span class="result-summary-emoji"><%-resultEmoji%></span> <span lang="en"><%=resultTitleEn%></span><span lang="es"><%=resultTitleEs%></span></p>
+      <p class="result-summary-subtitle">
+        <span lang="en"><%=resultSubtitleEn%></span>
+        <span lang="es"><%=resultSubtitleEs%></span>
+      </p>
+    </div>
+    <div class="result-summary-stats">
+      <span class="tag is-success is-light" title="Correct"><i class="fas fa-check"></i>&nbsp;<em><%=result.hits%></em></span>
+      <span class="tag is-dark is-light" title="Omitted"><i class="fas fa-fast-forward"></i>&nbsp;<em><%=result.omissions%></em></span>
+      <span class="tag is-danger is-light" title="Wrong"><i class="fas fa-times"></i>&nbsp;<em><%=result.fails%></em></span>
+    </div>
+  </div>
+  <% } else if (test.type === 'personality') { %>
+  <% const countTotal = Object.values(result.personalitiesCount).reduce((sum, value) => sum + value, 0); %>
+  <% const maxCount = Math.max(...Object.values(result.personalitiesCount)); %>
+  <% for (const key of result.orderedPersonalities) { %>
+  <% const persName = test.personalities[key] %>
+  <% const persDesc = test.personalitiesDesc[key] %>
+  <% const persCount = result.personalitiesCount[key] %>
+  <% const persPercentage = (persCount / countTotal) * 100; %>
+  <% const borderClass = `pers${key}-border`; %>
+
+  <% if (persName) { %>
+  <div class="box <%=borderClass%>">
+    <div class="columns is-vcentered">
+      <div class="column is-narrow">
+        <p class="title is-4"><%=persPercentage.toFixed(0)%>%</p>
+        <p class="subtitle is-5"><%=persCount%>/<%=countTotal%></p>
+      </div>
+      <div class="column has-text-right">
+        <p class="title is-4"><%=persName%></p>
+        <% if (persDesc && (persCount === maxCount)) { %>
+        <p class="subtitle is-5"><%=persDesc%></p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  <% } %>
+
+  <% } %>
+
+
+
+  <!-- Include compact result stats -->
+  <%- include('../cards/result', { viewType, result, test }) %>
+
+  <!-- Include test control panel -->
+  <% var isSequential = false; %>
+  <%- include('../auxiliary/test-control-panel', { viewType, isSequential, test, nSeconds, quizResults }) %>
+
+  <!-- Include context modal -->
+  <%- include('../auxiliary/modal-context', { context }) %>
+
+  <!-- Action buttons - compact and elegant -->
+  <div class="result-actions-bar is-hidden-touch">
+    <% if ((isAuthor || isAdmin || !test.hideAnswers) && (test.type !== "personality")) { %>
+    <button class="button is-link is-light toggle-correct-answers-switch">
+      <span lang="en">Answers</span>
+      <span lang="es">Respuestas</span>
+      <span class="icon has-color-link"><i class="fas fa-toggle-off"></i></span>
+    </button>
+    <% } %>
+
+    <% if (isExaminee) { %>
+    <a href="/tests/<%=test.id%>" class="button is-info is-light" onclick="event.preventDefault(); fetchBodyContent('/tests/<%= test.id %>');">
+      <span class="icon"><i class="fas fa-arrow-left"></i></span>
+      <span lang="en">Back to test</span>
+      <span lang="es">Volver al test</span>
+    </a>
+    <% } %>
+
+    <button class="button is-primary is-light open-modal-try-button" data-test-id="<%=test.id%>" data-test-type="<%=test.type%>" data-test-name="<%=test.name%>" data-n-quizzes="<%=test.quizzes.length%>" data-test-author="<%=test.author ? test.author.username : 'Anonymous'%>" title="Try the test again">
+      <span class="icon"><i class="fas fa-undo-alt"></i></span>
+      <span lang="en">Retry</span>
+      <span lang="es">Reintentar</span>
+    </button>
+
+    <% if (isAuthor && (test.type !== "personality")) { %>
+    <a href="/tests/<%=test.id%>/edit" class="button is-warning is-light" onclick="event.preventDefault(); fetchBodyContent('/tests/<%= test.id %>/edit');">
+      <span class="icon"><i class="fas fa-edit"></i></span>
+      <span lang="en">Edit</span>
+      <span lang="es">Editar</span>
+    </a>
+    <% } %>
+
+    <% if (session.user && !isFavorite) { %>
+    <button class="button is-danger is-light favorite-button" data-is-logged-in="<%=!!session.user%>" data-test-id="<%= test.id %>" data-is-favorite="<%=isFavorite%>">
+      <span class="icon heart-icon"><i class="far fa-heart"></i></span>
+      <span lang="en">Like</span>
+      <span lang="es">Me gusta</span>
+    </button>
+    <% } %>
+  </div>
+
+  <!-- Show quiz results -->
+  <div id="quiz-els">
+    <% if (quizResults && quizResults.length > 0) { %>
+    <% const showOptions = isAdmin || isAuthor || isExaminee || !test.hideAnswers; %>
+    <% const hideQuiz = false; %>
+    <% const nQuizzes = quizResults.length %>
+    <% for (const quizResult of quizResults) { %>
+    <% const n = quizResult.number; %>
+    <% const quizId = quizResult.quizId; %>
+    <% var quiz = test.quizzes.find(quiz => quiz.id === quizId); %>
+    <% if (quiz || (viewType === "RESULT" && quizResult && quizResult.quizId)) { %>
+    <!-- Include quiz box -->
+    <%- include('../auxiliary/test-quiz', { viewType, n, quiz, test, hideQuiz, quizResult, showOptions, isAuthor, isAdmin: (session.user && session.user.isAdmin) }) %>
+    <% } %>
+    <% } %>
+    <% } else { %>
+    <!-- No quiz results available -->
+    <div class="notification is-light">
+      <p class="has-text-centered">
+        <span class="icon"><i class="fas fa-info-circle"></i></span>
+        <span lang="en">Quiz details are not available for this result.</span>
+        <span lang="es">Los detalles de las preguntas no están disponibles para este resultado.</span>
+      </p>
+    </div>
+    <% } %>
+  </div>
+
+    </div><!-- /.container -->
+  </div><!-- /.hero-body -->
+</section><!-- /.hero -->

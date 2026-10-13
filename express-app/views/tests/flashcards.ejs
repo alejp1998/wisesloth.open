@@ -1,0 +1,361 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "<%=test.name%> | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Flashcards for WiseSloth.open: study and memorize " + "<%=test.name%>" + ".");
+
+  // Set as noindex if test.visibility is "private" or "followers"
+  <% if (test.visibility === "private" || test.visibility === "followers") { %>
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+  <% } else { %>
+  if (metaRobots) metaRobots.setAttribute("content", "index");
+  <% } %>
+</script>
+
+<% const viewType = "SHOW" %>
+<% var isAuthor = session.user && test.author && (test.author.username === session.user.username); %>
+
+<!-- Include hero header -->
+<% const heroTitleEn = "Flashcards" %>
+<% const heroTitleEs = "Flashcards" %>
+<% const heroSubtitleEn = "Study and memorize with flip cards..." %>
+<% const heroSubtitleEs = "Estudia y memoriza con tarjetas..." %>
+<% const containerId = "" %>
+<%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+
+<!-- Test Content -->
+<div class="container">
+
+  <!-- Include test card -->
+  <div class="flex-container">
+    <%- include('../cards/test', { viewType, test }) %>
+  </div>
+  <br>
+
+  <!-- General AI edit -->
+  <%- include('../auxiliary/general-ai-edit', { test, isAuthor, isAdmin }) %>
+
+  <!-- Action buttons (desktop only — editing flows are not suited to phones) -->
+  <div class="show-action-bar is-hidden-mobile">
+    <% if ((isAuthor || isAdmin) && (test.type !== 'personality')) { %>
+    <a href="/tests/<%=test.id%>/edit" class="show-action">
+      <span class="icon"><i class="fas fa-edit"></i></span>
+      <span lang="en">Edit cards</span>
+      <span lang="es">Editar tarjetas</span>
+    </a>
+    <% } %>
+    <button type="button" id="make-test-from-cards-button" class="show-action show-action-primary">
+      <span class="icon"><i class="fas fa-plus"></i></span>
+      <span lang="en">Make a test from these cards</span>
+      <span lang="es">Hacer un test con estas tarjetas</span>
+    </button>
+  </div>
+
+  <!-- Flashcard deck -->
+  <div class="box">
+    <div class="flashcard-deck-header">
+      <h3 class="title is-4">
+        <span lang="en">Study deck</span>
+        <span lang="es">Baraja de estudio</span>
+      </h3>
+      <div class="flashcard-deck-actions">
+        <button type="button" id="flashcard-expand" class="button is-info is-light is-rounded is-small" title="Focused mode">
+          <span class="icon is-small"><i class="fas fa-expand"></i></span>
+          <span class="is-hidden-touch">
+            <span lang="en">Focus</span>
+            <span lang="es">Enfocar</span>
+          </span>
+        </button>
+        <% if (isAuthor || isAdmin) { %>
+        <a href="/tests/<%=test.id%>/edit" class="quiz-edit-minimal button is-small is-ghost is-hidden-mobile" title="Edit all cards">
+          <i class="fas fa-edit"></i>
+        </a>
+        <% } %>
+      </div>
+    </div>
+
+    <% if (test.flashcards.length === 0) { %>
+    <div class="notification">
+      <p lang="en"><strong>No flashcards yet.</strong> Edit this set to add some.</p>
+      <p lang="es"><strong>Aún no hay tarjetas.</strong> Edita este conjunto para añadir algunas.</p>
+    </div>
+    <% } else { %>
+    <div class="flashcard-deck" id="flashcard-deck">
+      <!-- Card navigation links (same style as quiz questions) -->
+      <div class="quiz-links flex-container-no-wrap mb-3" id="flashcard-links"></div>
+
+      <!-- Flip card -->
+      <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Flashcard: click to flip">
+        <div class="flashcard-inner">
+          <div class="flashcard-face flashcard-front">
+            <p class="flashcard-text" id="flashcard-front-text"></p>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <p class="flashcard-text" id="flashcard-back-text"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card controls -->
+      <div class="flashcard-controls">
+        <div class="field is-grouped is-grouped-centered">
+          <div class="control">
+            <button id="flashcard-prev" class="button is-light is-rounded" title="Previous card">
+              <span class="icon is-small"><i class="fas fa-arrow-left"></i></span>
+            </button>
+          </div>
+          <div class="control">
+            <button id="flashcard-flip" class="button is-link is-rounded">
+              <span class="icon is-small"><i class="fas fa-sync-alt"></i></span>
+              <span class="is-hidden-mobile">
+                <span lang="en">Flip</span>
+                <span lang="es">Girar</span>
+              </span>
+            </button>
+          </div>
+          <div class="control">
+            <button id="flashcard-next" class="button is-light is-rounded" title="Next card">
+              <span class="icon is-small"><i class="fas fa-arrow-right"></i></span>
+            </button>
+          </div>
+          <div class="control">
+            <button id="flashcard-shuffle" class="button is-info is-rounded is-light">
+              <span class="icon is-small"><i class="fas fa-random"></i></span>
+              <span class="is-hidden-mobile">
+                <span lang="en">Shuffle</span>
+                <span lang="es">Barajar</span>
+              </span>
+            </button>
+          </div>
+          <% if (isAuthor || isAdmin) { %>
+          <div class="control is-hidden-mobile">
+            <button id="flashcard-edit-current" class="button is-warning is-rounded is-light" title="Edit this card">
+              <span class="icon is-small"><i class="fas fa-edit"></i></span>
+              <span class="is-hidden-mobile">
+                <span lang="en">Edit</span>
+                <span lang="es">Editar</span>
+              </span>
+            </button>
+          </div>
+          <% } %>
+        </div>
+        <p class="has-text-centered mt-2">
+          <span id="flashcard-counter" class="tag is-medium is-info is-light">1 / 1</span>
+        </p>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- ========== SINGLE FLASHCARD EDIT MODAL (like the per-question quiz modal) ========== -->
+<div id="modal-edit-flashcard-single" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card quiz-edit-modal">
+    <header class="modal-card-head">
+      <p class="modal-card-title is-size-5" id="single-fc-title">
+        <span class="icon is-small has-text-warning"><i class="fas fa-edit"></i></span>
+        <span lang="en">Edit card</span>
+        <span lang="es">Editar tarjeta</span>
+      </p>
+      <button class="modal-delete delete" aria-label="close" data-single-fc-close></button>
+    </header>
+    <section class="modal-card-body">
+      <!-- AI edit section (compact, same as quiz edit modal) -->
+      <div class="ai-edit-section qe-ai-box">
+        <div class="qe-ai-head">
+          <span class="icon is-small"><i class="fas fa-magic"></i></span>
+          <span class="qe-ai-title">
+            <span lang="en">Edit with AI</span>
+            <span lang="es">Editar con IA</span>
+          </span>
+        </div>
+        <div class="field has-addons">
+          <div class="control is-expanded has-icons-left">
+            <span class="icon is-left is-small"><i class="fas fa-pen-nib"></i></span>
+            <input id="single-fc-ai-instruction" class="input is-small" type="text" autocomplete="off"
+              placeholder="e.g. Make the answer more concise / Add an example / Translate to Spanish...">
+          </div>
+          <div class="control">
+            <button id="single-fc-ai-apply" class="button is-small ai-generate-btn" type="button">
+              <span class="icon is-small"><i class="fas fa-magic"></i></span>
+              <span lang="en">Apply</span>
+              <span lang="es">Aplicar</span>
+            </button>
+          </div>
+        </div>
+        <p class="help" id="single-fc-ai-status"></p>
+      </div>
+
+      <!-- Front -->
+      <div class="field">
+        <label class="label is-size-6">
+          <span lang="en">Front</span>
+          <span lang="es">Frente</span>
+        </label>
+        <textarea id="single-fc-front" class="textarea is-small" rows="3"></textarea>
+      </div>
+
+      <!-- Back -->
+      <div class="field">
+        <label class="label is-size-6">
+          <span lang="en">Back</span>
+          <span lang="es">Reverso</span>
+        </label>
+        <textarea id="single-fc-back" class="textarea is-small" rows="3"></textarea>
+      </div>
+    </section>
+    <footer class="modal-card-foot">
+      <div class="buttons">
+        <button id="single-fc-save" class="button is-warning is-small is-rounded" type="button">
+          <span class="icon is-small"><i class="fas fa-save"></i></span>
+          <span lang="en">Save</span>
+          <span lang="es">Guardar</span>
+        </button>
+        <button class="button is-small is-rounded" type="button" data-single-fc-close>
+          <span lang="en">Cancel</span>
+          <span lang="es">Cancelar</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<style nonce="<%=nonce%>">
+  .flashcard-deck { max-width: 620px; margin: 0 auto; perspective: 1000px; }
+  .flashcard {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 1.25rem;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+  .flashcard-face {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  .flashcard-front { background: var(--bulma-link); color: #fff; }
+  .flashcard-back { background: var(--bulma-success); color: #fff; transform: rotateY(180deg); }
+  .flashcard-text { font-size: 1.25rem; line-height: 1.5; word-break: break-word; }
+  .flashcard-controls { text-align: center; }
+
+  /* Card controls stretch to fill the deck width (both normal and focused) */
+  .flashcard-controls .field.is-grouped-centered {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .flashcard-controls .field.is-grouped-centered .control {
+    flex: 1 1 0;
+  }
+  .flashcard-controls .field.is-grouped-centered .button {
+    width: 100%;
+  }
+
+  /* Card navigation links - reuse quiz-links style (see #flashcard-links) */
+  #flashcard-links { flex-wrap: nowrap; }
+  #flashcard-links .flex-item-quiz-link.is-active {
+    background: var(--bulma-link);
+    border-color: var(--bulma-link);
+    color: #fff;
+  }
+
+  /* Deck header row (title + focus/edit-all actions) */
+  .flashcard-deck-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .flashcard-deck-header .title { margin-bottom: 0; }
+  .flashcard-deck-actions { display: flex; align-items: center; gap: 0.4rem; }
+
+  /* Focused (expanded) study mode */
+  body.flashcard-focused { overflow: hidden; }
+  .flashcard-focused-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    /* Fully opaque, matches the current theme (white in light mode, dark in dark mode) */
+    background: var(--bulma-scheme-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+  /* Keep the deck within the viewport: cap at 620px but never exceed the overlay */
+  .flashcard-focused-overlay .flashcard-deck {
+    width: 100%;
+    max-width: 620px;
+    min-width: 0;
+  }
+  .flashcard-focused-overlay .flashcard {
+    height: min(62vh, 560px);
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+  }
+  .flashcard-focused-overlay .flashcard-text { font-size: 1.6rem; }
+  .flashcard-focused-overlay .flashcard-controls .button { min-height: 3rem; }
+  /* Card-number links stay on ONE row in focused mode and scroll horizontally
+     (same behavior as the quiz-links bar elsewhere on the site) */
+  .flashcard-focused-overlay #flashcard-links {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    min-width: 0;
+    max-width: 100%;
+    justify-content: flex-start;
+  }
+  .flashcard-focused-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 620px;
+    width: 100%;
+    margin: 0 auto 0.75rem;
+  }
+  .flashcard-focused-title { color: var(--bulma-text-strong); font-size: 0.95rem; font-weight: 600; opacity: 0.9; }
+  .flashcard-focused-overlay #flashcard-focused-close { color: var(--bulma-text-strong); background: var(--bulma-scheme-main-bis); }
+
+  /* Mobile: tighter spacing and a shorter card so header + card + controls all fit
+     without scrolling on typical phone viewports */
+  @media (max-width: 768px) {
+    .flashcard-focused-overlay { padding: 0.75rem; }
+    .flashcard-focused-overlay .flashcard { height: min(46vh, 380px); margin-bottom: 1rem; }
+    .flashcard-focused-overlay .flashcard-text { font-size: 1.2rem; }
+    .flashcard-focused-head { margin-bottom: 0.5rem; }
+    .flashcard-text { font-size: 1.05rem; }
+    /* Card-number links stay on one row and scroll horizontally on phones too */
+    #flashcard-links { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; }
+    /* Icon-only buttons (text labels hidden on phones): neutralize Bulma's
+       asymmetric icon margins (assumes a visible label) so the icon centers */
+    .flashcard-controls .button .icon {
+      margin-inline-start: 0 !important;
+      margin-inline-end: 0 !important;
+    }
+  }
+</style>
+
+<script class="test-show-js" data-n="4" nonce="<%=nonce%>">
+  // Data for the inline flashcard editor modal (re-run on every AJAX nav so the
+  // globals always match the currently viewed test)
+  test = <%- safeJson(test) %>;
+  flashcards = <%- safeJson(test.flashcards || []) %>;
+</script>
+
+<script src="/scripts/tests/test-flashcards.js?v=20260814fc4" class="test-show-js" id="test-flashcards-js" data-n="5" nonce="<%=nonce%>"></script>
+<script src="/scripts/tests/test-edit-flashcards.js?v=20261013-byok" class="test-show-js" id="test-edit-flashcards-js" data-n="6" nonce="<%=nonce%>"></script>

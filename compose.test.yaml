@@ -1,0 +1,14 @@
+# Use only with a disposable project: docker compose -p wisesloth-open-test
+# --env-file /tmp/your-test.env -f compose.yaml -f compose.test.yaml up --build -d
+services:
+  ai:
+    environment:
+      OPENAI_API_KEY: offline-fixture-key
+      LLM_API_BASE: http://mock:8000/v1
+    depends_on:
+      - mock
+  mock:
+    image: python:3.12-slim
+    command: ["python", "/mock-provider.py"]
+    volumes:
+      - ./scripts/mock_provider.py:/mock-provider.py:ro

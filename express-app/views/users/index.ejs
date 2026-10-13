@@ -1,0 +1,347 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Users | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Users page for WiseSloth.open: navigate through the users and follow them or see their profiles.");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Página de usuarios para WiseSloth.open: navega a través de los usuarios y síguelos o mira sus perfiles.");
+
+  // Set as index
+  if (metaRobots) metaRobots.setAttribute("content", "index");
+</script>
+
+<!-- Include hero header -->
+<% const heroTitleEn = "Navigate Users" %>
+<% const heroTitleEs = "Navegar Usuarios" %>
+<% const heroSubtitleEn = "" %>
+<% const heroSubtitleEs = "" %>
+<% const containerId = "" %>
+<%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+
+<!-- Users Content -->
+<% const viewType = "INDEX" %>
+<section id="usercontent" class="container">
+
+  <!-- Orderby in spanish -->
+  <% let orderbyEs = "Fecha"; %>
+  <% let hasBgColor = ""; %>
+  <% if (orderby === "tries") { %>
+  <% orderbyEs = "Intentos"; %>
+  <% hasBgColor = "is-warning"; %>
+  <% } else if (orderby === "tests") { %>
+  <% orderbyEs = "Tests"; %>
+  <% hasBgColor = "is-info"; %>
+  <% } else if (orderby === "public") { %>
+  <% orderbyEs = "Públicos"; %>
+  <% hasBgColor = "is-success"; %>
+  <% } else if (orderby === "duration") { %>
+  <% orderbyEs = "Duración"; %>
+  <% hasBgColor = "is-dark"; %>
+  <% } %>
+
+  <!-- Users index menu -->
+  <nav class="level index-menu" id="users-index-menu">
+    <!-- Left-side -->
+    <div class="level-left">
+      <div class="level-item">
+        <% if (type === "following") { %>
+          <% if (username && username !== session.user.username) { %>
+            <p class="title is-3">
+              <span lang="en"><%=username%> follows:</span>
+              <span lang="es"><%=username%> sigue a:</span>
+            </p>
+          <% } else { %>
+            <p class="title is-3">
+              <span lang="en">I Follow</span>
+              <span lang="es">Sigo a</span>
+            </p>
+          <% } %>
+        <% } else if (type === "followers") { %>
+          <% if (username && username !== session.user.username) { %>
+            <p class="title is-3">
+              <span lang="en"><%=username%>'s Followers</span>
+              <span lang="es">Seguidores de <%=username%></span>
+            </p>
+          <% } else { %>
+            <p class="title is-3">
+              <span lang="en">My Followers</span>
+              <span lang="es">Mis Seguidores</span>
+            </p>
+          <% } %>
+        <% } else if (type === "supporters") { %>
+        <p class="title is-3">
+          <span lang="en"><img src="/images/sloth-logo.webp" alt="" style="height: 1em; vertical-align: middle;"> Wise Supporters</span>
+          <span lang="es"><img src="/images/sloth-logo.webp" alt="" style="height: 1em; vertical-align: middle;"> Wise Supporters</span>
+        </p>
+        <% } else { %>
+        <% if (search) { %>
+        <p class="title is-3">
+          <span lang="en">Users</span>
+          <span lang="es">Usuarios</span>
+        </p>
+        <% } else { %>
+        <p class="title is-3">
+          <span lang="en">All Users</span>
+          <span lang="es">Todos los Usuarios</span>
+        </p>
+        <% } %>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="level-right">
+      <!-- Search input -->
+      <div class="level-item index-search-item">
+        <% if (lang === "en") { %>
+        <input type="text" class="input" id="searchInput" name="search" value="<%= search %>" placeholder="Search users" autocomplete="on" />
+        <% } else if (lang === "es") { %>
+        <input type="text" class="input" id="searchInput" name="search" value="<%= search %>" placeholder="Buscar usuarios" autocomplete="on" />
+        <% } %>
+      </div>
+
+      <!-- Orderby and type dropdowns -->
+      <div class="level-item">
+        <!-- Sort by dropdown: Date, Likes, Tries, nTests, nPublicTests, Duration -->
+        <div class="dropdown is-hoverable" style="margin-left: 5px;">
+          <div class="dropdown-trigger">
+            <div class="button <%=hasBgColor%>" aria-haspopup="true" aria-controls="dropdown-menu">
+              <span>
+                <span class="icon"><i class="fas fa-sort"></i></span>
+                <span lang="en"><%= orderby.charAt(0).toUpperCase() + orderby.slice(1) %></span>
+                <span lang="es"><%= orderbyEs %></span>
+              </span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <div class="select-order-button dropdown-item" data-order="date" data-dir="desc" role="menuitem">
+                <span class="icon"><i class="fas fa-clock"></i></span>
+                <span lang="en">Date</span>
+                <span lang="es">Fecha</span>
+              </div>
+              <div class="select-order-button dropdown-item" data-order="tries" data-dir="desc" role="menuitem">
+                <span class="icon filter-icon has-text-warning"><i class="fas fa-play-circle"></i></span>
+                <span lang="en">Tries</span>
+                <span lang="es">Intentos</span>
+              </div>
+              <div class="select-order-button dropdown-item" data-order="duration" data-dir="desc" role="menuitem">
+                <span class="icon filter-icon has-text-dark"><i class="fas fa-stopwatch"></i></span>
+                <span lang="en">Duration</span>
+                <span lang="es">Duración</span>
+              </div>
+              <div class="select-order-button dropdown-item" data-order="tests" data-dir="desc" role="menuitem">
+                <span class="icon filter-icon has-text-info"><i class="fas fa-clipboard-list"></i></span>
+                <span lang="en">Quizzes</span>
+                <span lang="es">Tests</span>
+              </div>
+              <div class="select-order-button dropdown-item" data-order="public" data-dir="desc" role="menuitem">
+                <span class="icon filter-icon has-text-success"><i class="fas fa-globe-europe"></i></span>
+                <span lang="en">Public</span>
+                <span lang="es">Públicos</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Type dropdown -->
+        <div class="dropdown is-hoverable" style="margin-left: 5px;">
+          <div class="dropdown-trigger">
+            <div class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+              <% if (type === "following") { %>
+              <span class="icon">
+                <i class="fas fa-walking fa-flip-horizontal"></i>
+                <i class="fas fa-walking fa-flip-horizontal" style="color: var(--link-color)"></i>
+              </span>
+              <span lang="en">Following</span>
+              <span lang="es">Siguiendo</span>
+              <% } else if (type === "followers") { %>
+              <span class="icon">
+                <i class="fas fa-walking fa-flip-horizontal" style="color: var(--link-color)"></i>
+                <i class="fas fa-walking fa-flip-horizontal"></i>
+              </span>
+              <span lang="en">Followers</span>
+              <span lang="es">Seguidores</span>
+              <% } else if (type === "supporters") { %>
+              <span class="icon"><i class="fas fa-star" style="color: var(--warning-color);"></i></span>
+              <span lang="en">Supporters</span>
+              <span lang="es">Supporters</span>
+              <% } else { %>
+              <span class="icon"><i class="fas fa-users"></i></span>
+              <span lang="en">All</span>
+              <span lang="es">Todos</span>
+              <% } %>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <div class="dropdown-item select-type-button" role="menuitem" data-type="all">
+                <span class="icon"><i class="fas fa-users"></i></span>
+                <span lang="en">All</span>
+                <span lang="es">Todos</span>
+              </div>
+              <div class="dropdown-item select-type-button" role="menuitem" data-type="following">
+                <span class="icon">
+                  <i class="fas fa-walking fa-flip-horizontal"></i>
+                  <i class="fas fa-walking fa-flip-horizontal" style="color: var(--link-color)"></i>
+                </span>
+                <span lang="en">Following</span>
+                <span lang="es">Siguiendo</span>
+              </div>
+              <div class="dropdown-item select-type-button" role="menuitem" data-type="followers">
+                <span class="icon">
+                  <i class="fas fa-walking fa-flip-horizontal" style="color: var(--link-color)"></i>
+                  <i class="fas fa-walking fa-flip-horizontal"></i>
+                </span>
+                <span lang="en">Followers</span>
+                <span lang="es">Seguidores</span>
+              </div>
+              <% if (isAdmin) { %>
+              <div class="dropdown-item select-type-button" role="menuitem" data-type="supporters">
+                <span class="icon"><i class="fas fa-star" style="color: var(--warning-color);"></i></span>
+                <span lang="en">Supporters</span>
+                <span lang="es">Supporters</span>
+              </div>
+              <% } %>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Search tags -->
+  <div class="flex-container" style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px;" id="search-tags-container">
+    <div class="field is-grouped is-grouped-multiline">
+      <% if (search) { %>
+      <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-medium is-info">
+            <span class="icon"><i class="fas fa-search"></i></span>
+            <span lang="en">Search</span>
+            <span lang="es">Búsqueda</span>
+          </span>
+          <span class="tag is-medium">
+            <b><%= search %></b>
+          </span>
+          <button class="tag is-delete is-medium is-dark tag-delete-button" data-tag-name="search"></button>
+        </div>
+      </div>
+      <% } %>
+      <% if (username && (type === "following" || type === "followers") && username !== session.user.username) { %>
+      <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-medium is-link">
+            <span class="icon"><i class="fas fa-user-astronaut"></i></span>
+            <span lang="en">User</span>
+            <span lang="es">Usuario</span>
+          </span>
+          <span class="tag is-medium">
+            <b><a href="/users/<%= username %>"><%= username %></a></b>
+          </span>
+          <button class="tag is-delete is-medium is-dark tag-delete-button" data-tag-name="username" aria-label="Delete tag"></button>
+        </div>
+      </div>
+      <% } %>
+      <div class="control">
+        <div class="tags has-addons">
+          <button class="tag is-medium is-dark has-text-info change-orderdir-button" aria-label="Change sorting direction">
+            <% if (orderdir === "asc") { %>
+            <span class="icon"><i class="fas fa-arrow-up"></i></span>
+            <% } else { %>
+            <span class="icon"><i class="fas fa-arrow-down"></i></span>
+            <% } %>
+          </button>
+          <span class="tag is-medium <%= hasBgColor %>">
+            <b lang="en"><%= orderby.charAt(0).toUpperCase() + orderby.slice(1) %></b>
+            <b lang="es"><%= orderbyEs %></b>
+          </span>
+          <button class="tag is-delete is-medium is-dark tag-delete-button" data-tag-name="orderby" aria-label="Clear sorting"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Short message showing number of items and pages -->
+  <% if (paginateControl && paginateControl.totalItems > 0) { %>
+  <p class="is-size-6 has-text-centered">
+    <% if ((paginateControl.totalPages > 1) && (paginateControl.pageNo > 1)) { %>
+    <span class="pagination-button" data-pageno="<%= paginateControl.pageNo - 1 %>">
+      <span class="icon"><i class="fas fa-arrow-left"></i></span>
+    </span>
+    <% } else { %>
+    <span class="icon"><i class="fas fa-info-circle"></i></span>
+    <% } %>
+    <span lang="en">Page </span>
+    <span lang="es">Página </span>
+    <span lang="en"><%= paginateControl.pageNo %> of <%= paginateControl.totalPages %> </span>
+    <span lang="es"><%= paginateControl.pageNo %> de <%= paginateControl.totalPages %> </span>
+    <b>(<%= paginateControl.pageFirstItemIndex %> - <%= paginateControl.pageLastItemIndex %></b>
+    <span lang="en">out of</span>
+    <span lang="es">de</span>
+    <b><%= paginateControl.totalItems %>)</b>
+    <% if ((paginateControl.totalPages > 1) && (paginateControl.pageNo < paginateControl.totalPages)) { %>
+    <span class="pagination-button" data-pageno="<%= paginateControl.pageNo + 1 %>">
+      <span class="icon"><i class="fas fa-arrow-right"></i></span>
+    </span>
+    <% } %>
+  </p>
+  <% } else { %>
+  <p class="is-size-6 has-text-centered">
+    <span class="icon"><i class="fas fa-info-circle"></i></span>
+    <span lang="en">No users found</span>
+    <span lang="es">No se encontraron usuarios</span>
+  </p>
+  <% } %>
+
+  <!-- User results container -->
+  <div class="flex-container">
+    <% if (users.length === 0) { %>
+    <% if (!username) { %>
+    <div class="notification">
+      <p class="title is-4">
+        <span lang="en">No users found matching your search</span>
+        <span lang="es">No se encontraron usuarios que coincidan con tu búsqueda</span>
+      </p>
+      <p class="subtitle is-6">
+        <span lang="en">Try a different search term or filter</span>
+        <span lang="es">Intenta con un término de búsqueda o filtro diferente</span>
+      </p>
+    </div>
+    <% } else { %>
+    <div class="notification">
+      <p class="title is-4">
+        <span lang="en">No users found for <%= username %></span>
+        <span lang="es">No se encontraron usuarios para <%= username %></span>
+      </p>
+      <p class="subtitle is-6">
+        <span lang="en">Either the user does not exist or has no followers/following</span>
+        <span lang="es">O el usuario no existe o no tiene seguidores/siguiendo</span>
+      </p>
+    </div>
+    <% } %>
+    <% } else { %>
+
+    <% for (const user of users) { %>
+    <!-- Start of user card -->
+    <%- include('../cards/user', { viewType, user }) %>
+    <!-- End of user card -->
+    <% } %>
+
+    <% } %>
+  </div>
+</section>
+
+<!-- Pagination -->
+<div class="container">
+  <div class="flex-container" id="pagination-container">
+    <% if (paginateControl.html) { %>
+    <%- paginateControl.html %>
+    <% } %>
+  </div>
+</div>

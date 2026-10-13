@@ -1,0 +1,257 @@
+<% if (typeof isHelpModal === 'undefined') { %>
+    <% var isHelpModal = false %>
+<% } %>
+
+<% if (!isHelpModal) { %>
+    <!-- Modify title in meta tag -->
+    <script class="title-metadata-js" nonce="<%=nonce%>">
+        document.title = "From Notes | WiseSloth.open";
+    </script>
+
+    <!-- Include hero header -->
+    <% const heroTitleEn = "From Notes or Text" %>
+    <% const heroTitleEs = "Desde Apuntes o Texto" %>
+    <% const heroSubtitleEn = "" %>
+    <% const heroSubtitleEs = "" %>
+    <% const containerId = "" %>
+    <%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+<% } %>
+
+<div class="container">
+    <div class="section">
+        <h1 class="title is-2">
+            <span lang="en">How to create a test from notes or text</span>
+            <span lang="es">Cómo crear un test a partir de apuntes o texto</span>
+        </h1>
+        <h2 class="subtitle is-4">
+            <span lang="en">Test your knowledge about any subject by creating interactive quizzes from your notes or text. Share them with friends / students, randomize questions and options, and compete on the leaderboard.</span>
+            <span lang="es">Pon a prueba tus conocimientos sobre cualquier tema creando tests interactivos a partir de tus apuntes o texto. Compártelos con amigos / estudiantes, ordena aleatoriamente preguntas y opciones, y compite en la clasificación.</span>
+        </h2>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">What do you need to get started?</span>
+                <span lang="es">¿Qué necesitas para empezar?</span>
+            </h1>
+        </div>
+        <br>
+
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-8">
+                <h2 class="title is-3">
+                    <span lang="en">Notes or Text in PDF or plain text format</span>
+                    <span lang="es">Apuntes o Texto en formato PDF o texto plano</span>
+                </h2>
+
+                <h2 class="title is-4">
+                    <span lang="en">Tip 1: Use an OCR tool</span>
+                    <span lang="es">Consejo 1: Usa una herramienta OCR</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">If the notes or text are in a physical format, use an OCR (Optical Character Recognition) tool to convert them into digital format. This will make it easier to copy and paste the content into the input area.</span>
+                    <span lang="es">Si los apuntes o texto están en formato físico, utiliza una herramienta OCR (Reconocimiento Óptico de Caracteres) para convertirlos en formato digital. Esto facilitará copiar y pegar el contenido en el área de entrada.</span>
+                </p>
+                <br>
+                <h2 class="title is-4">
+                    <span lang="en">Tip 2: Avoid including unnecessary information</span>
+                    <span lang="es">Consejo 2: Evita incluir información innecesaria</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Try choosing the PDF pages or pasting the text that contains the content the questions should ask about. Avoid including irrelevant information for the quiz.</span>
+                    <span lang="es">Intenta seleccionar las páginas del PDF o pegar el texto que contenga el contenido sobre el que deberían preguntar las preguntas. Evita incluir información irrelevante para el test.</span>
+                </p>
+                <br>
+                <h2 class="title is-4">
+                    <span lang="en">Tip 3: You can copy text from Wikipedia</span>
+                    <span lang="es">Consejo 3: Puedes copiar texto de Wikipedia</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">If you don't have notes or text available, you can copy text from Wikipedia or other online sources to create a quiz.</span>
+                    <span lang="es">Si no tienes apuntes o texto disponible, puedes copiar texto de Wikipedia u otras fuentes en línea para crear un test.</span>
+                </p>
+            </div>
+            <div class="column is-4">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img class="preview-image" src="/images/notes-or-text-example.png" alt="OCR tool" loading="lazy">
+                        </figure>
+                    </div>
+                    <div class="card-content has-text-centered">
+                        <h3 class="title is-4">
+                            <span lang="en">Example - Notes or text</span>
+                            <span lang="es">Ejemplo - Apuntes o texto</span>
+                        </h3>
+                        <h3 class="subtitle is-6">
+                            <span lang="en">Content from a Wikipedia article about Aristotle</span>
+                            <span lang="es">Contenido de un artículo de Wikipedia sobre Aristóteles</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">You are ready to create your interactive quiz!</span>
+                <span lang="es">¡Estás listo para crear tu test interactivo!</span>
+            </h1>
+        </div>
+        <br>
+
+
+        <h2 class="title is-3 has-text-centered">
+            <span lang="en">From a PDF file</span>
+            <span lang="es">Desde un archivo PDF</span>
+        </h2>
+        <br>
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-5">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img class="preview-image" src="/images/upload-pdf-from-notes-or-text.png" alt="Upload PDF" loading="lazy">
+                        </figure>
+                    </div>
+                    <div class="card-content has-text-centered">
+                        <h3 class="title is-4">
+                            <span lang="en">Screenshot - From PDF</span>
+                            <span lang="es">Screenshot - Desde PDF</span>
+                        </h3>
+                        <h3 class="subtitle is-6">
+                            <span lang="en">Select the pages to ask about</span>
+                            <span lang="es">Selecciona las páginas sobre las que preguntar</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-7">
+                <h2 class="title is-4">
+                    <span lang="en">Step 1a: Upload the PDF file</span>
+                    <span lang="es">Paso 1a: Sube el archivo PDF</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Click on the "Upload PDF" button and select the PDF file from your computer, or drag and drop it into the upload area.</span>
+                    <span lang="es">Haz clic en el botón "Subir PDF" y selecciona el archivo PDF de tu ordenador, o arrástralo y suéltalo en el área de subida.</span>
+                </p>
+                <br>
+
+                <h2 class="title is-4">
+                    <span lang="en">Step 1b: Select the pages to ask about</span>
+                    <span lang="es">Paso 1b: Selecciona las páginas sobre las que preguntar</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Choose the pages with the content you want to ask about. You can select multiple pages at once, and preview the pages to make sure you are selecting the right ones.</span>
+                    <span lang="es">Elige las páginas con el contenido sobre el que quieres preguntar. Puedes seleccionar varias páginas a la vez, y previsualizar las páginas para asegurarte de que estás seleccionando las correctas.</span>
+                </p>
+            </div>
+        </div>
+        <br>
+
+        <h2 class="title is-3 has-text-centered">
+            <span lang="en">From plain text</span>
+            <span lang="es">Desde texto plano</span>
+        </h2>
+        <br>
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-7">
+                <h2 class="title is-4">
+                    <span lang="en">Step 1: Paste the content you want to ask about</span>
+                    <span lang="es">Paso 1: Pega el contenido sobre el que quieres preguntar</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Copy the content you want to ask about from your notes or text, and paste it into the input area. Ideas: content from a Wikipedia article, a textbook, or your own notes.</span>
+                    <span lang="es">Copia el contenido sobre el que quieres preguntar de tus apuntes o texto, y pégalo en el área de entrada. Ideas: contenido de un artículo de Wikipedia, un libro de texto, o tus propios apuntes.</span>
+                </p>
+            </div>
+            <div class="column is-5">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img class="preview-image" src="/images/paste-plain-text-from-notes-or-text.png" alt="Paste plain text" loading="lazy">
+                        </figure>
+                    </div>
+                    <div class="card-content has-text-centered">
+                        <h3 class="title is-4">
+                            <span lang="en">Screenshot - From plain text</span>
+                            <span lang="es">Screenshot - Desde texto plano</span>
+                        </h3>
+                        <h3 class="subtitle is-6">
+                            <span lang="en">Paste content you want to ask about</span>
+                            <span lang="es">Pega el contenido sobre el que quieres preguntar</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <h2 class="title is-3 has-text-centered">
+            <span lang="en">Provide some more details to tailor the test to your needs</span>
+            <span lang="es">Proporciona más detalles para adaptar el test a tus necesidades</span>
+        </h2>
+        <br>
+        <div class="columns mx-0 is-vcentered">
+            <div class="column">
+                <h2 class="title is-4">
+                    <span lang="en">Step 2: Select number of questions and options</span>
+                    <span lang="es">Paso 2: Selecciona el número de preguntas y opciones</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Choose the number of questions you want to include in the quiz, and the number of options for each question.</span>
+                    <span lang="es">Elige el número de preguntas que quieres incluir en el test, y el número de opciones para cada pregunta.</span>
+                </p>
+                <br>
+
+                <h2 class="title is-4">
+                    <span lang="en">Step 3: Provide extra-guidelines on how to create the quiz</span>
+                    <span lang="es">Paso 3: Proporciona instrucciones adicionales sobre cómo crear el test</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">You can provide additional guidelines on how to create the quiz, such as the type of questions (multiple choice, true or false...), the difficulty level, or any specific instructions for the quiz takers.</span>
+                    <span lang="es">Puedes proporcionar instrucciones adicionales sobre cómo crear el test, como el tipo de preguntas (opción múltiple, verdadero o falso...), el nivel de dificultad, o cualquier instrucción específica para los que realicen el test.</span>
+                </p>
+                <br>
+
+                <h2 class="title is-4">
+                    <span lang="en">Step 4: Create the quiz</span>
+                    <span lang="es">Paso 4: Crea el test</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Click on the button to generate the quiz from the selected pages. WiseSloth.open will extract the questions and answers from the pages and create the interactive quiz for you. This might take a few seconds depending on the number of questions.</span>
+                    <span lang="es">Haz clic en el botón para generar el test a partir de las páginas seleccionadas. WiseSloth.open extraerá las preguntas y respuestas de las páginas y creará el test interactivo para ti. Esto puede tardar unos segundos dependiendo del número de preguntas.</span>
+                </p>
+                <br>
+
+                <h2 class="title is-4">
+                    <span lang="en">Step 5: Review and edit the quiz</span>
+                    <span lang="es">Paso 5: Revisa y edita el test</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Review the quiz to make sure all questions and answers are correct. You can edit the questions, answers, and options if needed. Once you are satisfied with the quiz, you can save it and share it with others.</span>
+                    <span lang="es">Revisa el test para asegurarte de que todas las preguntas y respuestas son correctas. Puedes editar las preguntas, respuestas y opciones si es necesario. Una vez que estés satisfecho con el test, puedes guardarlo y compartirlo con otros.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <% if (!isHelpModal) { %>
+        <div class="section">
+            <div class="box">
+                <h1 class="title is-3 has-text-centered">
+                    <span lang="en">Create an interactive quiz from your notes or text now!</span>
+                    <span lang="es">¡Crea un test interactivo a partir de tus apuntes o texto ahora!</span>
+                </h1>
+                <br>
+                <a class="button is-link is-rounded is-large is-fullwidth" href="/tests/new?type=notes">
+                    <span lang="en">Create Quiz</span>
+                    <span lang="es">Crear Test</span>
+                </a>
+            </div>
+        </div>
+    <% } %>
+</div>

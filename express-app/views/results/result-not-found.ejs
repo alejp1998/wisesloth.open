@@ -1,0 +1,43 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Result Not Found | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Result not found page for WiseSloth.open.");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Página de resultado no encontrado para WiseSloth.open.");
+
+  // Set as noindex
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+</script>
+
+<!-- Main content -->
+<div class="hero is-light is-fullheight">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <p class="title is-1">
+            <span lang="en">404 Not Found 😕</span>
+            <span lang="es">404 No Encontrado 😕</span>
+          </p>
+          <p class="subtitle is-3">
+            <span lang="en">Oops! The result you're looking for doesn't exist. 🚫</span>
+            <span lang="es">¡Ups! El resultado que buscas no existe. 🚫</span>
+          </p>
+          <p class="is-size-5">
+            <span lang="en">Maybe you took a wrong turn? 🛣️</span>
+            <span lang="es">¿Quizás tomaste un desvío equivocado? 🛣️</span>
+          </p>
+          <p class="is-size-5">
+            <span lang="en">The result was either deleted 🗑️ or didn't exist in the first place. 💨</span>
+            <span lang="es">El resultado fue eliminado 🗑️ o nunca existió en primer lugar. 💨</span>
+          </p>
+          <p class="is-size-5">
+            <span lang="en">Let's get you back <a href="/results">home 🏠</a>.</span>
+            <span lang="es">Regresemos a <a href="/results">casa 🏠</a>.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

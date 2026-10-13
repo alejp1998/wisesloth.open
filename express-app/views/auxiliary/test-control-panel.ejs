@@ -1,0 +1,179 @@
+<% const isControlPanelAuthor = session.user && test.author && test.author.username === session.user.username; %>
+<% const contextHiddenClass = test.context ? "" : "is-hidden" %>
+<div id="control-panel" class="leftbar">
+  <!-- Collapse button for desktop -->
+  <div class="control-panel-collapse-btn" id="control-panel-collapse-btn" title="Toggle panel">
+    <i class="fas fa-chevron-left"></i>
+  </div>
+  <div class="box omitted">
+    <div id="leftbar-menu">
+      <p class="title is-5 has-text-centered" style="margin-bottom: 5px;">
+        <span lang="en">Control Panel</span>
+        <span lang="es">Panel de Control</span>
+      </p>
+    </div>
+
+    <div id="bottombar-menu">
+      <div class="flex-container">
+        <div id="control-panel-toggle" class="button is-rounded is-small omitted">
+          <span lang="en">Control Panel</span>
+          <span lang="es">Panel de Control</span>
+          <span class="icon is-large"><i class="fas fa-angle-down"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="control-panel-visible-content">
+      <% if(viewType === "TRY") { %>
+      <div class="grid">
+        <div class="cell">
+          <input class="is-hidden" type="text" name="nSeconds" id="nSeconds"/>
+          <div id="stopwatch" class="button is-dark is-rounded is-fullwidth">
+            <span class="icon"><i class="fas fa-stopwatch"></i></span>
+            <span id="stopwatch-value">0s</span>
+          </div>
+        </div>
+        <% if (!isSequential) { %>
+        <div class="cell">
+          <div class="confirm-submit-button button is-primary is-rounded is-fullwidth" data-result-id="<%=resultId%>" title="Submit answers and finish test">
+            <span class="icon"><i class="fas fa-flag-checkered"></i></span>
+            <span lang="en">Finish</span>
+            <span lang="es">Terminar</span>
+          </div>
+        </div>
+        <% } else { %>
+        <div class="cell">
+          <div class="confirm-submit-button button is-link is-rounded is-fullwidth" data-result-id="<%=resultId%>" title="Submit answers and finish test">
+            <span class="icon"><i class="fas fa-flag-checkered"></i></span>
+            <span lang="en">Finish</span>
+            <span lang="es">Terminar</span>
+          </div>
+        </div>
+        <% } %>
+      </div>
+      <% } else if (viewType === "EDIT") { %>
+      <div class="grid">
+        <button class="save-button button is-danger is-rounded is-fullwidth" disabled>
+          <span class="icon is-small"><i class="fas fa-save"></i></span>
+          <span lang="en">SAVE</span>
+          <span lang="es">GUARDAR</span>
+        </button>
+        <button class="save-view-button button is-link is-rounded is-fullwidth">
+          <span class="icon is-small"><i class="fas fa-eye"></i></span>
+          <span lang="en">VIEW</span>
+          <span lang="es">VER</span>
+        </button>
+      </div>
+      <% } else if(viewType === "RESULT") { %>
+      <div class="grid">
+        <% if (test.type !== 'personality') { %>
+        <div class="cell">
+        <% if (test.hideAnswers && (!isControlPanelAuthor && !isAdmin)) { %>
+          <div class="button is-danger is-rounded is-fullwidth" disabled>
+            <span lang="en">Answers</span>
+            <span lang="es">Respuestas</span>
+            <span class="icon"><i class="fas fa-eye-slash"></i></span>
+          </div>
+          <% } else { %>
+          <div class="button is-link is-light is-rounded is-fullwidth toggle-correct-answers-switch" title="Show correct answers">
+            <span lang="en">Show answers</span>
+            <span lang="es">Ver respuestas</span>
+            <span class="icon has-color-link"><i class="fas fa-toggle-off"></i></span>
+          </div>
+          <% } %>
+        </div>
+        <% } %>
+        <div class="cell">
+          <div id="stopwatch" class="button is-dark is-rounded is-fullwidth">
+            <!-- Include stopwatch -->
+            <%- include('stopwatch', {nSeconds, viewType}) %>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+    <div id="control-panel-content" style="margin-top: 10px;">
+      <% if(viewType === "TRY") { %>
+      <div class="field">
+        <div class="cancel-try-button button is-warning is-rounded is-fullwidth" title="Stop taking the test and return to the test page">
+          <span class="icon"><i class="fas fa-door-open"></i></span>
+          <span lang="en">Return</span>
+          <span lang="es">Volver</span>
+        </div>
+      </div>
+      <% } else if(viewType === "RESULT") { %>
+      <div class="field">
+        <a class="button is-info is-rounded is-fullwidth" href="/tests/<%=test.id%>" title="Go back to the test page">
+          <span class="icon"><i class="fas fa-eye"></i></span>
+          <span lang="en">Back</span>
+          <span lang="es">Volver</span>
+        </a>
+      </div>
+      <div class="field">
+        <button class="button is-primary is-rounded is-fullwidth open-modal-try-button" data-test-id="<%=test.id%>" data-test-type="<%=test.type%>" data-test-name="<%=test.name%>" data-n-quizzes="<%=test.quizzes.length%>" data-test-author="<%=test.author ? test.author.username : 'Anonymous'%>" title="Try the test again">
+          <span class="icon"><i class="fas fa-undo-alt"></i></span>
+          <span lang="en">Retry</span>
+          <span lang="es">Reintentar</span>
+        </button>
+      </div>
+      <% } else if(viewType === "EDIT") { %>
+      <div class="field">
+        <button class="cancel-button button is-warning is-rounded is-fullwidth">
+          <span class="icon is-small"><i class="fas fa-undo-alt"></i></span>
+          <span lang="en">CANCEL</span>
+          <span lang="es">CANCELAR</span>
+        </button>
+      </div>
+      <% } %>
+
+      <% if (viewType === "TRY" && isSequential) { %>
+      <!-- No quiz links in sequential mode -->
+      <% } else { %>
+      <div class="quiz-links flex-container">
+        <% if (viewType === "SHOW") { %>
+          <% for (var i in test.quizzes) { %>
+          <% var quiz = test.quizzes[i] %>
+            <div class="flex-item-quiz-link scroll-to-quiz-button" id="quiz-link-<%= quiz.id %>" data-quiz-id="<%= quiz.id %>"><%= quiz.number %></div>
+          <% } %>
+        <% } else if (viewType === "EDIT") { %>
+          <% function intStrToCharStr(inputString) {
+            const numbers = inputString.split(",");
+            const letters = numbers.map(number => String.fromCharCode(parseInt(number) + 64));
+            return letters.join(",");
+          } %>
+          <% for (var i in test.quizzes) { %>
+          <% var quiz = test.quizzes[i] %>
+            <div class="flex-item-quiz-link scroll-to-quiz-button" id="quiz-link-<%= quiz.id %>" data-quiz-id="<%= quiz.id %>"><b><%= quiz.number %></b>.<%=intStrToCharStr(quiz.correct_opts)%></div>
+          <% } %>
+        <% } else if (viewType === "TRY") { %>
+          <% for (const i in tryConfig.randomQuizIds) { %>
+          <% const randomQuizId = tryConfig.randomQuizIds[i]; %>
+          <% var quiz = test.quizzes.find(quiz => quiz.id === randomQuizId); %>
+            <div class="flex-item-quiz-link scroll-to-quiz-button" id="quiz-link-<%= quiz.id %>" data-quiz-id="<%= quiz.id %>"><%= Number(i)+1 %></div>
+          <% } %>
+        <% } else if (viewType === "RESULT") { %>
+          <% if (quizResults && quizResults.length > 0) { %>
+          <% for (const quizResult of quizResults) { %>
+            <% const quizId = quizResult.quizId; %>
+            <% var quiz = test.quizzes.find(quiz => quiz.id === quizId); %>
+            <% if (quiz) { %>
+            <% let optClass = ''; %>
+            <% if (test.type === 'knowledge') { %>
+            <% optClass = quizResult.result %>
+            <% } else if (test.type === 'personality') { %>
+            <% const chosenOpts = quizResult.chosenOpts.split(','); %>
+            <% optClass = `pers${chosenOpts[0]}-border`; %>
+            <% } %>
+            <div class="flex-item-quiz-link <%= optClass %> scroll-to-quiz-button" id="quiz-link-<%= quizResult.quizId %>" data-quiz-id="<%= quizResult.quizId %>"><%= quizResult.number %></div>
+            <% } %>
+          <% } %>
+          <% } %>
+        <% } %>
+      </div>
+      <% } %>
+
+    </div>
+
+  </div>
+</div>

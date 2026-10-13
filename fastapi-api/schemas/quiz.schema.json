@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "quiz.schema.json",
+  "title": "Quiz Schema",
+  "description": "Schema for quiz generation output (old_exam, notes, instructions endpoints)",
+  "type": "object",
+  "required": ["lang", "name", "topic", "desc", "quizzes"],
+  "properties": {
+    "lang": {
+      "type": "string",
+      "description": "ISO 639-1 language code (e.g., 'en', 'es', 'fr')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Concise test title, max 5 words, no 'test/quiz/exam' terms"
+    },
+    "topic": {
+      "type": "string",
+      "description": "2-4 hyphenated lowercase nouns, general to specific (e.g., 'math-algebra-quadratic')"
+    },
+    "desc": {
+      "type": "string",
+      "description": "30-50 word description summarizing the test content"
+    },
+    "quizzes": {
+      "type": "array",
+      "description": "Array of quiz question objects",
+      "items": {
+        "type": "object",
+        "required": ["q", "a", "b", "exp", "correctOpts"],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "The question text. Use MathJax ($...$) for math expressions."
+          },
+          "a": {
+            "type": "string",
+            "description": "Option A text"
+          },
+          "b": {
+            "type": "string",
+            "description": "Option B text"
+          },
+          "c": {
+            "type": "string",
+            "description": "Option C text (optional)"
+          },
+          "d": {
+            "type": "string",
+            "description": "Option D text (optional)"
+          },
+          "e": {
+            "type": "string",
+            "description": "Option E text (optional)"
+          },
+          "exp": {
+            "type": "string",
+            "description": "50-80 word explanation justifying the correct answer(s) and why others are incorrect"
+          },
+          "correctOpts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["a", "b", "c", "d", "e"]
+            },
+            "description": "Array of correct option letters"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

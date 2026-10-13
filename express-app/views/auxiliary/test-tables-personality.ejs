@@ -1,0 +1,154 @@
+
+<p class="title is-4 has-text-centered">
+    <span lang="en">Statistics</span>
+    <span lang="es">Estadísticas</span>
+  </p>
+  <div class="tabs is-boxed is-medium is-centered is-fullwidth">
+    <ul>
+      <li id="tab-toggle-totalTab" class="tab is-active">
+        <a>
+          <span class="icon is-small"><i class="fas fa-users" aria-hidden="true"></i></span>
+          <span>
+            <p class="is-size-6">
+              <span lang="en">All</span>
+              <span lang="es">Todos</span>
+            </p>
+          </span>
+        </a>
+      </li>
+      <li id="tab-toggle-userTab" class="tab">
+        <a>
+          <span class="icon is-small"><i class="fas fa-user-astronaut" aria-hidden="true"></i></span>
+          <span>
+            <p class="is-size-6">
+              <span lang="en">Mine</span>
+              <span lang="es">Míos</span>
+            </p>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <% function correctPercentage(score,nQuestions) { return Math.round((score/nQuestions)*100); } %>
+  <% function getWeigthedScore(nSeconds,nQuestions,score) { return 100000*(score/nQuestions) + 50*nQuestions - nSeconds; } %>
+  <div id="tab-content-totalTab" class="tab-content">
+    <% if (test.latestResults.length > 0) { %>
+
+    <% var personalitiesCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }; %>
+    <% for (const key of Object.keys(personalitiesCount)) { %>
+    <% personalitiesCount[key] = test.stats['tn'+key]; %>
+    <% } %>
+    <% const countTotal = Object.values(personalitiesCount).reduce((sum, value) => sum + value, 0); %>
+    <% const maxCount = Math.max(...Object.values(personalitiesCount)); %>
+
+    <div id="percentages-bar-total" class="percentages-bar">
+      <% for (const key of Object.keys(personalitiesCount)) { %>
+      <% const percentage = (personalitiesCount[key] / countTotal) * 100; %>
+      <div style="width: <%= percentage.toFixed(0) %>%;" class="pers<%= key %>-bg">
+        <%= percentage.toFixed(0) %>%
+      </div>
+      <% } %>
+    </div>
+    <br>
+
+    <div class="columns is-1 is-vcentered">
+    <% for (const key of [1, 2, 3, 4, 5, 6]) { %>
+    <% const persName = test.personalities[key] %>
+    <% const persDesc = test.personalitiesDesc[key] %>
+    <% const persCount = personalitiesCount[key] %>
+    <% const persPercentage = (persCount / countTotal) * 100; %>
+    <% const borderClass = `pers${key}-border`; %>
+
+    <% if (persName) { %>
+    <div class="column">
+      <div class="box <%=borderClass%>">
+        <div class="columns is-vcentered">
+          <div class="column is-narrow">
+            <p class="title is-4"><%=persPercentage.toFixed(0)%>%</p>
+            <p class="subtitle is-4"><%=persCount%>/<%=countTotal%></p>
+          </div>
+          <div class="column has-text-right">
+            <b class="is-size-5"><%=persName%></b>
+            <% if (persDesc && (persCount === maxCount)) { %>
+            <!-- <p class="subtitle is-5"><%=persDesc%></p> -->
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+    <% } %>
+    </div>
+
+    <% } else { %>
+    <p class="has-text-centered">
+      <span lang="en">No results for this test yet.</span>
+      <span lang="es">No hay resultados para este test aún.</span>
+    </p>
+    <% } %>
+  </div>
+
+  <div id="tab-content-userTab" class="tab-content is-hidden">
+    <% if (session.user) { %>
+    <% if (test.userResults.length > 0) { %>
+
+    <% var personalitiesCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }; %>
+    <% for (const key of Object.keys(personalitiesCount)) { %>
+    <% personalitiesCount[key] = test.stats['un'+key]; %>
+    <% } %>
+    <% const countTotal = Object.values(personalitiesCount).reduce((sum, value) => sum + value, 0); %>
+    <% const maxCount = Math.max(...Object.values(personalitiesCount)); %>
+
+    <div id="percentages-bar-user" class="percentages-bar">
+      <% for (const key of Object.keys(personalitiesCount)) { %>
+      <% const percentage = (personalitiesCount[key] / countTotal) * 100; %>
+      <div style="width: <%= percentage.toFixed(0) %>%;" class="pers<%= key %>-bg">
+        <%= percentage.toFixed(0) %>%
+      </div>
+      <% } %>
+    </div>
+    <br>
+
+    <div class="columns is-1 is-vcentered">
+    <% for (const key of [1, 2, 3, 4, 5, 6]) { %>
+    <% const persName = test.personalities[key] %>
+    <% const persDesc = test.personalitiesDesc[key] %>
+    <% const persCount = personalitiesCount[key] %>
+    <% const persPercentage = (persCount / countTotal) * 100; %>
+    <% const borderClass = `pers${key}-border`; %>
+
+    <% if (persName) { %>
+    <div class="column">
+      <div class="box <%=borderClass%>">
+        <div class="columns is-vcentered">
+          <div class="column is-narrow">
+            <p class="title is-4"><%=persPercentage.toFixed(0)%>%</p>
+            <p class="subtitle is-4"><%=persCount%>/<%=countTotal%></p>
+          </div>
+          <div class="column has-text-right">
+            <b class="is-size-5"><%=persName%></b>
+            <% if (persDesc && (persCount === maxCount)) { %>
+            <!-- <p class="subtitle is-5"><%=persDesc%></p> -->
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+    <% } %>
+    </div>
+
+    <% } else { %>
+    <p class="has-text-centered">
+      <span lang="en">You haven't tried this test yet.</span>
+      <span lang="es">Aún no has intentado este test.</span>
+    </p>
+    <% } %>
+    <% } else { %>
+    <p class="has-text-centered">
+      <span lang="en">Log in to see your results.</span>
+      <span lang="es">Inicia sesión para ver tus resultados.</span>
+    </p>
+    <% } %>
+  </div>

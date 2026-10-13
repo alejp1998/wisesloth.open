@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "required": ["q", "a", "b", "exp", "correctOpts"],
+  "properties": {
+    "q": {
+      "type": "string",
+      "description": "The (possibly edited) question text. Use MathJax ($...$) for math expressions."
+    },
+    "a": {
+      "type": "string",
+      "description": "Option A text"
+    },
+    "b": {
+      "type": "string",
+      "description": "Option B text"
+    },
+    "c": {
+      "type": "string",
+      "description": "Option C text (optional)"
+    },
+    "d": {
+      "type": "string",
+      "description": "Option D text (optional)"
+    },
+    "e": {
+      "type": "string",
+      "description": "Option E text (optional)"
+    },
+    "exp": {
+      "type": "string",
+      "description": "Explanation justifying the correct answer(s) and why others are incorrect"
+    },
+    "correctOpts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["a", "b", "c", "d", "e"]
+      },
+      "description": "Array of correct option letters"
+    }
+  },
+  "additionalProperties": false
+}

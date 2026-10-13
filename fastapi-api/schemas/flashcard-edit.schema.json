@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "required": ["front", "back"],
+  "properties": {
+    "front": {
+      "type": "string",
+      "description": "The (possibly edited) front side of the flashcard: a term, concept, question or prompt. Keep it short (max ~25 words)."
+    },
+    "back": {
+      "type": "string",
+      "description": "The (possibly edited) back side of the flashcard: the definition, answer or explanation. Concise but complete (max ~40 words)."
+    }
+  },
+  "additionalProperties": false
+}

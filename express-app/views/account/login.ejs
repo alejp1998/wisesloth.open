@@ -1,0 +1,22 @@
+<section class="section"><div class="container" style="max-width:480px">
+  <h1 class="title">Sign in to WiseSloth.open</h1>
+  <% if (error) { %><p class="notification"><%= error %></p><% } %>
+  <form action="/login" method="post">
+    <label class="label" for="username">Username</label>
+    <input class="input mb-3" id="username" name="username" autocomplete="username" required maxlength="32">
+    <label class="label" for="password">Password</label>
+    <input class="input mb-3" id="password" name="password" type="password" autocomplete="current-password" required maxlength="256">
+    <label class="checkbox mb-3"><input type="checkbox" name="rememberMe"> Remember me for seven days</label>
+    <button class="button is-link is-fullwidth" type="submit">Sign in</button>
+  </form>
+  <% if (allowRegistration) { %>
+  <h2 class="title is-5 mt-5">Create an account</h2>
+  <form action="/register" method="post">
+    <label class="label" for="new-username">Username</label>
+    <input class="input mb-3" id="new-username" name="username" autocomplete="username" required minlength="3" maxlength="32" pattern="[a-z0-9][a-z0-9-]{1,30}[a-z0-9]">
+    <label class="label" for="new-password">Password (at least 12 characters)</label>
+    <input class="input mb-3" id="new-password" name="password" type="password" autocomplete="new-password" required minlength="12" maxlength="256">
+    <button class="button" type="submit">Create account</button>
+  </form>
+  <% } else { %><p class="mt-4">Ask this instance's host for an account.</p><% } %>
+</div></section>

@@ -1,0 +1,37 @@
+# Configuration for the fastapi-api Python service.
+# Ruff linting / formatting config (used by pre-commit and CI).
+[project]
+name = "wisesloth-fastapi"
+version = "1.0.0"
+description = "WiseSloth.open AI API server (FastAPI + LiteLLM)"
+requires-python = ">=3.10"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+src = ["fastapi-api"]
+exclude = [
+    "fastapi-api/completion_logs",
+    "fastapi-api/error_logs",
+    "fastapi-api/mykeys",
+]
+
+[tool.ruff.lint]
+# Curated rule set: pycodestyle + pyflakes + isort + pyupgrade + bugbear + ruff-specific.
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (undefined names, unused imports)
+    "I",   # isort (import sorting)
+    "UP",  # pyupgrade (modern syntax)
+    "B",   # flake8-bugbear
+    "RUF", # ruff-specific rules
+]
+ignore = [
+    # FastAPI idiom: Depends()/Query()/Body() in default arguments.
+    "B008",
+    # Mutable class-level defaults are deliberate in these config/data classes.
+    "RUF012",
+    # cached_property on request-scoped instances is intentional here.
+    "B019",
+]

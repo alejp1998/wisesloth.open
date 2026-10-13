@@ -1,0 +1,74 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Error | WiseSloth.open";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Error page for WiseSloth.open.");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Página de error para WiseSloth.open.");
+
+  // Set as noindex
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+</script>
+
+<!-- Include hero header -->
+<% const heroTitleEn = "Chaos" %>
+<% const heroTitleEs = "Caos" %>
+<% const heroSubtitleEn = "Oops, I'm sorry for that :/" %>
+<% const heroSubtitleEs = "Vaya, lo siento por eso :/" %>
+<% const containerId = "" %>
+<%- include('auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+
+<%
+  const httpStatusExplanations = {
+    // Informational 1xx
+    100: "Continue: Server received the initial part of the request.",
+    101: "Switching Protocols: Server agrees to switch protocols as requested.",
+
+    // Success 2xx
+    200: "OK: Request succeeded.",
+    201: "Created: Request succeeded, and a new resource was created.",
+    204: "No Content: Request succeeded, but no content is returned.",
+
+    // Redirection 3xx
+    301: "Moved Permanently: Resource has permanently moved to a new location.",
+    302: "Found (Moved Temporarily): Resource temporarily moved to a new location.",
+    304: "Not Modified: Resource hasn't changed since the last request.",
+
+    // Client Error 4xx
+    400: "Bad Request: Server couldn't understand the request due to invalid syntax.",
+    401: "Unauthorized: Authentication is required.",
+    403: "Forbidden: Server understood the request but refuses to authorize it.",
+    404: "Not Found: The requested resource doesn't exist.",
+
+    // Server Error 5xx
+    500: "Internal Server Error: Generic error occurred on the server.",
+    502: "Bad Gateway: Server received an invalid response from an upstream server.",
+    503: "Service Unavailable: Server is temporarily unavailable (overloaded or down)."
+  };
+%>
+
+<% error.status = error.status ? error.status : 500 %>
+<div class="container">
+  <div class="error-number has-text-centered">
+    <%= error.status %>
+  </div>
+  <div class="error-message has-text-centered">
+    <p style="color: red;"><%= httpStatusExplanations[error.status ]  %></p>
+  </div>
+  <% if (isAdmin && process.env.NODE_ENV !== 'production') { %>
+  <div class="error-stack">
+    <pre><%= error.stack %></pre>
+  </div>
+  <% } else { %>
+  <div class="notification has-text-centered">
+    <p class="title is-4">
+      <span lang="en">There was an error loading the page.</span>
+      <span lang="es">Hubo un error al cargar la página.</span>
+    </p>
+    <p>
+      <span lang="en">You either dont have permission to view this page or the page doesn't exist.</span>
+      <span lang="es">O no tienes permiso para ver esta página o la página no existe.</span>
+    </p>
+  </div>
+  <% } %>
+</div>

@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "personality.schema.json",
+  "title": "Personality Test Schema",
+  "description": "Schema for personality test generation output",
+  "type": "object",
+  "required": ["lang", "name", "topic", "desc", "personalities", "personalities_desc", "quizzes"],
+  "properties": {
+    "lang": {
+      "type": "string",
+      "description": "ISO 639-1 language code",
+      "pattern": "^[a-z]{2}$",
+      "examples": ["en", "es", "fr"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Intriguing personalized question, max 10 words",
+      "maxLength": 80,
+      "examples": ["What's Your Inner Compass?", "Which hidden aspect of your personality drives you?"]
+    },
+    "topic": {
+      "type": "string",
+      "description": "2-4 hyphenated lowercase nouns (e.g., 'self-discovery-personality-archetypes')",
+      "pattern": "^[a-z]+(-[a-z]+){1,3}$",
+      "examples": ["self-discovery-personality-archetypes", "human-nature-identity"]
+    },
+    "desc": {
+      "type": "string",
+      "description": "30-50 word overview of the personality test journey",
+      "minLength": 100,
+      "maxLength": 400
+    },
+    "personalities": {
+      "type": "object",
+      "description": "Object with keys '1' to '6' mapping to personality names",
+      "properties": {
+        "1": { "type": "string" },
+        "2": { "type": "string" },
+        "3": { "type": "string" },
+        "4": { "type": "string" },
+        "5": { "type": "string" },
+        "6": { "type": "string" }
+      },
+      "required": ["1", "2", "3", "4", "5", "6"],
+      "additionalProperties": false
+    },
+    "personalities_desc": {
+      "type": "object",
+      "description": "Object with keys '1' to '6' mapping to personality descriptions (max 40 words each)",
+      "properties": {
+        "1": { "type": "string", "maxLength": 300 },
+        "2": { "type": "string", "maxLength": 300 },
+        "3": { "type": "string", "maxLength": 300 },
+        "4": { "type": "string", "maxLength": 300 },
+        "5": { "type": "string", "maxLength": 300 },
+        "6": { "type": "string", "maxLength": 300 }
+      },
+      "required": ["1", "2", "3", "4", "5", "6"],
+      "additionalProperties": false
+    },
+    "quizzes": {
+      "type": "array",
+      "description": "Array of personality quiz question objects",
+      "items": {
+        "type": "object",
+        "required": ["q", "opt1", "opt2", "opt3"],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Creative, diverse question exploring scenarios, values, and decision-making"
+          },
+          "opt1": {
+            "type": "string",
+            "description": "Answer option 1 - subtly linked to a personality type"
+          },
+          "opt2": {
+            "type": "string",
+            "description": "Answer option 2 - subtly linked to a personality type"
+          },
+          "opt3": {
+            "type": "string",
+            "description": "Answer option 3 - subtly linked to a personality type"
+          },
+          "opt4": {
+            "type": "string",
+            "description": "Answer option 4 (optional) - subtly linked to a personality type"
+          },
+          "opt5": {
+            "type": "string",
+            "description": "Answer option 5 (optional) - subtly linked to a personality type"
+          },
+          "opt6": {
+            "type": "string",
+            "description": "Answer option 6 (optional) - subtly linked to a personality type"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,327 @@
+<!-- ============================================ -->
+<!-- FLASHCARDS EDIT PAGE                         -->
+<!-- Edit existing flashcards: modify front/back, -->
+<!-- add/delete cards, AI-edit individual cards   -->
+<!-- ============================================ -->
+
+<!-- ============================================ -->
+<!-- PAGE METADATA                                -->
+<!-- ============================================ -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Edit: <%=test.name%> | WiseSloth.open";
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content",
+    "Edit page for WiseSloth.open: modify flashcards, add/remove cards, and AI-edit individual cards in <%=test.name%>.");
+  if (metaRobots) metaRobots.setAttribute("content", "noindex");
+</script>
+
+<!-- ============================================ -->
+<!-- STATE INITIALIZATION                         -->
+<!-- ============================================ -->
+<%
+  const viewType = "EDIT";
+  const isAuthor = session.user && test.author && (session.user.id === test.author.id);
+  const hideQuiz = false;
+%>
+
+<script class="test-edit-js" data-n="0" nonce="<%=nonce%>">
+  // Initialize flashcard data on frontend
+  test = <%- safeJson(test) %>;
+  flashcards = <%- safeJson(test.flashcards || []) %>;
+
+  // Initialize tracking arrays
+  isFlashcardsEdited = false;
+  newFlashcardsIds = [];
+  deletedFlashcardsIds = [];
+</script>
+
+<!-- ============================================ -->
+<!-- PAGE INITIALIZATION SCRIPT                   -->
+<!-- ============================================ -->
+<script class="test-edit-js" data-n="100" nonce="<%=nonce%>">
+  // Initialize edit page when all scripts are loaded
+  (function initFlashcardsEditPage() {
+    const waitForScripts = () => {
+      if (isTestEditFlashcardsJSLoaded) {
+        addAllEditFlashcardsEventListeners();
+        isFlashcardsEditInitialized = true;
+      } else {
+        setTimeout(waitForScripts, 500);
+      }
+    };
+
+    if (!isFlashcardsEditInitialized) {
+      if (document.readyState === "complete") {
+        waitForScripts();
+      } else {
+        document.addEventListener("DOMContentLoaded", () => {
+          addAllEditFlashcardsEventListeners();
+          isFlashcardsEditInitialized = true;
+        });
+      }
+    } else {
+      addAllEditFlashcardsEventListeners();
+    }
+  })();
+</script>
+
+<!-- ============================================ -->
+<!-- MAIN CONTENT                                 -->
+<!-- ============================================ -->
+<br>
+<section id="test-container">
+
+  <!-- ---------------------------------------- -->
+  <!-- HELP NOTIFICATION                        -->
+  <!-- ---------------------------------------- -->
+  <div class="message is-warning">
+    <div class="message-header">
+      <p class="is-size-4">
+        <span lang="en">&#128064; Review and edit your flashcards &#9997;</span>
+        <span lang="es">&#128064; Revisa y edita tus tarjetas &#9997;</span>
+      </p>
+      <button class="delete" aria-label="delete"></button>
+    </div>
+    <div class="message-body">
+      <p class="is-size-6">
+        <span lang="en">Edit the front and back of each card directly.</span>
+        <span lang="es">Edita el frente y el reverso de cada tarjeta directamente.</span>
+      </p>
+      <p class="is-size-6">
+        <span lang="en">Use <i class="fas fa-magic has-text-info"></i> <b>Edit with AI</b> to change a single card by describing the edit you want.</span>
+        <span lang="es">Usa <i class="fas fa-magic has-text-info"></i> <b>Editar con IA</b> para cambiar una sola tarjeta describiendo la edición que quieres.</span>
+      </p>
+      <p class="is-size-6">
+        <b lang="en">Don't forget to save your changes! <i class="fas fa-save"></i></b>
+        <b lang="es">¡No olvides guardar tus cambios! <i class="fas fa-save"></i></b>
+      </p>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------- -->
+  <!-- TEST CARD                                -->
+  <!-- ---------------------------------------- -->
+  <div class="flex-container">
+    <%- include('../cards/test', { viewType, test }) %>
+  </div>
+
+  <!-- ---------------------------------------- -->
+  <!-- GENERAL AI EDIT                          -->
+  <!-- ---------------------------------------- -->
+  <%- include('../auxiliary/general-ai-edit', { test, isAuthor, isAdmin }) %>
+
+  <!-- ---------------------------------------- -->
+  <!-- SAVE AND VIEW CTA (Desktop only)         -->
+  <!-- ---------------------------------------- -->
+  <div class="box is-hidden-touch">
+    <div class="columns is-vcentered">
+      <div class="column has-text-centered">
+        <p class="title is-4">
+          <span lang="en">Ready? Save your changes and view the flashcards!</span>
+          <span lang="es">¿Listo? ¡Guarda tus cambios y ve las tarjetas!</span>
+        </p>
+      </div>
+      <div class="column has-text-centered">
+        <button class="save-view-button button is-link is-light is-medium is-rounded is-fullwidth">
+          <span class="icon is-small"><i class="fas fa-save"></i></span>
+          <span lang="en">SAVE AND VIEW</span>
+          <span lang="es">GUARDAR Y VER</span>
+          <span class="icon is-small"><i class="fas fa-eye"></i></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------- -->
+  <!-- FLASHCARDS LIST                          -->
+  <!-- ---------------------------------------- -->
+  <div id="flashcards-els">
+    <% for (const fc of test.flashcards) { %>
+    <div class="box flashcard-edit-card" id="flashcard-<%=fc.id%>" data-id="<%=fc.id%>" data-number="<%=fc.number%>">
+      <div class="columns is-vcentered">
+        <div class="column is-1 has-text-centered">
+          <span class="tag is-info is-medium flashcard-number"><%= fc.number %></span>
+        </div>
+        <div class="column">
+          <div class="field">
+            <label class="label">
+              <span lang="en">Front</span>
+              <span lang="es">Frente</span>
+            </label>
+            <div class="control">
+              <textarea class="textarea flashcard-front-input" rows="2"><%= fc.front %></textarea>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">
+              <span lang="en">Back</span>
+              <span lang="es">Reverso</span>
+            </label>
+            <div class="control">
+              <textarea class="textarea flashcard-back-input" rows="2"><%= fc.back %></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-small ai-generate-btn flashcard-ai-edit-button" data-id="<%=fc.id%>">
+            <span class="icon is-small"><i class="fas fa-magic"></i></span>
+            <span lang="en">Edit with AI</span>
+            <span lang="es">Editar con IA</span>
+          </button>
+        </div>
+        <div class="control">
+          <button class="button is-danger is-small flashcard-delete-button" data-id="<%=fc.id%>">
+            <span class="icon is-small"><i class="fas fa-trash"></i></span>
+            <span lang="en">Delete</span>
+            <span lang="es">Eliminar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </div>
+
+  <!-- ---------------------------------------- -->
+  <!-- ADD CARD BUTTON                          -->
+  <!-- ---------------------------------------- -->
+  <div class="has-text-centered" style="margin: 1rem 0;">
+    <button id="flashcard-add-button" class="button is-link is-rounded is-medium">
+      <span class="icon"><i class="fas fa-plus"></i></span>
+      <span lang="en">Add flashcard</span>
+      <span lang="es">Añadir tarjeta</span>
+    </button>
+  </div>
+
+  <!-- ---------------------------------------- -->
+  <!-- SAVE / CANCEL CONTROLS                   -->
+  <!-- ---------------------------------------- -->
+  <div class="box">
+    <div class="buttons is-centered">
+      <button class="save-button button is-success is-medium is-rounded">
+        <span class="icon is-small"><i class="fas fa-save"></i></span>
+        <span lang="en">SAVE</span>
+        <span lang="es">GUARDAR</span>
+      </button>
+      <button class="save-view-button button is-link is-medium is-rounded">
+        <span class="icon is-small"><i class="fas fa-save"></i></span>
+        <span lang="en">SAVE AND VIEW</span>
+        <span lang="es">GUARDAR Y VER</span>
+        <span class="icon is-small"><i class="fas fa-eye"></i></span>
+      </button>
+      <button class="cancel-button button is-light is-medium is-rounded">
+        <span class="icon is-small"><i class="fas fa-times"></i></span>
+        <span lang="en">CANCEL</span>
+        <span lang="es">CANCELAR</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Hidden clone template for new cards -->
+  <div id="flashcard-edit-example" class="is-hidden">
+    <div class="box flashcard-edit-card">
+      <div class="columns is-vcentered">
+        <div class="column is-1 has-text-centered">
+          <span class="tag is-info is-medium flashcard-number">1</span>
+        </div>
+        <div class="column">
+          <div class="field">
+            <label class="label">
+              <span lang="en">Front</span>
+              <span lang="es">Frente</span>
+            </label>
+            <div class="control">
+              <textarea class="textarea flashcard-front-input" rows="2"></textarea>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">
+              <span lang="en">Back</span>
+              <span lang="es">Reverso</span>
+            </label>
+            <div class="control">
+              <textarea class="textarea flashcard-back-input" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-small ai-generate-btn flashcard-ai-edit-button">
+            <span class="icon is-small"><i class="fas fa-magic"></i></span>
+            <span lang="en">Edit with AI</span>
+            <span lang="es">Editar con IA</span>
+          </button>
+        </div>
+        <div class="control">
+          <button class="button is-danger is-small flashcard-delete-button">
+            <span class="icon is-small"><i class="fas fa-trash"></i></span>
+            <span lang="en">Delete</span>
+            <span lang="es">Eliminar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- AI EDIT MODAL                                -->
+<!-- ============================================ -->
+<div id="modal-ai-edit-flashcard" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">
+        <span class="icon is-small has-text-warning"><i class="fas fa-edit"></i></span>
+        <span lang="en">Edit card</span>
+        <span lang="es">Editar tarjeta</span>
+      </p>
+      <button class="modal-delete delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <!-- AI edit (same unified design as the per-question/card modals) -->
+      <div class="ai-edit-section qe-ai-box">
+        <div class="qe-ai-head">
+          <span class="icon is-small"><i class="fas fa-magic"></i></span>
+          <span class="qe-ai-title">
+            <span lang="en">Edit with AI</span>
+            <span lang="es">Editar con IA</span>
+          </span>
+        </div>
+        <div class="field has-addons">
+          <div class="control is-expanded has-icons-left">
+            <span class="icon is-left is-small"><i class="fas fa-pen-nib"></i></span>
+            <input id="flashcard-ai-instruction" class="input is-small" type="text" autocomplete="off" maxlength="500"
+              placeholder="e.g. Make the answer more concise / Add an example / Translate to Spanish...">
+          </div>
+          <div class="control">
+            <button id="flashcard-ai-apply-button" class="button is-info is-small" type="button">
+              <span class="icon is-small"><i class="fas fa-magic"></i></span>
+              <span lang="en">Apply</span>
+              <span lang="es">Aplicar</span>
+            </button>
+          </div>
+        </div>
+        <p class="help">
+          <span lang="en">The AI will edit only this flashcard. Review the result before saving.</span>
+          <span lang="es">La IA editará solo esta tarjeta. Revisa el resultado antes de guardar.</span>
+        </p>
+        <div id="flashcard-ai-status" class="is-size-7"></div>
+      </div>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="modal-cancel button">
+        <span class="icon is-small"><i class="fas fa-times"></i></span>
+        <span lang="en">Cancel</span>
+        <span lang="es">Cancelar</span>
+      </button>
+    </footer>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- PAGE SCRIPTS                                 -->
+<!-- ============================================ -->
+<script src="/scripts/tests/test-edit-flashcards.js?v=20261013-byok" class="test-edit-js" id="test-edit-flashcards-js" data-n="6" nonce="<%=nonce%>"></script>

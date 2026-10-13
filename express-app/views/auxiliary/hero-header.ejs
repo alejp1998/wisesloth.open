@@ -1,0 +1,31 @@
+<% if (isAdmin) { %>
+<section class="hero is-link is-hidden" id="hero-title-subtitle">
+<% } else { %>
+<section class="hero others is-dark is-hidden" id="hero-title-subtitle">
+<% } %>
+  <div class="hero-body">
+    <% if (containerId) { %>
+    <div id="<%=containerId%>">
+    <% } else { %>
+    <div class="container">
+    <% } %>
+      <div class="columns">
+        <div class="column is-8">
+          <% if(heroTitleEn) {%>
+            <p class="title is-2 is-uppercase has-text-weight-bold">
+              <span lang="en"><%- heroTitleEn %></span>
+              <span lang="es"><%- heroTitleEs %></span>
+            </p>
+          <% } %>
+          <% if(heroSubtitleEn) {%>
+            <p class="subtitle is-4">
+              <span lang="en"><%- heroSubtitleEn %></span>
+              <span lang="es"><%- heroSubtitleEs %></span>
+            </p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<br>

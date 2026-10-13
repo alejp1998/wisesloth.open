@@ -1,0 +1,64 @@
+<div id="modal-livebattle" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card" style="min-width: 50%;">
+    <header class="modal-card-head">
+      <p id="modal-livebattle-title" class="modal-card-title">
+        <span class="icon"><i class="fas fa-bolt"></i></span>
+        <span lang="en">Join Live Battle</span>
+        <span lang="es">Unirse a Batalla</span>
+      </p>
+      <button class="modal-delete delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <p class="has-text-centered mb-4">
+        <span lang="en">⚡ Enter the code from your host and pick a name to compete in real-time!</span>
+        <span lang="es">⚡ Ingresa el código de tu anfitrión y elige un nombre para competir en tiempo real!</span>
+      </p>
+
+      <form id="livebattleForm" method="POST">
+        <label id="liveBattleIdLabel" class="label livebattleid-field">
+          <span lang="en">Battle Code </span>
+          <span lang="es">Código de Batalla </span>
+          <span class="is-size-7 has-text-grey">(6 letters)</span>
+        </label>
+        <div class="field livebattleid-field">
+          <div class="control has-icons-left">
+            <input class="input" type="text" id="liveBattleId-input" name="liveBattleId-input" placeholder="e.g. FRTXWQ" autocomplete="off" required style="text-transform: uppercase; letter-spacing: 2px;"></input>
+            <span class="icon is-left"><i class="fas fa-key"></i></span>
+          </div>
+        </div>
+        <label id="playernameLabel" class="label playername-field">
+          <span lang="en">Your Name </span>
+          <span lang="es">Tu Nombre </span>
+        </label>
+        <div class="field playername-field">
+          <div class="control has-icons-left">
+            <input class="input" type="text" id="playername-input" name="playername-input" placeholder="e.g. QuizMaster99" required></input>
+            <span class="icon is-left"><i class="fas fa-user"></i></span>
+          </div>
+        </div>
+      </form>
+      <div class="modal-alert"></div>
+
+      <p class="is-size-7 has-text-grey mt-4">
+        <span class="icon is-small"><i class="fas fa-lightbulb"></i></span>
+        <span lang="en"><b>Want to host?</b> Click <i class="fas fa-play"></i> on any quiz → Live Battle tab → Create Battle</span>
+        <span lang="es"><b>¿Quieres ser anfitrión?</b> Clic en <i class="fas fa-play"></i> en cualquier quiz → Live Battle → Crear Batalla</span>
+      </p>
+    </section>
+    <footer class="modal-card-foot">
+      <div class="buttons">
+        <button id="modal-livebattle-button" class="button is-link">
+          <span class="icon"><i class="fas fa-sign-in-alt"></i></span>
+          <span lang="en">Join</span>
+          <span lang="es">Unirme</span>
+        </button>
+        <button class="modal-cancel button">
+          <span class="icon"><i class="fas fa-times"></i></span>
+          <span lang="en">Cancel</span>
+          <span lang="es">Cancelar</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

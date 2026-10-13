@@ -1,0 +1,187 @@
+<% if ((chartType === 'quiz') || (chartType === 'test') || (chartType === 'user')) { %>
+<% const { userHits, userFails, userOmissions } = chartStats; %>
+<% const { totalHits, totalFails, totalOmissions } = chartStats; %>
+
+<% if (session.user && (userHits > 0 || userFails > 0 || userOmissions > 0)) { %>
+<div class="canvas-container">
+  <div class="icon-overlay"><i class="fas fa-user-astronaut"></i></div>
+  <canvas class="doughnut <%=chartType%>-doughnut" id="doughnut-user-<%=chartType%>-<%=chartId%>"></canvas>
+</div>
+
+<script class="chart-js" nonce="<%=nonce%>">
+  // Generate user chart
+  var doughnutUserCtx = document.getElementById('doughnut-user-<%=chartType%>-<%=chartId%>').getContext('2d');
+  var doughnutUserChart = new Chart(doughnutUserCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Hits', 'Omits', 'Fails'],
+      datasets: [{
+        data: [<%=userHits%>, <%=userOmissions%>, <%=userFails%>],
+        backgroundColor: [
+          'hsl(141, 71%, 48%)',
+          '#2F4F4F',
+          'hsl(348, 100%, 61%)',
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: false,
+        title: {
+          display: false,
+          text: 'User Stats (<%=chartType%>)'
+        },
+        tooltip: {
+          bodyFontSize: 10
+        }
+      }
+    }
+  });
+</script>
+<% } %>
+
+<% if ((totalHits > 0 || totalFails > 0 || totalOmissions > 0) && (totalHits !== userHits || totalFails !== userFails || totalOmissions !== userOmissions)) { %>
+<div class="canvas-container">
+  <div class="icon-overlay"><i class="fas fa-users"></i></div>
+  <canvas class="doughnut <%=chartType%>-doughnut" id="doughnut-total-<%=chartType%>-<%=chartId%>"></canvas>
+</div>
+
+<script class="chart-js" nonce="<%=nonce%>">
+  // Generate total chart
+  var doughnutTotalCtx = document.getElementById('doughnut-total-<%=chartType%>-<%=chartId%>').getContext('2d');
+  var doughnutTotalChart = new Chart(doughnutTotalCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Hits', 'Omits', 'Fails'],
+      datasets: [{
+        data: [<%=totalHits%>, <%=totalOmissions%>, <%=totalFails%>],
+        backgroundColor: [
+          'hsl(141, 71%, 48%)',
+          '#2F4F4F',
+          'hsl(348, 100%, 61%)',
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: false,
+        title: {
+          display: false,
+          text: 'Total Stats (<%=chartType%>)'
+        },
+        tooltip: {
+          bodyFontSize: 8
+        }
+      }
+    }
+  });
+</script>
+<% } %>
+<% } else if (chartType === 'personality') { %>
+<% const { un1, un2, un3, un4, un5, un6 } = chartStats; %>
+<% const { tn1, tn2, tn3, tn4, tn5, tn6 } = chartStats; %>
+
+<% if (session.user && (un1 > 0 || un2 > 0 || un3 > 0 || un4 > 0 || un5 > 0 || un6 > 0)) { %>
+<div class="canvas-container">
+  <div class="icon-overlay"><i class="fas fa-user-astronaut"></i></div>
+  <canvas class="doughnut <%=chartType%>-doughnut" id="doughnut-user-<%=chartType%>-<%=chartId%>"></canvas>
+</div>
+
+<script class="chart-js" nonce="<%=nonce%>">
+  // Generate user chart
+  var doughnutUserCtx = document.getElementById('doughnut-user-<%=chartType%>-<%=chartId%>').getContext('2d');
+  var doughnutUserChart = new Chart(doughnutUserCtx, {
+    type: 'doughnut',
+    data: {
+      labels: [
+        '<%=personalities[1].slice(0, 5) + '...'%>',
+        '<%=personalities[2].slice(0, 5) + '...'%>',
+        '<%=personalities[3].slice(0, 5) + '...'%>',
+        '<%=personalities[4].slice(0, 5) + '...'%>',
+        '<%=personalities[5].slice(0, 5) + '...'%>',
+        '<%=personalities[6].slice(0, 5) + '...'%>'
+      ],
+      datasets: [{
+        data: [<%=un1%>, <%=un2%>, <%=un3%>, <%=un4%>, <%=un5%>, <%=un6%>],
+        backgroundColor: [
+          '#8b06d3',
+          '#d30606',
+          '#06d306',
+          '#06d3d3',
+          '#d3d306',
+          '#d3068b'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: false,
+        title: {
+          display: false,
+          text: 'User Stats (<%=chartType%>)'
+        },
+        tooltip: {
+          bodyFontSize: 10
+        }
+      }
+    }
+  });
+</script>
+<% } %>
+
+<% if ((tn1 > 0 || tn2 > 0 || tn3 > 0 || tn4 > 0 || tn5 > 0 || tn6 > 0) && (tn1 !== un1 || tn2 !== un2 || tn3 !== un3 || tn4 !== un4 || tn5 !== un5 || tn6 !== un6)) { %>
+<div class="canvas-container">
+  <div class="icon-overlay"><i class="fas fa-users"></i></div>
+  <canvas class="doughnut <%=chartType%>-doughnut" id="doughnut-total-<%=chartType%>-<%=chartId%>"></canvas>
+</div>
+
+<script class="chart-js" nonce="<%=nonce%>">
+  // Generate total chart
+  var doughnutTotalCtx = document.getElementById('doughnut-total-<%=chartType%>-<%=chartId%>').getContext('2d');
+  var doughnutTotalChart = new Chart(doughnutTotalCtx, {
+    type: 'doughnut',
+    data: {
+      labels: [
+        '<%=personalities[1].slice(0, 5) + '...'%>',
+        '<%=personalities[2].slice(0, 5) + '...'%>',
+        '<%=personalities[3].slice(0, 5) + '...'%>',
+        '<%=personalities[4].slice(0, 5) + '...'%>',
+        '<%=personalities[5].slice(0, 5) + '...'%>',
+        '<%=personalities[6].slice(0, 5) + '...'%>'
+      ],
+      datasets: [{
+        data: [<%=tn1%>, <%=tn2%>, <%=tn3%>, <%=tn4%>, <%=tn5%>, <%=tn6%>],
+        backgroundColor: [
+          '#8b06d3',
+          '#d30606',
+          '#06d306',
+          '#06d3d3',
+          '#d3d306',
+          '#d3068b'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: false,
+        title: {
+          display: false,
+          text: 'Total Stats (<%=chartType%>)'
+        },
+        tooltip: {
+          bodyFontSize: 8
+        }
+      }
+    }
+  });
+</script>
+<% } %>
+<% } %>

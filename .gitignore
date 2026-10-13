@@ -1,0 +1,85 @@
+# My ignores
+mysql-data
+files
+mykeys
+myenv
+.env
+error_log.txt
+
+# General ignores
+node_modules
+dist
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite
+*.log
+*:Zone.Identifier
+
+# OS and IDE-specific files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+express-app/config/.env
+
+# Python specific
+*.pyc
+*.ipynb
+
+# FastAPI runtime logs
+fastapi-api/error_logs/
+fastapi-api/completion_logs/
+
+# Node.js specific
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Compiled Python files
+__pycache__/
+
+# Flask specific
+completion_logs/
+instance/
+webapp/__pycache__/
+webapp/*.pyc
+webapp/*.pyo
+
+# Logs
+*.log
+
+# Express.js specific
+logs/
+log.txt
+
+# Ignore minified files
+browser-ai.min.js
+customize.min.js
+general-actions.min.js
+index.min.js
+login-logout.min.js
+add-image-to-quiz.min.js
+test-index.min.js
+test-new.min.js
+test-edit.min.js
+style.min.css
+
+.venv/
+coverage/
+junit.xml
+uploads/
+.env.*
+!.env.example
+
+backups/

@@ -1,0 +1,66 @@
+<div id="modal-edit-quiz" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card quiz-edit-modal">
+    <header class="modal-card-head">
+      <p class="modal-card-title is-size-5">
+        <span class="icon is-small has-text-warning"><i class="fas fa-edit"></i></span>
+        <span lang="en">Edit question</span>
+        <span lang="es">Editar pregunta</span>
+      </p>
+      <button class="modal-delete delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <!-- AI Edit Section: edit this question with a natural-language instruction -->
+      <div class="ai-edit-section qe-ai-box">
+        <div class="qe-ai-head">
+          <span class="icon is-small"><i class="fas fa-magic"></i></span>
+          <span class="qe-ai-title">
+            <span lang="en">Edit with AI</span>
+            <span lang="es">Editar con IA</span>
+          </span>
+        </div>
+        <div class="field has-addons">
+          <div class="control is-expanded has-icons-left">
+            <span class="icon is-left is-small"><i class="fas fa-pen-nib"></i></span>
+            <input id="ai-edit-instruction" class="input is-small" type="text" autocomplete="off"
+              placeholder="e.g. Make it harder / Simplify / Translate to Spanish...">
+          </div>
+          <div class="control">
+            <button id="ai-edit-apply-button" class="button is-small ai-generate-btn">
+              <span class="icon is-small"><i class="fas fa-magic"></i></span>
+              <span lang="en">Apply</span>
+              <span lang="es">Aplicar</span>
+            </button>
+          </div>
+        </div>
+        <p class="help">
+          <span lang="en">The AI will edit only this question. Review the result before saving.</span>
+          <span lang="es">La IA editará solo esta pregunta. Revisa el resultado antes de guardar.</span>
+        </p>
+        <div id="ai-edit-status" class="is-size-7"></div>
+      </div>
+
+      <div class="modalQuiz"></div>
+      <div class="modal-alert"></div>
+    </section>
+    <footer class="modal-card-foot">
+      <div class="buttons">
+        <button id="modal-edit-quiz-button" class="button is-warning is-small is-rounded">
+          <span class="icon is-small"><i class="fas fa-save"></i></span>
+          <span lang="en">Edit quiz</span>
+          <span lang="es">Editar pregunta</span>
+        </button>
+        <button id="modal-add-quiz-button" class="button is-link is-small is-rounded">
+          <span class="icon is-small"><i class="fas fa-save"></i></span>
+          <span lang="en">Add question</span>
+          <span lang="es">Añadir pregunta</span>
+        </button>
+        <button class="modal-cancel button is-small is-rounded">
+          <span class="icon is-small"><i class="fas fa-times"></i></span>
+          <span lang="en">Cancel</span>
+          <span lang="es">Cancelar</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

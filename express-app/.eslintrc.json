@@ -1,0 +1,104 @@
+{
+  "env": {
+    "node": true,
+    "es2022": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "no-console": "off",
+    "semi": [
+      "error",
+      "always"
+    ],
+    "quotes": [
+      "warn",
+      "single",
+      {
+        "allowTemplateLiterals": true
+      }
+    ],
+    "indent": [
+      "warn",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "no-multiple-empty-lines": [
+      "warn",
+      {
+        "max": 2
+      }
+    ],
+    "eol-last": [
+      "warn",
+      "always"
+    ],
+    "comma-dangle": [
+      "warn",
+      "only-multiline"
+    ],
+    "object-curly-spacing": [
+      "warn",
+      "always"
+    ],
+    "array-bracket-spacing": [
+      "warn",
+      "never"
+    ],
+    "arrow-spacing": "warn",
+    "keyword-spacing": "warn",
+    "space-before-blocks": "warn",
+    "space-infix-ops": "warn",
+    "no-trailing-spaces": "warn",
+    "prefer-const": "warn",
+    "no-var": "error",
+    "eqeqeq": [
+      "warn",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "curly": [
+      "warn",
+      "multi-line"
+    ],
+    "no-throw-literal": "error",
+    "prefer-promise-reject-errors": "warn",
+    "no-return-await": "warn",
+    "require-await": "off"
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "coverage/",
+    "public/",
+    "*.min.js"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "**/*.test.js",
+        "**/__tests__/**"
+      ],
+      "rules": {
+        "no-unused-expressions": "off"
+      }
+    }
+  ]
+}

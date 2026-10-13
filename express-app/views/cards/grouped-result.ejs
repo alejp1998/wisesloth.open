@@ -1,0 +1,108 @@
+<% const test = groupedResult.test; %>
+<% test.type = test.type || (test.context === 'personality' ? 'personality' : 'knowledge'); %>
+<% const isFavorite = session.user && (session.user.favoriteIds || []).includes(test.id); %>
+
+<div class="flex-card" id="card-grouped-result-for-<%=test.id%>">
+  <div class="card grouped-result-card" data-test-id="<%=test.id%>">
+    <header class="card-header">
+      <div class="card-header-title">
+        <a class="test-name" href="/tests/<%=test.id%>"><%=test.name%></a>
+      </div>
+      <div class="card-header-icon">
+        <span id="card-hide-button-test-<%=test.id%>" class="icon is-large">
+          <i class="fas fa-angle-down" aria-hidden="true"></i>
+        </span>
+      </div>
+    </header>
+    <div class="card-content" id="card-content-<%=test.id%>">
+      <div class="content">
+        <!-- Test folder -->
+        <div class="columns is-vcentered">
+          <div class="column">
+            <span class="test-topic is-hidden"><%=test.topic%></span>
+            <div class="test-topic-words">
+              <% let topicWords = test.topic.split("-"); %>
+              <span class="icon is-small" style="color: var(--bulma-link);"><i class="fas fa-folder-open fa-xs"></i></span>
+              <% for (let i = 0; i < topicWords.length; i++) { %>
+              <b class="test-topic-<%=i%> is-size-6 ajax-link" data-href="/tests?topic=<%=topicWords.slice(0, i + 1).join("-")%>">
+                <%=topicWords[i]%>
+              </b>
+              <% if (i < topicWords.length - 1) { %>
+              <span class="icon is-small" style="color: var(--bulma-link);">/</span>
+              <% } %>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test description -->
+        <div class="card-hideable-content is-hidden" id="card-hidden-test-<%=test.id%>">
+          <p class="test-desc"><%=test.desc%></p>
+        </div>
+
+        <!-- Test results -->
+        <div class="table-container" style="max-height: 250px; overflow-y: auto;">
+          <!-- Include results table -->
+          <% function correctPercentage(score,nQuestions) { return Math.round((score/nQuestions)*100); } %>
+          <table class="table is-fullwidth is-hoverable is-striped">
+            <thead>
+              <tr>
+                <th>
+                  <span lang="en">Username</span>
+                  <span lang="es">Usuario</span>
+                </th>
+                <th>
+                  <span lang="en">Date</span>
+                  <span lang="es">Fecha</span>
+                </th>
+                <th class="has-text-right">
+                  <span lang="en">Score</span>
+                  <span lang="es">Puntuación</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <% groupedResult.results.forEach(result => { %>
+              <tr class="is-clickable" data-href="/results/<%= result.id %>">
+                <td class="is-size-6">
+                  <% if (result.examinee) { %>
+                    <% if (session.user && result.examinee.username === session.user.username) { %>
+                    <a href="/users/<%= result.examinee.username %>">
+                      <span class="has-text-primary"><%= result.examinee.username %></span>
+                    </a>
+                    <% } else { %>
+                    <a href="/users/<%= result.examinee.username %>"><%= result.examinee.username %></a>
+                    <% } %>
+                  <% } else { %>
+                  <span lang="en">unknown</span>
+                  <span lang="es">desconocido</span>
+                  <% } %>
+                </td>
+                <td class="is-size-6"><%= formatTimeAgo(result.updatedAt, lang) %></td>
+                <td class="has-text-right is-size-6"><%= result.score %>/<%= result.nQuestions %> (<%= correctPercentage(result.score,result.nQuestions) %>%)</td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <footer class="card-footer">
+      <div class="card-footer-item open-modal-try-button" data-test-id="<%=test.id%>" data-test-type="<%=test.type%>" data-test-name="<%=test.name%>" data-n-quizzes="<%=test.quizzes.length%>" data-test-author="<%=test.author ? test.author.username : 'Anonymous'%>">
+        <span class="icon"><i class="fas fa-play" style="color: var(--bulma-primary);"></i></span>
+      </div>
+      <div class="card-footer-item share-test-button" data-test-id="<%=test.id%>" data-test-name="<%=test.name%>">
+        <span class="icon"><i class="fas fa-share-alt" style="color: var(--bulma-info);"></i></span>
+      </div>
+      <% if(session.user) { %>
+      <div class="card-footer-item favorite-button" data-is-logged-in="<%=!!session.user%>" data-test-id="<%= test.id %>" data-is-favorite="<%=isFavorite%>">
+        <% if (isFavorite) { %>
+        <span class="icon heart-icon"><i class="fas fa-heart" style="color: red;"></i></span>
+        <% } else { %>
+        <span class="icon heart-icon"><i class="far fa-heart" style="color: red;"></i></span>
+        <% } %>
+        </div>
+      <% } %>
+    </footer>
+  </div>
+</div>

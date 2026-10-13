@@ -1,0 +1,81 @@
+name: wisesloth-open
+services:
+  web:
+    build: ./express-app
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${PORT:-8080}:8080"
+    environment:
+      NODE_ENV: production
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      TRUST_PROXY: ${TRUST_PROXY:-0}
+      SESSION_SECRET: ${SESSION_SECRET:?Run python3 scripts/setup.py first}
+      KEY_ENCRYPTION_SECRET: ${KEY_ENCRYPTION_SECRET:?Run python3 scripts/setup.py first}
+      DB_USERNAME: wisesloth
+      DB_PASSWORD: ${DB_PASSWORD:?Run python3 scripts/setup.py first}
+      DB_HOST: db
+      DB_DIALECT: mysql
+      DB_NAME_PROD: wisesloth
+      AI_API_URL: http://ai:5000
+      UPLOAD_DIR: /data/uploads
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+      ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-false}
+      HTTP_RATE_LIMIT_PER_15_MIN: ${HTTP_RATE_LIMIT_PER_15_MIN:-500}
+      INSTANCE_WEEKLY_BUDGET_USD: ${INSTANCE_WEEKLY_BUDGET_USD:-}
+      UNCERTAIN_REQUEST_COST_USD: ${UNCERTAIN_REQUEST_COST_USD:-1}
+      LLM_MODEL: ${LLM_MODEL:-openai/gpt-6-luna}
+    volumes:
+      - uploads:/data/uploads:ro
+    depends_on:
+      db: { condition: service_healthy }
+      ai: { condition: service_healthy }
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8080/ready').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  ai:
+    build: ./fastapi-api
+    environment:
+      ENVIRONMENT: production
+      UPLOAD_DIR: /data/uploads
+      LLM_MODEL: ${LLM_MODEL:-openai/gpt-6-luna}
+      LLM_API_BASE: ${LLM_API_BASE:-}
+      LLM_MAX_OUTPUT_TOKENS: ${LLM_MAX_OUTPUT_TOKENS:-16384}
+      LLM_USE_CATALOG_PRICES: ${LLM_USE_CATALOG_PRICES:-true}
+      LLM_INPUT_USD_PER_MILLION: ${LLM_INPUT_USD_PER_MILLION:-0.1}
+      LLM_OUTPUT_USD_PER_MILLION: ${LLM_OUTPUT_USD_PER_MILLION:-0.5}
+      UNCERTAIN_REQUEST_COST_USD: ${UNCERTAIN_REQUEST_COST_USD:-1}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    volumes:
+      - uploads:/data/uploads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: wisesloth
+      MYSQL_USER: wisesloth
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Run python3 scripts/setup.py first}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Run python3 scripts/setup.py first}
+    volumes:
+      - database:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql --protocol=TCP -h 127.0.0.1 -u \"$$MYSQL_USER\" \"$$MYSQL_DATABASE\" -e 'SELECT 1' >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+volumes:
+  database:
+  uploads:

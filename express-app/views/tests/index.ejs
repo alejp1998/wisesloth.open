@@ -1,0 +1,470 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Quizzes | WiseSloth.open: Browse Quizzes or Create your own for FREE!";
+
+  // Change document meta description
+  document.querySelector('meta[name="description"][lang="en"]').setAttribute("content", "Browse quizzes or quizzes created by the WiseSloth.open community about any topic. If you don't find what you're looking for, create your own quiz for free!");
+  // document.querySelector('meta[name="description"][lang="es"]').setAttribute("content", "Navega por tests o cuestionarios creados con IA por la comunidad de WiseSloth.open sobre cualquier tema. Si no encuentras lo que buscas, ¡crea tu propio test gratis!");
+
+  // Set as index
+  if (metaRobots) metaRobots.setAttribute("content", "index");
+</script>
+
+<!-- Include hero header -->
+<% const heroTitleEn = "Navigate Quizzes" %>
+<% const heroTitleEs = "Navegar Tests" %>
+<% const heroSubtitleEn = "" %>
+<% const heroSubtitleEs = "" %>
+<% const containerId = "" %>
+<%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+
+<!-- Tests Content -->
+<section id="usercontent" class="container">
+  <!-- In case the user is not logged in show a notification to encourage him to create its first test with AI effortlessly in seconds -->
+  <!-- There should a catchy call to action message with a button to go to the test creation page -->
+  <% if (!session.user) { %>
+  <div id="create-first-quiz-notification" class="notification is-link is-light is-hidden-touch">
+    <button class="delete" aria-label="delete"></button>
+    <div class="columns is-vcentered">
+      <div class="column">
+        <p class="title is-5">
+          <span lang="en">Create your first quiz with AI in seconds &#128640;</span>
+          <span lang="es">Crea tu primer test con IA en segundos &#128640;</span>
+        </p>
+        <p class="subtitle is-5">
+          <span lang="en">Effortlessly, about any content, and in any language.</span>
+          <span lang="es">Sin esfuerzo, sobre cualquier contenido, y en cualquier idioma.</span>
+        </p>
+      </div>
+      <div class="column is-narrow has-text-centered">
+        <a href="/tests/new" class="button is-link is-rounded is-fullwidth">
+          <span class="icon"><i class="fas fa-plus"></i></span>
+          <span lang="en">Test</span>
+          <span lang="es">Test</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  <!-- Define view type -->
+  <% const viewType = "INDEX" %>
+  <!-- Orderby in spanish -->
+  <% let orderbyEs = "Fecha"; %>
+  <% let hasBgColor = ""; %>
+  <% if (orderby === "likes") { %>
+  <% orderbyEs = "Likes"; %>
+  <% hasBgColor = "has-text-danger"; %>
+  <% } else if (orderby === "tries") { %>
+  <% orderbyEs = "Intentos"; %>
+  <% hasBgColor = "is-warning"; %>
+  <% } else if (orderby === "questions") { %>
+  <% orderbyEs = "Preguntas"; %>
+  <% hasBgColor = "is-info"; %>
+  <% } else if (orderby === "duration") { %>
+  <% orderbyEs = "Duración"; %>
+  <% hasBgColor = "is-dark"; %>
+  <% } %>
+
+  <!-- Tests index menu -->
+  <nav class="level index-menu" id="tests-index-menu">
+    <!-- Left-side -->
+    <div class="level-left">
+      <div class="level-item">
+        <% if (session.user && username === session.user.username) { %>
+        <p class="title is-2">
+          <span lang="en">My Quizzes</span>
+          <span lang="es">Mis Tests</span>
+        </p>
+        <% } else if (type === "liked") { %>
+        <p class="title is-2">
+          <span lang="en">Liked Quizzes</span>
+          <span lang="es">Liked Tests</span>
+        </p>
+        <% } else if (type === "tried") { %>
+        <p class="title is-2">
+          <span lang="en">Tried Quizzes</span>
+          <span lang="es">Tests Intentados</span>
+        </p>
+        <% } else if (type === "following") { %>
+        <p class="title is-2">
+          <span lang="en">My Feed</span>
+          <span lang="es">Mi Feed</span>
+        </p>
+        <% } else { %>
+        <p class="title is-2">
+          <span lang="en">Quizzes</span>
+          <span lang="es">Tests</span>
+        </p>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="level-right">
+
+      <!-- Search bar -->
+      <div class="level-item index-search-item">
+        <% if (lang === "en") { %>
+        <input type="text" class="input is-link" id="searchInput" name="search" value="<%= search %>" placeholder="Search quizzes" autocomplete="off" />
+        <% } else { %>
+        <input type="text" class="input is-link" id="searchInput" name="search" value="<%= search %>" placeholder="Buscar tests" autocomplete="off" />
+        <% } %>
+      </div>
+
+      <!-- Language and sortby dropdowns -->
+      <div class="level-item">
+        <!-- Language dropdown -->
+        <div class="dropdown is-hoverable" style="margin-left: 5px;">
+          <div class="dropdown-trigger">
+            <div class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+              <% if (indexLang && indexLang !== "all") { %>
+              <% if (indexLang in languagesDict) { %>
+              <% const langData = languagesDict[indexLang]; %>
+              <span class="icon"><i class="fi fi-<%= langData.country %>"></i></span>
+              <span><%= indexLang.toUpperCase() %></span>
+              <% } else { %>
+              <%= indexLang.toUpperCase() %>
+              <% } %>
+              <% } else { %>
+              <span class="icon"><i class="fas fa-language"></i></span>
+              <% } %>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <% if(indexLang && indexLang !== "all") { %>
+              <div class="select-lang-button dropdown-item" data-lang="all" role="menuitem">
+                All
+              </div>
+              <% } %>
+              <% for (const language of languages) { %>
+              <div class="select-lang-button dropdown-item" data-lang="<%=language%>" role="menuitem">
+                <% if (language in languagesDict) { %>
+                <% const langData = languagesDict[language]; %>
+                <span class="icon"><i class="fi fi-<%= langData.country %>"></i></span>
+                <span><%= langData.name %></span>
+                <% } else { %>
+                <span><%= language.toUpperCase() %></span>
+                <% } %>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sort by dropdown: Date, Likes, Tries, nQuestions, nSeconds -->
+        <div class="dropdown is-hoverable" style="margin-left: 5px;">
+          <div class="dropdown-trigger">
+            <div class="button <%=hasBgColor%>" aria-haspopup="true" aria-controls="dropdown-menu">
+              <span>
+                <span class="icon"><i class="fas fa-sort"></i></span>
+                <span lang="en"><%= orderby.charAt(0).toUpperCase() + orderby.slice(1) %></span>
+                <span lang="es"><%= orderbyEs %></span>
+              </span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <div class="select-order-button dropdown-item" data-order="date" data-dir="desc" role="menuitem">
+                <span class="icon"><i class="fas fa-clock"></i></span>
+                <span lang="en">Date</span>
+                <span lang="es">Fecha</span>
+              </div>
+              <div class="select-order-button dropdown-item" data-order="likes" data-dir="desc" role="menuitem">
+                <span class="icon filter-icon has-text-danger"><i class="fas fa-heart"></i></span>
+                <span lang="en">Likes</span>
+                <span lang="es">Likes</span>
+              </div>
+              <div class="select-order-button dropdown-item" data-order="tries" data-dir="desc" role="menuitem">
+                <span class="icon filter-icon has-text-warning"><i class="fas fa-play-circle"></i></span>
+                <span lang="en">Tries</span>
+                <span lang="es">Intentos</span>
+              </div>
+              <div class="select-order-button dropdown-item" data-order="questions" data-dir="desc" role="menuitem">
+                <span class="icon filter-icon has-text-info"><i class="fas fa-hashtag"></i></span>
+                <span lang="en">Questions</span>
+                <span lang="es">Preguntas</span>
+              </div>
+              <div class="select-order-button dropdown-item" data-order="duration" data-dir="desc" role="menuitem">
+                <span class="icon filter-icon has-text-dark"><i class="fas fa-stopwatch"></i></span>
+                <span lang="en">Duration</span>
+                <span lang="es">Duración</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Type dropdown: All, Mine, Liked, Following -->
+        <% if (session.user) { %>
+        <div class="dropdown is-hoverable" style="margin-left: 5px;">
+          <div class="dropdown-trigger">
+            <div class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+              <% if (session.user && username === session.user.username) { %>
+              <span class="icon"><i class="fas fa-user-astronaut"></i></span>
+              <span lang="en">Mine</span>
+              <span lang="es">Mios</span>
+              <% } else if (type === "following") { %>
+              <span class="icon">
+                <i class="fas fa-walking fa-flip-horizontal"></i>
+                <i class="fas fa-walking fa-flip-horizontal" style="color: var(--link-color)"></i>
+              </span>
+              <span lang="en">Following</span>
+              <span lang="es">Siguiendo</span>
+              <% } else if (type === "liked") { %>
+              <span class="icon"><i class="fas fa-heart"></i></span>
+              <span lang="en">Liked</span>
+              <span lang="es">Liked</span>
+              <% } else if (type === "tried") { %>
+              <span class="icon"><i class="fas fa-play"></i></span>
+              <span lang="en">Tried</span>
+              <span lang="es">Intentados</span>
+              <% } else { %>
+              <span class="icon"><i class="fas fa-users"></i></span>
+              <span lang="en">All</span>
+              <span lang="es">Todos</span>
+              <% } %>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <div class="dropdown-item select-type-button" role="menuitem" data-type="all">
+                <span class="icon"><i class="fas fa-users"></i></span>
+                <span lang="en">All</span>
+                <span lang="es">Todos</span>
+              </div>
+              <div class="dropdown-item select-type-button" role="menuitem" data-type="following">
+                <span class="icon">
+                  <i class="fas fa-walking fa-flip-horizontal"></i>
+                  <i class="fas fa-walking fa-flip-horizontal" style="color: var(--link-color)"></i>
+                </span>
+                <span lang="en">Following</span>
+                <span lang="es">Siguiendo</span>
+              </div>
+              <div class="dropdown-item select-type-button" role="menuitem" data-type="mine">
+                <span class="icon"><i class="fas fa-user-astronaut"></i></span>
+                <span lang="en">Mine</span>
+                <span lang="es">Mios</span>
+              </div>
+              <div class="dropdown-item select-type-button" role="menuitem" data-type="liked">
+                <span class="icon"><i class="fas fa-heart"></i></span>
+                <span lang="en">Liked</span>
+                <span lang="es">Liked</span>
+              </div>
+              <div class="dropdown-item select-type-button" role="menuitem" data-type="tried">
+                <span class="icon"><i class="fas fa-play"></i></span>
+                <span lang="en">Tried</span>
+                <span lang="es">Intentados</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- New test button -->
+        <!-- <a href="/tests/new" class="button is-success is-rounded" style="margin-left: 5px;">
+          <span class="icon"><i class="fas fa-plus"></i></span>
+          <span>Test</span>
+        </a> -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <% if (topic) { %>
+  <% let topicWords = topic.split("-"); %>
+
+  <nav class="breadcrumb is-medium" aria-label="breadcrumbs" style="margin-left: 10px;">
+  <% let prevTopicWords = []; %>
+  <% for (const word of topicWords) { %>
+    <% prevTopicWords.push(word); %>
+      <% if (prevTopicWords[0] === word) { %>
+      <span class="icon tag-delete-button is-clickable has-text-danger" data-tag-name="topic" title="Clear folder path"><i class="fas fa-folder-minus"></i></span>
+      <% } %>
+      <b class="select-topic-button is-clickable" data-topic="<%= prevTopicWords.join("-") %>"><%= word %></b>
+      <% if (prevTopicWords.length < topicWords.length) { %>
+      <span class="icon is-small has-text-link">/</span>
+      <% } %>
+    </li>
+  <% } %>
+  </nav>
+  <% } %>
+
+  <!-- Topic folders if topics has more than 1 element -->
+  <% if (topics.length > 0) { %>
+  <!-- Include quiz links for sequential mode -->
+  <div class="quiz-links flex-container-no-wrap">
+  <% for (const folderName of topics) { %>
+  <div class="flex-item-quiz-link select-topic-button" data-topic="<%=topic ? (folderName.split("-").length > 1 ? topic + folderName.split("-")[0] + "-" + folderName.split("-")[1] : topic + "-" + folderName) : folderName %>" title="Select folder">
+    <span>/<%= folderName.split("-").length > 1 ? folderName.split("-")[1] : folderName %></span>
+  </div>
+  <% } %>
+  </div>
+  <% } %>
+
+  <!-- Search tags -->
+  <div class="flex-container" style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px;" id="search-tags-container">
+    <div class="field is-grouped is-grouped-multiline">
+      <% if (search) { %>
+      <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-medium is-info">
+            <span class="icon"><i class="fas fa-search"></i></span>
+            <span lang="en">Search</span>
+            <span lang="es">Búsqueda</span>
+          </span>
+          <span class="tag is-medium">
+            <b><%= search %></b>
+          </span>
+          <button class="tag is-delete is-medium is-dark tag-delete-button" data-tag-name="search"></button>
+        </div>
+      </div>
+      <% } %>
+      <% if (username) { %>
+      <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-medium is-link">
+            <span class="icon"><i class="fas fa-user-astronaut"></i></span>
+            <span lang="en">By</span>
+            <span lang="es">Por</span>
+          </span>
+          <span class="tag is-medium">
+            <b><a href="/users/<%= username %>"><%= username %></a></b>
+          </span>
+          <button class="tag is-delete is-medium is-dark tag-delete-button" data-tag-name="username"></button>
+        </div>
+      </div>
+      <% } %>
+      <% if (indexLang && indexLang !== "all") { %>
+      <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-medium is-link">
+            <span class="icon"><i class="fas fa-language"></i></span>
+            <span lang="en">Language</span>
+            <span lang="es">Idioma</span>
+          </span>
+          <span class="tag is-medium">
+            <b><%= languagesDict[indexLang].name %></b>
+          </span>
+          <button class="tag is-delete is-medium is-dark tag-delete-button" data-tag-name="lang"></button>
+        </div>
+      </div>
+      <% } %>
+      <div class="control">
+        <div class="tags has-addons">
+          <button class="tag is-medium is-dark has-text-info change-orderdir-button" aria-label="Change sorting direction">
+            <% if (orderdir === "asc") { %>
+            <span class="icon"><i class="fas fa-arrow-up"></i></span>
+            <% } else { %>
+            <span class="icon"><i class="fas fa-arrow-down"></i></span>
+            <% } %>
+          </button>
+          <span class="tag is-medium <%= hasBgColor %>">
+            <b lang="en"><%= orderby.charAt(0).toUpperCase() + orderby.slice(1) %></b>
+            <b lang="es"><%= orderbyEs %></b>
+          </span>
+          <button class="tag is-delete is-medium is-dark tag-delete-button" data-tag-name="orderby" aria-label="Clear sorting"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Short message showing number of items and pages -->
+  <% if (paginateControl && paginateControl.totalItems > 0) { %>
+  <p class="is-size-6 has-text-centered">
+    <% if ((paginateControl.totalPages > 1) && (paginateControl.pageNo > 1)) { %>
+    <span class="pagination-button" data-pageno="<%= paginateControl.pageNo - 1 %>">
+      <span class="icon"><i class="fas fa-arrow-left"></i></span>
+    </span>
+    <% } else { %>
+    <span class="icon"><i class="fas fa-info-circle"></i></span>
+    <% } %>
+    <span lang="en">Page </span>
+    <span lang="es">Página </span>
+    <span lang="en"><%= paginateControl.pageNo %> of <%= paginateControl.totalPages %> </span>
+    <span lang="es"><%= paginateControl.pageNo %> de <%= paginateControl.totalPages %> </span>
+    <b>(<%= paginateControl.pageFirstItemIndex %> - <%= paginateControl.pageLastItemIndex %></b>
+    <span lang="en">out of</span>
+    <span lang="es">de</span>
+    <b><%= paginateControl.totalItems %>)</b>
+    <% if ((paginateControl.totalPages > 1) && (paginateControl.pageNo < paginateControl.totalPages)) { %>
+    <span class="pagination-button" data-pageno="<%= paginateControl.pageNo + 1 %>">
+      <span class="icon"><i class="fas fa-arrow-right"></i></span>
+    </span>
+    <% } %>
+  </p>
+  <% } else { %>
+  <p class="is-size-6 has-text-centered">
+    <span class="icon"><i class="fas fa-info-circle"></i></span>
+    <span lang="en">No quizzes found</span>
+    <span lang="es">No se encontraron tests</span>
+  </p>
+  <% } %>
+
+  <!-- Test results container -->
+  <div class="flex-container" id="search-results-container">
+    <!-- Message if no tests are found -->
+    <% if (tests.length === 0) { %>
+    <% if (type === "following") { %>
+    <div class="notification">
+      <p class="title is-4">
+        <span lang="en">No quizzes from users you follow were found</span>
+        <span lang="es">No se encontraron tests de usuarios que sigues</span>
+      </p>
+      <p class="subtitle is-4">
+        <span lang="en">Try following more users on the <a href="/users">users page</a></span>
+        <span lang="es">Intenta seguir a más usuarios en la <a href="/users">página de usuarios</a></span>
+      </p>
+    </div>
+    <% } else if (type === "liked") { %>
+    <div class="notification">
+      <p class="title is-4">
+        <span lang="en">No liked quizzes were found</span>
+        <span lang="es">No se encontraron tests favoritos</span>
+      </p>
+      <p class="subtitle is-4">
+        <span lang="en">Like some quizzes and they will appear here</span>
+        <span lang="es">Dale like a algunos tests y aparecerán aquí</span>
+      </p>
+    </div>
+    <% } else { %>
+    <div class="notification">
+      <p class="title is-4">
+        <span lang="en">No quizzes matching your search were found</span>
+        <span lang="es">No se encontraron tests que coincidan con tu búsqueda</span>
+      </p>
+      <p class="subtitle is-4">
+        <span lang="en">Try a different search or <a href="/tests/new">create a new quiz</a></span>
+        <span lang="es">Intenta una búsqueda diferente o <a href="/tests/new">crea un nuevo test</a></span>
+      </p>
+    </div>
+    <% } %>
+    <% } else { %>
+
+    <% for (const test of tests) { %>
+    <!-- Start of test card -->
+    <%- include('../cards/test', { viewType, test }) %>
+    <!-- End of test card -->
+    <% } %>
+
+    <% } %>
+  </div>
+</section>
+
+<!-- Pagination -->
+<div class="container">
+  <div class="flex-container" id="pagination-container">
+    <% if (paginateControl.html) { %>
+    <%- paginateControl.html %>
+    <% } %>
+  </div>
+</div>

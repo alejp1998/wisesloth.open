@@ -1,0 +1,57 @@
+<section class="section"><div class="container">
+  <h1 class="title">Settings & spending</h1>
+  <div class="box">
+    <h2 class="title is-4">Browser API key</h2>
+    <p class="mb-3">Call your provider directly from this tab. Your key stays in tab memory and is cleared on reload or logout; it is never sent to the application server. Use this only on an instance you trust, since page scripts can access browser memory.</p>
+    <form id="browser-ai-form">
+      <label class="label" for="browser-ai-model">Model</label>
+      <div class="select mb-3"><select id="browser-ai-model">
+        <option value="gemini/gemini-3.8-flash">Gemini 3.8 Flash</option>
+        <option value="gemini/gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite</option>
+        <option value="openai/gpt-6-luna">GPT-6 Luna</option>
+      </select></div>
+      <label class="label" for="browser-api-key">Your key</label>
+      <input class="input mb-3" id="browser-api-key" type="password" autocomplete="off" maxlength="512" required>
+      <button class="button is-link" type="submit">Use key in this tab</button>
+      <button class="button" id="browser-ai-disconnect" type="button">Disconnect</button>
+    </form>
+    <p class="help mt-3" id="browser-ai-status">Browser key is disconnected.</p>
+    <p class="help mt-3">Get a Gemini key from <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>. Free-tier quotas and provider billing apply. Browser requests use your chosen model and bypass the server's weekly spending thresholds. Only validated study content is saved here; manage your personal spending in your provider dashboard.</p>
+  </div>
+  <% if (notice) { %><p class="notification is-success"><%= notice %></p><% } %>
+  <p class="mb-4">Model: <strong><%= model %></strong>. Your estimated server AI spend this week: <strong>$<%= personalSpend.toFixed(6) %></strong>.</p>
+  <p class="notification is-info">Weeks begin Monday at 00:00 UTC. Limits stop new requests once recorded spending reaches the amount; the final request can exceed it. Provider billing is authoritative. Failed requests with unknown cost use the host's conservative estimate.</p>
+  <form action="/settings" method="post" class="box">
+    <label class="label" for="budget">Your weekly limit (USD)</label>
+    <input class="input mb-3" id="budget" name="weeklyBudgetUsd" type="number" min="0" max="100000" step="0.000001" value="<%= personalBudget ?? '' %>" placeholder="Unlimited">
+    <p class="help mb-4">Leave blank for unlimited. Zero disables your server AI requests. Existing quizzes remain available.</p>
+    <label class="label" for="api-key">Server-stored provider API key (optional)</label>
+    <input class="input mb-2" id="api-key" name="apiKey" type="password" autocomplete="off" maxlength="512" placeholder="<%= hasApiKey ? 'Key saved; blank keeps it' : 'Blank uses the host key' %>">
+    <p class="help mb-3">Use a key for the provider of the configured model. It is encrypted on the server and is never sent to other users.</p>
+    <label class="checkbox mb-4"><input type="checkbox" name="clearApiKey"> Remove my key and use the host key</label>
+    <h2 class="title is-5">Change password</h2>
+    <label class="label" for="current-password">Current password</label><input class="input mb-3" id="current-password" name="currentPassword" type="password" autocomplete="current-password" maxlength="256">
+    <label class="label" for="change-password">New password (leave blank to keep it)</label><input class="input mb-4" id="change-password" name="newPassword" type="password" autocomplete="new-password" minlength="12" maxlength="256">
+    <button class="button is-link" type="submit">Save settings</button>
+  </form>
+  <% if (isAdmin) { %>
+  <div class="box"><h2 class="title is-4">Instance settings</h2>
+    <p class="mb-3">Server AI requests combined this week: $<%= instanceSpend.toFixed(6) %>. Browser-direct calls have no host cost and use the user's provider controls.</p>
+    <form action="/settings/instance" method="post">
+      <label class="label" for="instance-budget">Instance weekly limit (USD)</label><input class="input mb-3" id="instance-budget" name="weeklyBudgetUsd" type="number" min="0" max="100000" step="0.000001" value="<%= instanceBudget ?? '' %>" placeholder="Unlimited">
+      <button class="button" type="submit">Save instance limit</button>
+    </form>
+    <h2 class="title is-5 mt-5">Create an account for someone</h2>
+    <form action="/settings/accounts" method="post">
+      <label class="label" for="account-name">Username</label><input class="input mb-3" id="account-name" name="username" required minlength="3" maxlength="32" pattern="[a-z0-9][a-z0-9-]{1,30}[a-z0-9]" autocomplete="off">
+      <label class="label" for="account-password">Initial password</label><input class="input mb-3" id="account-password" name="password" type="password" required minlength="12" maxlength="256" autocomplete="new-password">
+      <button class="button" type="submit">Create account</button>
+    </form>
+  </div>
+  <% } %>
+  <h2 class="title is-4">Recent AI requests</h2>
+  <div class="table-container"><table class="table is-fullwidth">
+    <thead><tr><th>Time (UTC)</th><th>Action</th><th>Model</th><th>Tokens</th><th>Estimated server USD</th><th>Outcome</th></tr></thead>
+    <tbody><% usage.forEach(row => { %><tr><td><%= row.createdAt.toISOString() %></td><td><%= row.action %></td><td><%= row.model %></td><td><%= row.totalTokens %></td><td><%= Number(row.costUsd).toFixed(8) %></td><td><%= row.outcome %></td></tr><% }); %></tbody>
+  </table></div>
+</div></section>

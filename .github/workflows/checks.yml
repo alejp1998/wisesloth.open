@@ -1,0 +1,48 @@
+name: Verify release
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: express-app/package-lock.json
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: npm ci --ignore-scripts
+        working-directory: express-app
+      - run: npm run lint && npm test -- --runInBand && npm run build
+        working-directory: express-app
+      - run: npm audit
+        working-directory: express-app
+      - run: pip install -r fastapi-api/requirements.txt ruff==0.17.0 pip-audit
+      - run: ruff check fastapi-api && ruff format --check fastapi-api
+      - run: python -m unittest discover -s fastapi-api/tests -v
+        env:
+          PYTHONPATH: fastapi-api
+      - run: pip-audit -r fastapi-api/requirements.txt
+      - run: python3 scripts/setup.py
+      - name: Boot a fresh self-hosted instance with an offline provider
+        run: |
+          if ! docker compose -p wisesloth-open-test -f compose.yaml -f compose.test.yaml up -d --build --wait --wait-timeout 180 > /tmp/wisesloth-boot.log 2>&1; then
+            python3 scripts/ci-diagnostics.py /tmp/wisesloth-boot.log
+            exit 1
+          fi
+        env:
+          PORT: '18080'
+          APP_URL: http://localhost:18080
+      - run: python3 scripts/smoke-test.py
+        env:
+          SMOKE_URL: http://localhost:18080
+      - if: failure()
+        run: docker compose -p wisesloth-open-test -f compose.yaml -f compose.test.yaml logs --tail 100
+      - if: always()
+        run: docker compose -p wisesloth-open-test -f compose.yaml -f compose.test.yaml down -v

@@ -1,0 +1,281 @@
+
+<% // Set quiz to a default value if it was deleted or modified after the quiz result was created
+isQuizAvailable = true;
+if (!quiz || (viewType==="RESULT" && quiz.updatedAt > quizResult.updatedAt)) {
+  isQuizAvailable = false;
+  const unavailableMsgEn = "This question result is unavailable because it was deleted or modified after the result was created.";
+  const unavailableMsgEs = "El resultado de esta pregunta no está disponible porque fue eliminada o modificada después de que se creó el resultado.";
+  quiz = {
+    id: quizResult.quizId,
+    question: (typeof lang !== "undefined" && lang === "es") ? unavailableMsgEs : unavailableMsgEn,
+    image_url: "",
+    opt1: "",
+    opt2: "",
+    opt3: "",
+    opt4: "",
+    opt5: "",
+    opt6: "",
+    correct_opts: "",
+  };
+} %>
+
+<div class="quiz <%=hideQuiz ? "is-hidden" : ""%>" id="quiz-<%= quiz.id %>">
+  <% if (viewType === "SHOW" || (viewType === "TRY" && isSequential)) { %>
+  <div style="padding: 3px;">
+  <% } else if (viewType !== "RESULT" || showOptions) { %>
+  <% let resultBoxClass = ""; %>
+  <% if (viewType === "RESULT" && !isQuizAvailable && test.type === 'knowledge') { %>
+  <% resultBoxClass = quizResult.result; %>
+  <% } %>
+  <div class="box <%=resultBoxClass%>">
+  <% } else { %>
+    <% let boxClass = ""; %>
+    <% if (test.type === 'knowledge') { %>
+    <% boxClass = quizResult.result; %>
+    <% } else if (test.type === 'personality') { %>
+    <% boxClass = `pers${quizResult.chosenOpts.split(',').map(Number)[0]}-border`; %>
+    <% } %>
+    <div class="box <%=boxClass%>">
+  <% } %>
+    <!-- Quiz Title Row (title + stats) -->
+    <div class="quiz-title-row">
+      <!-- Quiz Title -->
+      <div class="<%=(viewType === "TRY" && isSequential) ? "quiz-title-div-try" : "quiz-title-div"%>">
+        <span class="quiz-title">
+          <span class="quiz-number"><%= n %></span><% if (isQuizAvailable) { %><span class="quiz-question-text"><%= quiz.question %></span><% } else { %><span class="quiz-question-text"><%= quiz.question %></span><% } %>
+          <!-- Edit trigger, inline right after the question text (flows naturally with it,
+               so it never fights with the stats chart or any other absolutely positioned
+               element). Only shown where a quick edit makes sense: reviewing the test (SHOW)
+               or a past result (RESULT). Hidden while actively taking the test or in a live
+               battle (TRY). -->
+          <% var canEditQuiz = ((typeof isAuthor !== 'undefined' && isAuthor) || (typeof isAdmin !== 'undefined' && isAdmin)) && (typeof isQuizAvailable === 'undefined' || isQuizAvailable); %>
+          <% if ((viewType === "SHOW" || viewType === "RESULT") && canEditQuiz && (typeof test !== 'undefined' && test && test.type === 'knowledge')) { %>
+            <% if (viewType === "SHOW") { %>
+            <!-- Minimal inline edit: opens the editing modal right here (no navigation) -->
+            <button type="button" class="quiz-edit-inline-button quiz-edit-minimal quiz-edit-inline-trigger button is-small is-ghost" title="Edit question with AI" data-quiz-id="<%=quiz.id%>">
+              <i class="fas fa-edit"></i>
+            </button>
+            <% } else { %>
+            <a class="quiz-edit-minimal quiz-edit-inline-trigger button is-small is-ghost" href="/tests/<%=test.id%>/edit?focus=<%=quiz.id%>" title="Edit question with AI" data-quiz-id="<%=quiz.id%>">
+              <i class="fas fa-edit"></i>
+            </a>
+            <% } %>
+          <% } %>
+        </span>
+      </div>
+
+      <!-- Quiz Chart -->
+      <% if (viewType === "SHOW" && quiz.stats) { %>
+      <% if (test.type === 'knowledge') { %>
+      <div class="stats quiz-stats">
+        <!-- Include quiz chart -->
+        <% var chartType = "quiz"; %>
+        <% var chartId = quiz.id; %>
+      <% var chartStats = quiz.stats; %>
+      <%- include('chart', { chartType, chartId, chartStats }) %>
+    </div>
+    <% } else if (test.type === 'personality') { %>
+    <div class="stats quiz-stats">
+      <!-- Include personality chart -->
+      <% var chartType = "personality"; %>
+      <% var chartId = quiz.id; %>
+      <% var chartStats = quiz.stats; %>
+      <% var personalities = test.personalities; %>
+      <%- include('chart', { chartType, chartId, chartStats, personalities }) %>
+    </div>
+    <% } %>
+    <% } %>
+    </div><!-- End quiz-title-row -->
+
+    <% if (viewType === "TRY") { %>
+    <!-- Quiz Omit Button -->
+    <div class="flex-opt-clickable is-try selected quiz-omit-button">
+      <p lang="en">OMIT</p>
+      <p lang="es">OMITIR</p>
+      <input class="is-hidden" type="checkbox" name="chosenOpts-<%=quiz.id%>" value="0" checked>
+    </div>
+    <% } %>
+
+    <!-- Edit & Delete Buttons -->
+    <% if (viewType === "EDIT") { %>
+    <button class="quiz-edit-button button is-rounded is-warning" data-quiz-id="<%=quiz.id%>">
+      <span class="icon is-small">
+        <i class="fas fa-edit"></i>
+      </span>
+    </button>
+    <button class="quiz-delete-button button is-rounded is-danger" data-quiz-id="<%=quiz.id%>">
+      <span class="icon is-small">
+        <i class="fas fa-trash"></i>
+      </span>
+    </button>
+    <% } %>
+
+    <!-- Quiz Image -->
+    <% var imageHiddenClass = quiz.image_url ? "" : "is-hidden" %>
+    <div class="image-container">
+      <% if ((viewType === "SHOW") || (viewType === "TRY") || (viewType === "RESULT")) { %>
+      <img class="gcs-image preview-image <%=imageHiddenClass%>" id="gcs-image-<%= quiz.id %>" alt="gcs-image-<%= quiz.id %>" src="<%= quiz.image_url%>" loading="lazy"/>
+      <% if ((viewType !== "RESULT" || (viewType === "RESULT" && showOptions)) && (quiz.correct_opts.split(',').length > 1)) { %>
+      <p class="multiple-choice-alert is-size-7">
+        <span class="icon has-text-danger"><i class="fas fa-exclamation-triangle"></i></span>
+        <span lang="en">More than one correct answer!</span>
+        <span lang="es">¡Más de una respuesta correcta!</span>
+      </p>
+      <% } %>
+      <% } else if(viewType === "EDIT") { %>
+      <div style="width: 70%;">
+        <!-- File pond image input -->
+        <input id="quiz-image-pond-<%= quiz.id %>" type="file" class="filepond" name="filepond" data-max-files="1">
+      </div>
+      <img class="gcs-image preview-image <%=imageHiddenClass%>" id="gcs-image-<%= quiz.id %>" alt="gcs-image-<%= quiz.id %>" src="<%= quiz.image_url%>" loading="lazy"/>
+      <p class="is-size-7">
+        <span class="icon has-text-success"><i class="fas fa-info-circle"></i></span>
+        <b lang="en">Change correct answers just by clicking on them!</b>
+        <b lang="es">¡Cambia las respuestas correctas haciendo clic en ellas!</b>
+      </p>
+      <p class="quiz-edit-alert title is-6 has-text-danger is-hidden"></p>
+      <% } %>
+      <p class="quiz-alert title is-6 is-hidden"></p>
+    </div>
+
+    <!-- Quiz Options -->
+    <% if ((viewType === "SHOW") || (viewType === "EDIT")) { %>
+    <div class="quiz-options flex-container" style="margin-top: 10px;">
+
+      <% for (var j = 1; j <= 6; j++) { %>
+      <% const optionValue = quiz['opt' + j];%>
+      <% const userOptionTries = quiz.stats['un' + j]; %>
+      <% const totalOptionTries = quiz.stats['tn' + j]; %>
+      <% if (optionValue) {%>
+      <% if (optionValue.startsWith("[Exp]") && viewType !== "EDIT") continue; %> <!-- Skip explanation options -->
+      <% let optClass = "" %>
+      <% let isCorrect = false; %>
+      <% if (test.type === 'knowledge') { %>
+      <% isCorrect = quiz.correct_opts.includes(j); %>
+      <% optClass = isCorrect ? "marked" : ""; %>
+      <% } else if (test.type === 'personality') { %>
+      <% optClass = `pers${j}-border`; %>
+      <% } %>
+      <% if (viewType === "SHOW") { %>
+      <div class="flex-opt <%=optClass%>">
+        <% if (userOptionTries > 0 || totalOptionTries > 0 ) { %>
+        <div class="stats option-stats">
+          <div class="tags">
+            <% if (session.user) { %>
+            <span class="tag is-small is-link is-light is-rounded" title="Number of times you chose option <%=String.fromCharCode(64 + j)%>: <%=userOptionTries%>">
+              <span class="is-size-6"><i class="fas fa-user-astronaut fa-xs"></i> <%=userOptionTries%></span>
+            </span>
+            <% } %>
+            <span class="tag is-small is-info is-light is-rounded" title="Number of times someone chose option <%=String.fromCharCode(64 + j)%>: <%=totalOptionTries%>">
+              <span class="is-size-6"><i class="fas fa-users fa-xs"></i> <%=totalOptionTries%></span>
+            </span>
+          </div>
+        </div>
+        <% } %>
+        <p class="quiz-option subtitle is-5">
+          <b><%=String.fromCharCode(64 + j)%>.</b> <span class="option-text"><%=optionValue%></span>
+        </p>
+      </div>
+
+      <% } else if(viewType === "EDIT") { %>
+      <% isCorrect = quiz.correct_opts.includes(j); %>
+      <% const isExplanation = optionValue.startsWith("[Exp]"); %>
+      <% if (isExplanation) { %>
+      <!-- Show explanation with consistent styling -->
+      <div class="quiz-explanation">
+        <i class="fas fa-info-circle"></i>
+        <span><%= optionValue.substring(5).trim() %></span>
+      </div>
+      <% } else { %>
+      <div class="option flex-opt-clickable is-edit <%=isCorrect ? 'correct' : ''%>" id="opt<%=j%>">
+        <input class="is-hidden" type="checkbox" name="chosenOpts-<%=quiz.id%>" value="<%=j%>" <%=isCorrect ? 'checked' : ''%>>
+        <p class="quiz-option subtitle is-5">
+          <b><%=String.fromCharCode(64 + j)%>.</b> <span class="option-text"><%=optionValue%></span>
+        </p>
+      </div>
+      <% } %>
+      <% } %>
+
+      <% } %>
+      <% } %>
+    </div>
+
+    <% } else if (viewType === "TRY") { %>
+    <div class="quiz-options flex-container" style="margin-top: 10px;">
+      <% for (let j = 1; j <= 6; j++) { %>
+      <% const jRandom = randomQuizOpts[j-1]; %>
+      <% const optionValue = quiz['opt' + jRandom]; %>
+      <% if (optionValue) { %>
+      <% if (optionValue.startsWith("[Exp]")) continue; %> <!-- Skip explanation options -->
+      <div class="flex-opt-clickable is-try" id="opt<%=jRandom%>">
+        <p class="quiz-option subtitle is-5">
+          <input class="is-hidden" type="checkbox" name="chosenOpts-<%=quiz.id%>" value="<%=jRandom%>">
+          <b><%=String.fromCharCode(64 + j)%>.</b> <span class="option-text"><%=optionValue%></span>
+        </p>
+      </div>
+      <% } %>
+      <% } %>
+    </div>
+
+    <!-- Quiz Check Button - Below options (hidden in livebattle mode - uses timer bar submit instead) -->
+    <% if (isSequential && test.type !== 'personality' && !(typeof isLiveBattle !== 'undefined' && isLiveBattle)) { %>
+    <% var isAuthor = session.user && test.author && test.author.username === session.user.username %>
+    <% const buttonClass = 'quiz-check-button'; %>
+    <% const buttonLabel = { en: 'Check Answer', es: 'Comprobar' }; %>
+    <div class="quiz-check-container">
+      <button class="<%=buttonClass%> button is-primary is-hidden" title="Check question" data-quiz-id="<%=quiz.id%>" data-result-id="<%=resultId%>" data-hide-answers="<%=test.hideAnswers%>" data-correct-opts="<%=quiz.correct_opts%>" data-is-author="<%=isAuthor%>">
+        <span class="icon"><i class="fas fa-check"></i></span>
+        <span lang="en"><%=buttonLabel.en%></span>
+        <span lang="es"><%=buttonLabel.es%></span>
+      </button>
+    </div>
+    <% } %>
+
+    <% } else if(viewType === "RESULT" && showOptions) { %>
+    <div class="quiz-options flex-container" style="margin-top: 10px;">
+      <% const orderOpts = quizResult.orderOpts.split(',').map(Number); %>
+      <% const chosenOpts = quizResult.chosenOpts.split(',').map(Number); %>
+      <% for (let j = 1; j <= 6; j++) { %>
+      <% const jRandom = orderOpts[j-1]; %>
+      <% const optionValue = quiz['opt' + jRandom]; %>
+      <% if (optionValue) { %>
+      <% if (optionValue.startsWith("[Exp]")) continue; %> <!-- Skip explanation options -->
+      <% let optClass = "" %>
+      <% if (test.type === 'knowledge') { %>
+      <% const isCorrect = quiz.correct_opts.includes(jRandom); %>
+      <% const isSelected = chosenOpts.includes(jRandom); %>
+      <% if (isCorrect && isSelected) {
+        optClass = "correct";
+      } else if (!isCorrect && isSelected) {
+        optClass = "incorrect";
+      } else if (isCorrect && !isSelected) {
+        optClass = "marked";
+      } %>
+      <% } else if (test.type === 'personality') { %>
+      <% const isSelected = chosenOpts.includes(jRandom); %>
+      <% optClass = isSelected ? `pers${chosenOpts[0]}-border` : ''; %>
+      <% } %>
+      <div class="flex-opt <%=optClass%>">
+        <p class="quiz-option subtitle is-5">
+          <b><%=String.fromCharCode(64 + j)%>.</b> <span class="option-text"><%=optionValue%></span>
+        </p>
+      </div>
+      <% } %>
+
+      <% } %>
+    </div>
+    <% } %>
+
+    <!-- Quiz Explanation -->
+    <% if (((test.hideAnswers === false) || isAdmin || isAuthor) && (test.type === 'knowledge') && (viewType === "SHOW" || viewType === "RESULT" || (viewType === "TRY" && isSequential)) && (quiz.opt6.startsWith("[Exp]"))) { %>
+      <div class="quiz-explanation
+          <% if (!((viewType === 'TRY' || viewType === 'RESULT' || viewType === 'SHOW') && quiz.opt6.startsWith('[Exp]'))) { %>hidden<% } %>">
+          <p class="quiz-explanation-text">
+              <i class="fas fa-info-circle"></i>
+              <span><%= quiz.opt6.substring(5).trim() %></span>
+          </p>
+      </div>
+    <% } %>
+
+  </div>
+</div>

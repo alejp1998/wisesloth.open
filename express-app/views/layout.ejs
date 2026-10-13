@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<% if (lang && lang === "es") { %>
+<html class="has-navbar-fixed-top" lang="es">
+<% } else { %>
+<html class="has-navbar-fixed-top" lang="en">
+<% } %>
+
+<!-- HEAD -->
+<%- include('head') %>
+
+<!-- Initialize variables -->
+<script class="layout-init-js" nonce="<%=nonce%>">
+  var isLoggedIn = "<%= isLoggedIn %>" === "true" ? true : false;
+  var username = <%- safeJson(session.user?.username || null) %>;
+  var isAdmin = <%= isAdmin ? 'true' : 'false' %>;
+  var metaRobots = document.querySelector('meta[name="robots"]');
+  var testJSON;
+  var test;
+  var isNewTestInitialized = false;
+  var isEditTestInitialized = false;
+  var isLiveBattleInitialized = false;
+  var isTestEdited;
+  var newQuizzesIds;
+  var changedQuizzesIds;
+  var deletedQuizzesIds;
+  var saveButtons;
+  var imagePonds = [];
+  var isTestNewJSLoaded = false;
+  var isTestEditJSLoaded = false;
+  var isAddImageJSLoaded = false;
+  var unsavedChanges = false;
+  var hoveredPond;
+  var randomFacts = [];
+  var liveBattleId = "";
+  var liveBattle = {};
+  var updateLiveBattleStatusIntervalKey = "update-live-battle-status";
+  var nLiveBattleStatusChecks = 0;
+  var nFailedLiveBattleStatusChecks = 0;
+</script>
+
+<body id="body">
+  <div id="body-background"></div>
+
+  <div id="dinamic-content"> <!-- style="min-height: 100vh;"> -->
+    <!-- NAVBAR -->
+    <%- include('navbar') %>
+
+    <!-- BODY CONTENT IS FILLED HERE -->
+    <div id="body-content">
+      <%- body %>
+    </div>
+
+    <!-- FOOTER -->
+    <% if (typeof minimalFooter !== 'undefined' && minimalFooter) { %>
+      <%- include('footer-minimal') %>
+    <% } else { %>
+      <%- include('footer') %>
+    <% } %>
+  </div>
+
+
+
+</body>
+
+
+
+<!-- Login modal -->
+<%- include('auxiliary/modal-login') %>
+
+<!-- Image modal -->
+<%- include('auxiliary/modal-image') %>
+
+<!-- Try modal -->
+<%- include('auxiliary/modal-try') %>
+
+<!-- Live battle modal -->
+<%- include('auxiliary/modal-livebattle') %>
+
+<!-- Edit test details modal -->
+<%- include('auxiliary/modal-edit-test') %>
+
+<!-- Changelog modal -->
+<%- include('auxiliary/modal-changelog') %>
+
+
+<!-- Customization (language and theme) -->
+<script src="/scripts/customize.min.js?v=20260816b"></script>
+
+<!-- General actions -->
+<script src="/scripts/general-actions.min.js?v=20261013-byok"></script>
+<script src="/scripts/browser-ai.min.js?v=open2"></script>
+
+<!-- General (whole-test/deck) AI edit: shared by test/flashcard show+edit pages and
+     the "Edit test details" modal below. Loaded once, globally (event-delegated). -->
+<script src="/scripts/tests/test-general-ai-edit.js?v=20261013-byok" nonce="<%=nonce%>"></script>
+
+<!-- Tests Index JS -->
+<script src="/scripts/tests/test-index.min.js?v=20260814"></script>
+
+<!-- Other Indexes JS -->
+<script src="/scripts/index.min.js?v=20260814"></script>
+
+<!-- Local account actions -->
+<script src="/scripts/login-logout.min.js?v=20261013-byok"></script>
+
+<!-- Initialize markdown rendering on page load -->
+<script nonce="<%=nonce%>">
+  // Render markdown when page first loads
+  if (typeof renderQuizMarkdown === 'function') {
+    renderQuizMarkdown();
+  }
+</script>
+
+</html>

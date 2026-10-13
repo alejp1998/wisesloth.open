@@ -1,0 +1,161 @@
+<% const isTestAuthor = session.user && test.author && test.author.username === session.user.username; %>
+<% const isResultExaminee = session.user && result.examinee && result.examinee.username === session.user.username; %>
+<% const isTestFavorite = session.user && (session.user.favoriteIds || []).includes(test.id); %>
+<% function correctPercentage(score,nQuestions) { return Math.round((score/nQuestions)*100); } %>
+
+<% if (viewType === "RESULT") { %>
+<!-- Compact result stats for result page -->
+<div class="result-stats-compact" id="result-stats-<%=result.id%>" data-result-id="<%=result.id%>" data-test-id="<%=test.id%>">
+  <div class="tags are-medium mb-0">
+    <span class="tag is-dark" title="Time spent">
+      <% var nSeconds = result.nSeconds; %>
+      <%- include('../auxiliary/stopwatch', {nSeconds, viewType: 'RESULT'}) %>
+    </span>
+    <% if (result.test.type === 'personality') { %>
+      <% for (const key of result.orderedPersonalities) { %>
+        <% const persName = test.personalities[key] %>
+        <% const persDesc = test.personalitiesDesc[key] %>
+        <% const persCount = result.personalitiesCount[key] %>
+        <% const borderClass = `pers${key}-border`; %>
+        <% if (persName) { %>
+        <span class="tag <%=borderClass%>" title="<%=persDesc%>">
+          <b><%=persName%></b>&nbsp;<%=persCount%>
+        </span>
+        <% } %>
+      <% } %>
+    <% } %>
+  </div>
+  <div class="result-actions">
+    <% if (isAdmin || isTestAuthor) { %>
+    <% const deleteMsgUsername = result.examinee ? result.examinee.username : "unknown"; %>
+    <% const deleteMsg = "Delete " + test.name + "'s result taken by " + deleteMsgUsername + formatTimeAgo(result.updatedAt) + " with score " + result.score + "/" + result.nQuestions + " (" + correctPercentage(result.score, result.nQuestions) + "%)."; %>
+    <button class="button is-small is-danger is-light delete-item-button" data-item-id="<%=result.id%>" data-delete-type="result" data-delete-msg="<%=deleteMsg%>">
+      <span class="icon"><i class="fas fa-trash"></i></span>
+    </button>
+    <% } %>
+    <% if(session.user) { %>
+    <button class="button is-small is-info is-light share-result-button" data-test-name="<%=test.name%>" data-result-id="<%=result.id%>">
+      <span class="icon"><i class="fas fa-share-alt"></i></span>
+    </button>
+    <button class="button is-small is-danger is-light favorite-button" data-is-logged-in="<%=!!session.user%>" data-test-id="<%= test.id %>" data-is-favorite="<%=isTestFavorite%>">
+      <% if (isTestFavorite) { %>
+      <span class="icon heart-icon"><i class="fas fa-heart"></i></span>
+      <% } else { %>
+      <span class="icon heart-icon"><i class="far fa-heart"></i></span>
+      <% } %>
+    </button>
+    <% } %>
+  </div>
+</div>
+<% } else { %>
+<!-- Full card for list views -->
+<div class="flex-card" id="card-result-<%=result.id%>">
+  <div class="card result-card" data-result-id="<%=result.id%>" data-test-id="<%=test.id%>">
+    <header class="card-header">
+      <div class="card-header-title">
+        <p class="is-size-4">
+          <span class="test-name is-clickable" data-href="/tests/<%=test.id%>"><%=test.name%></span>
+        </p>
+      </div>
+
+      <div class="card-header-icon">
+        <% if (result.test.type === 'knowledge') { %>
+        <span class="button is-link is-light is-medium">
+          <span class="icon"><i class="fas fa-check-double"></i></span>
+          <span><%= correctPercentage(result.score, result.nQuestions) %>%</span>
+        </span>
+        <% } %>
+      </div>
+    </header>
+    <div class="card-content" id="card-content-<%=result.id%>">
+      <br class="is-hidden-touch">
+      <br class="is-hidden-touch">
+      <div class="content">
+        <div class="is-hidden" id="card-hidden-result-<%=result.id%>">
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="tags">
+              <span class="tag is-medium is-dark" title="Time spent">
+                <!-- Include stopwatch -->
+                <% var nSeconds = result.nSeconds; %>
+                <%- include('../auxiliary/stopwatch', {nSeconds, viewType: 'RESULT'}) %>
+              </span>
+              <% if (result.test.type === 'personality') { %>
+                <% for (const key of result.orderedPersonalities) { %>
+                  <% const persName = test.personalities[key] %>
+                  <% const persDesc = test.personalitiesDesc[key] %>
+                  <% const persCount = result.personalitiesCount[key] %>
+                  <% const borderClass = `pers${key}-border`; %>
+                  <% if (persName) { %>
+                  <span class="tag is-medium <%=borderClass%>" title="<%=persDesc%>">
+                    <b><%=persName%></b> <span class="icon"><%=persCount%></span>
+                  </span>
+                  <% } %>
+                <% } %>
+              <% } %>
+            </div>
+          </div>
+          <div class="column is-narrow has-text-right">
+            <p class="title is-6">
+              <span lang="en">Examinee: </span>
+              <span lang="es">Examinado: </span>
+              <% if (isResultExaminee) { %>
+              <a href="/users/<%= result.examinee.username %>" class="has-text-success">
+<span class="icon"><i class="fas fa-user-astronaut"></i></span>
+                <b class="has-text-success " lang="en">ME</b>
+                <b class="has-text-success " lang="es">YO</b>
+              </a>
+              <% } else { %>
+                <% if(result.examinee && (result.examinee.username !== 'anonymous')) { %>
+                <a href="/users/<%= result.examinee.username %>">
+                  <%=result.examinee.username%>
+                </a>
+                <% } else { %>
+                <em lang="en">anonymous</em>
+                <em lang="es">anónimo</em>
+                <% } %>
+              <% } %>
+              <% if (session.user && result.examinee && (result.examinee.username !== session.user.username)) { %>
+              <% const isIFollow =  session.user && (session.user.iFollowUsernames || []).includes(result.examinee.username); %>
+              <a class="follow-button" data-user-username="<%=result.examinee.username%>" data-is-followed="<%=isIFollow%>">
+                <% if (isIFollow) { %>
+                <span class="icon"><i class="fas fa-user-minus" style="color: var(--danger-color);"></i></i></span>
+                <% } else { %>
+                <span class="icon"><i class="fas fa-user-plus" style="color: var(--success-color);"></i></span>
+                <% } %>
+              </a>
+              <% } %>
+            </p>
+            <p class="subtitle is-6">
+              <em><%= formatTimeAgo(result.updatedAt, lang) %></em>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="card-footer">
+      <% if (isAdmin || isTestAuthor ) { %>
+      <% const deleteMsgUsername = result.examinee ? result.examinee.username : "unknown"; %>
+      <% const deleteMsg = "Delete " + test.name + "'s result taken by " + deleteMsgUsername + formatTimeAgo(result.updatedAt) + " with score " + result.score + "/" + result.nQuestions + " (" + correctPercentage(result.score, result.nQuestions) + "%)."; %>
+      <% const deleteType = "result"; %>
+      <div class="card-footer-item delete-item-button" data-item-id="<%=result.id%>" data-delete-type="<%=deleteType%>" data-delete-msg="<%=deleteMsg%>">
+        <span class="icon"><i class="fas fa-trash" style="color: var(--bulma-danger);"></i></span>
+      </div>
+      <% } %>
+      <% if(session.user) { %>
+      <div class="card-footer-item share-result-button" data-test-name="<%=test.name%>" data-result-id="<%=result.id%>">
+        <span class="icon"><i class="fas fa-share-alt" style="color: var(--bulma-info);"></i></span>
+      </div>
+      <div class="card-footer-item favorite-button" data-is-logged-in="<%=!!session.user%>" data-test-id="<%= test.id %>" data-is-favorite="<%=isTestFavorite%>">
+        <% if (isTestFavorite) { %>
+        <span class="icon heart-icon"><i class="fas fa-heart" style="color: red;"></i></span>
+        <% } else { %>
+        <span class="icon heart-icon"><i class="far fa-heart" style="color: red;"></i></span>
+        <% } %>
+        </div>
+      <% } %>
+    </footer>
+  </div>
+</div>
+<% } %>

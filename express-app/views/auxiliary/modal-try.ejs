@@ -1,0 +1,219 @@
+<div id="modal-try" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p id="modal-try-title" class="modal-card-title is-size-5"></p>
+      <button class="modal-delete delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <!-- Test name - minimalistic header -->
+      <div class="modal-try-test-header mb-4">
+        <p id="modal-try-test-name" class="test-header-title"></p>
+        <p id="modal-try-test-author" class="test-header-meta"></p>
+      </div>
+      <!-- <br class="is-logged-out <%= isLoggedIn ? 'is-hidden' : '' %>"> -->
+      <p class="subtitle is-7 is-logged-out <%= isLoggedIn ? 'is-hidden' : '' %>">
+        <span class="icon is-small has-text-danger"><i class="fas fa-exclamation-triangle"></i></span>
+        <span lang="en">Not logged in! A temporal account will be created to save your results.</span>
+        <span lang="es">No has iniciado sesión! Se creará una cuenta temporal para guardar tus resultados.</span>
+      </p>
+
+      <!-- Tabs styled like creation tabs -->
+      <div class="modal-try-tabs" id="modal-try-tabs">
+        <!-- Try Tab -->
+        <button class="modal-try-tab tab is-active" id="tab-toggle-try">
+          <span class="modal-try-tab-icon"><i class="fas fa-play"></i></span>
+          <span class="modal-try-tab-label">
+            <span lang="en">Practice</span>
+            <span lang="es">Practicar</span>
+          </span>
+          <span class="modal-try-tab-help try-mode-help" aria-haspopup="true" aria-controls="try-mode-help-modal">
+            <i class="fas fa-question-circle"></i>
+          </span>
+        </button>
+
+        <!-- Live Battle Tab -->
+        <button class="modal-try-tab tab" id="tab-toggle-livebattle">
+          <span class="modal-try-tab-icon"><i class="fas fa-bolt"></i></span>
+          <span class="modal-try-tab-label">
+            <span lang="en">Live Battle</span>
+            <span lang="es">Live Battle</span>
+          </span>
+          <span class="modal-try-tab-help livebattle-mode-help" aria-haspopup="true" aria-controls="livebattle-mode-help-modal">
+            <i class="fas fa-question-circle"></i>
+          </span>
+        </button>
+      </div>
+
+      <div id="tab-content-try" class="tab-content">
+        <form id="trySettingsForm" method="POST">
+          <p class="subtitle is-6 has-text-centered">
+            <span lang="en">Test your knowledge at your own pace.</span>
+            <span lang="es">Prueba tus conocimientos a tu propio ritmo.</span>
+          </p>
+          <label id="nQuestionsLabel" class="label nquestions-field" for="nQuestions">
+            <span lang="en">Number of questions </span>
+            <span lang="es">Número de preguntas </span>
+            <span id="nQuestionsRange"></span>
+          </label>
+          <div class="field nquestions-field">
+            <div class="control">
+              <input class="input" type="number" id="nQuestions" name="nQuestions" min="1" max="30" value="30" required>
+            </div>
+          </div>
+          <div class="field">
+            <label class="checkbox">
+              <input type="checkbox" id="randomizeQuestions" name="randomizeQuestions">
+              <span lang="en">Randomize questions</span>
+              <span lang="es">Aleatorizar preguntas</span>
+            </label>
+          </div>
+          <div class="field nquestions-field">
+            <label class="checkbox">
+              <input type="checkbox" id="randomizeOptions" name="randomizeOptions">
+              <span lang="en">Randomize options</span>
+              <span lang="es">Aleatorizar opciones</span>
+            </label>
+          </div>
+          <div class="field">
+            <label class="checkbox">
+              <input type="checkbox" id="sequentialQuestions" name="sequentialQuestions" checked>
+              <span lang="en">Questions one by one</span>
+              <span lang="es">Preguntas una por una</span>
+            </label>
+          </div>
+        </form>
+        <div class="buttons is-centered" style="margin-top: 10px;">
+          <button id="modal-try-button" class="button is-primary">
+            <span class="icon"><i class="fas fa-play"></i></span>
+            <span lang="en">Try</span>
+            <span lang="es">Intentar</span>
+          </button>
+          <button class="modal-cancel button is-hidden-touch">
+            <span class="icon"><i class="fas fa-times"></i></span>
+            <span lang="en">Cancel</span>
+            <span lang="es">Cancelar</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="tab-content-livebattle" class="tab-content is-hidden">
+        <!-- Brief explanation -->
+        <p class="subtitle is-6 has-text-centered mb-4">
+          <span lang="en">⚡ Challenge friends in real-time!</span>
+          <span lang="es">⚡ ¡Desafía a amigos en tiempo real!</span>
+        </p>
+
+        <form id="livebattleSettingsForm" method="POST">
+          <div class="columns is-mobile">
+            <div class="column">
+              <label class="label is-size-7" for="nQuestions-livebattle">
+                <span lang="en"># Questions </span>
+                <span lang="es"># Preguntas </span>
+                <span id="nQuestionsRange-livebattle"></span>
+              </label>
+              <div class="field">
+                <input class="input" type="number" id="nQuestions-livebattle" name="nQuestions" min="1" max="30" value="15" required>
+              </div>
+            </div>
+            <div class="column">
+              <label class="label is-size-7" for="nSeconds-livebattle">
+                <span lang="en">Seconds/Q </span>
+                <span lang="es">Seg/Pregunta </span>
+                <span id="nSecondsRange-livebattle" class="is-hidden-mobile">(20-90)</span>
+              </label>
+              <div class="field">
+                <input class="input" type="number" id="nSeconds-livebattle" name="nSeconds" min="20" max="90" value="30" required>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="checkbox">
+              <input type="checkbox" id="randomizeQuestions-livebattle" name="randomizeQuestions">
+              <span lang="en">Randomize questions</span>
+              <span lang="es">Aleatorizar preguntas</span>
+            </label>
+          </div>
+          <div class="field">
+            <label class="checkbox">
+              <input type="checkbox" id="randomizeOptions-livebattle" name="randomizeOptions">
+              <span lang="en">Randomize options</span>
+              <span lang="es">Aleatorizar opciones</span>
+            </label>
+          </div>
+        </form>
+
+        <div class="buttons is-centered" style="margin-top: 10px;">
+          <button id="modal-live-battle-button" class="button is-link">
+            <span class="icon"><i class="fas fa-bolt"></i></span>
+            <span lang="en">Create Battle</span>
+            <span lang="es">Crear Batalla</span>
+          </button>
+          <button class="modal-cancel button is-hidden-touch">
+            <span class="icon"><i class="fas fa-times"></i></span>
+            <span lang="en">Cancel</span>
+            <span lang="es">Cancelar</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-alert"></div>
+    </section>
+
+    <!-- <footer class="modal-card-foot">
+    </footer> -->
+  </div>
+</div>
+
+<!-- ========== HELP MODALS ========== -->
+<!-- Try Mode Help Modal -->
+<div class="modal" id="try-mode-help-modal">
+  <div class="modal-background"></div>
+  <div class="modal-content" style="min-width: 50%;">
+    <div class="box">
+      <h1 class="title is-3 has-text-centered">
+        <span class="icon has-text-primary"><i class="fas fa-play"></i></span>
+        <span lang="en">Practice Mode</span>
+        <span lang="es">Modo Práctica</span>
+      </h1>
+      <p class="subtitle is-5 has-text-centered">
+        <span lang="en">Test your knowledge at your own pace, without any time pressure.</span>
+        <span lang="es">Pon a prueba tus conocimientos a tu propio ritmo, sin presión de tiempo.</span>
+      </p>
+      <hr>
+      <div class="content">
+        <ul>
+          <li>
+            <span lang="en"><strong>No time limit</strong> - Take as long as you need for each question</span>
+            <span lang="es"><strong>Sin límite de tiempo</strong> - Toma el tiempo que necesites para cada pregunta</span>
+          </li>
+          <li>
+            <span lang="en"><strong>Instant feedback</strong> - See if your answer is correct immediately</span>
+            <span lang="es"><strong>Retroalimentación instantánea</strong> - Ve si tu respuesta es correcta inmediatamente</span>
+          </li>
+          <li>
+            <span lang="en"><strong>Track your progress</strong> - Your results are saved to your profile</span>
+            <span lang="es"><strong>Sigue tu progreso</strong> - Tus resultados se guardan en tu perfil</span>
+          </li>
+          <li>
+            <span lang="en"><strong>Customize</strong> - Choose number of questions and randomization options</span>
+            <span lang="es"><strong>Personaliza</strong> - Elige el número de preguntas y opciones de aleatorización</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<!-- Live Battle Help Modal -->
+<div class="modal" id="livebattle-mode-help-modal">
+  <div class="modal-background"></div>
+  <div class="modal-content" style="min-width: 60%;">
+    <div class="box">
+      <% const isHelpModal = true; %>
+      <%- include('../general/from-livebattle', { isHelpModal }) %>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>

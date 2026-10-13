@@ -1,0 +1,218 @@
+<head>
+  <%
+    // Defaults shared by every page, can be overridden per-route via pageTitle/pageDescription/pageImage locals
+    const defaultPageTitle = "WiseSloth.open: quizzes on your own server";
+    const defaultPageDescription = "WiseSloth.open: Quickly create AI quizzes from exams, notes, or any text in any language. Shuffle questions, track progress, share with friends, compete in real time, and climb the leaderboards!";
+    const resolvedTitle = (typeof pageTitle !== 'undefined' && pageTitle) ? pageTitle : defaultPageTitle;
+    const resolvedDescription = (typeof pageDescription !== 'undefined' && pageDescription) ? pageDescription : defaultPageDescription;
+    const resolvedImage = (typeof pageImage !== 'undefined' && pageImage) ? pageImage : appUrl + "/images/sloth-logo.webp";
+    const currentPath = (typeof url !== 'undefined' && url) ? url.split('?')[0] : "/";
+    const canonicalUrl = appUrl + currentPath;
+  %>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <meta name="robots" content="index, follow">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" lang="en" content="<%= resolvedDescription %>">
+  <title><%= resolvedTitle %></title>
+
+  <!-- Apply the saved theme BEFORE the stylesheets load, so there is no white
+       flash on full page reloads (the visitor's localStorage preference wins) -->
+  <script nonce="<%=nonce%>">
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('bulma-theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="<%= canonicalUrl %>">
+
+  <!-- Open Graph / Facebook, Discord, WhatsApp, Slack, iMessage link previews -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="WiseSloth.open">
+  <meta property="og:title" content="<%= resolvedTitle %>">
+  <meta property="og:description" content="<%= resolvedDescription %>">
+  <meta property="og:url" content="<%= canonicalUrl %>">
+  <meta property="og:image" content="<%= resolvedImage %>">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:locale" content="<%= lang === 'es' ? 'es_ES' : 'en_US' %>">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="<%= resolvedTitle %>">
+  <meta name="twitter:description" content="<%= resolvedDescription %>">
+  <meta name="twitter:image" content="<%= resolvedImage %>">
+
+  <!-- Organization / WebSite structured data for Google Knowledge Graph -->
+  <script type="application/ld+json" nonce="<%=nonce%>">
+  <%- safeJson({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "WiseSloth.open",
+    "url": appUrl + "/",
+    "description": defaultPageDescription,
+    "publisher": {
+      "@type": "Organization",
+      "name": "WiseSloth.open",
+      "logo": appUrl + "/images/sloth-logo.webp"
+    }
+  }) %>
+  </script>
+
+  <!-- CMP by iubenda ? -->
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="<%= theme === 'dark' ? '#1a1a1a' : '#ffffff' %>">
+
+  <!-- Resource hints: speed up connections to third-party origins used below -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preload DM Sans (renders hero text) + Jura (titles) to avoid font-swap CLS on first paint -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAopxRSW32.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/jura/v34/z7NOdRfiaC4Vd8hhoPzfb5vBTP266pumR_g.woff2">
+  <!-- <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"> -->
+
+<!-- Critical CSS (above-fold: nav, hero, cookie banner) inlined to cut render-blocking -->
+  <style id="critical-css">
+:root{--select-color:var(--bulma-primary);--info-color:var(--bulma-info);--link-color:var(--bulma-link);--success-color:var(--bulma-success);--danger-color:var(--bulma-danger);--grey-color:var(--bulma-grey);--gold-color:#FFD700;--silver-color:#C0C0C0;--bronze-color:#CD7F32;--pers1-color:#8b06d3;--pers2-color:#d30606;--pers3-color:#06d306;--pers4-color:#06d3d3;--pers5-color:#d3d306;--pers6-color:#d3068b;--wise-blue:#4F46E5;--wise-purple:#8B5CF6;--wise-green:#10B981;--wise-yellow:#FBBF24;--wise-red:#EF4444;--bulma-primary-h:180deg;--bulma-navbar-height:3.5rem;--bulma-title-weight:450;--bulma-weight-bold:600;--bulma-weight-extrabold:700;--bulma-block-spacing:1rem}html.is-clipped{overflow:hidden !important}.supporter-ribbon a{position:absolute;display:flex;align-items:center;justify-content:center;gap:0.1rem;width:105px;padding:0.2rem 0;background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);box-shadow:0 2px 4px rgba(0,0,0,0.2);color:#78350f;font-size:0.5rem;font-weight:600;letter-spacing:0.02em;text-transform:uppercase;text-decoration:none;top:15px;right:-28px;transform:rotate(45deg);cursor:pointer;transition:background 0.2s ease}.supporter-ribbon a:hover{background:linear-gradient(135deg,#fcd34d 0%,#fbbf24 100%)}.title{font-weight:var(--bulma-title-weight) !important}.title span{font-weight:var(--bulma-title-weight) !important}.elegant-footer .footer-logo img{border-radius:6px}.elegant-footer .footer-links a{font-size:0.9rem;color:var(--text-color,#4a4a4a);transition:color 0.2s}.elegant-footer .footer-links a:hover{color:var(--link-color,#485fc7)}.content a,.box p a,p a:not(.button){text-decoration:underline;text-underline-offset:2px}.elegant-footer .footer-legal a{color:var(--text-light,#6b7280)}.elegant-footer .footer-legal a:hover{color:var(--link-color,#485fc7)}.footer-minimal a:hover{text-decoration:underline}.nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;height:var(--bulma-navbar-height);background:var(--bulma-scheme-main);border-bottom:1px solid var(--bulma-border,rgba(0,0,0,0.1));box-shadow:0 1px 3px rgba(0,0,0,0.06)}.nav__row{flex:0 0 auto;height:var(--bulma-navbar-height);display:flex;align-items:center;justify-content:space-between;padding:0 0.75rem}.nav__brand{display:flex;align-items:center;gap:1.25rem;min-width:0}.nav__brand-link{display:flex;align-items:center;gap:0.6rem;color:var(--bulma-text-strong,inherit);text-decoration:none;flex-shrink:0}.nav__logo{display:block;height:1.75rem;width:auto}.nav__brand-text{display:inline-flex;align-items:center;height:1.75rem;box-sizing:border-box;font-family:"Space Grotesk","Jura","DM Sans",sans-serif;font-weight:700;font-size:1.75rem;line-height:1;letter-spacing:0;color:#111111;transform:translateY(2px);white-space:nowrap}[data-theme="dark"] .nav__brand-text{color:#ffffff}.nav__brand-actions{display:flex;align-items:center;gap:0.5rem}.nav__dropdown:hover .nav__dropdown-menu,.nav__dropdown:focus-within .nav__dropdown-menu{display:block}.nav__link{padding:0.5rem 0.75rem;color:var(--bulma-text-strong,inherit);text-decoration:none;font-weight:500;border-radius:var(--bulma-radius-small)}.nav__link:hover{background:var(--bulma-scheme-main-bis)}.nav__icon-btn{display:flex;align-items:center;justify-content:center;gap:0.3rem;min-width:2.25rem;height:2.25rem;padding:0 0.5rem;border:1px solid var(--bulma-border,rgba(0,0,0,0.12));border-radius:var(--bulma-radius-small);background:var(--bulma-scheme-main);color:var(--bulma-text-strong,inherit);font-weight:600;font-size:0.8rem;cursor:pointer;transition:background 0.15s ease}.nav__icon-btn:hover{background:var(--bulma-scheme-main-bis)}.is-hidden{display:none !important}[data-theme="dark"] footer a{color:white}[data-theme="light"] footer a{color:black}#cookie-banner{z-index:2147483000;position:fixed;inset:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background-color:rgba(0,0,0,0.55);padding:1rem;text-align:center}#cookie-banner.is-hidden{display:none}#cookie-banner .cookie-banner-card{background-color:#f0f0f0;border-radius:12px;padding:1.25rem 1.5rem;max-width:520px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.3)}[data-theme="dark"] #cookie-banner .cookie-banner-card{background-color:#1e1e2e;color:#eee}.cookie-banner-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0.75rem;margin-top:1rem;margin-bottom:1rem}.hero.home{position:relative}#modal-context p{font-size:20px;line-height:1.6;margin-bottom:8px}#modal-context h3{color:var(--info-color);font-size:24px;margin-bottom:15px}.open-edit-test-modal-button:hover>.icon{transform:scale(1.2) rotate(360deg);transition:transform 0.3s}.pagination-button:hover>.icon{transform:scale(1.2) rotate(360deg);transition:transform 0.3s}.index-menu .level-left .title{margin-bottom:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.index-menu .button{white-space:nowrap}.quiz-check-button .icon{transition:transform 0.2s ease !important}.quiz-check-button:hover .icon{transform:scale(1.1) !important}.button:hover{transform:scale(1.02);transition:transform 0.3s}.card-footer-item:hover>.icon{transform:scale(1.5) rotate(360deg);transition:transform 0.3s}.dropdown-item:hover>.icon{transform:scale(1.3) rotate(360deg);transition:transform 0.3s}.dropdown-item:hover>.tag{transform:scale(1.1) rotate(360deg);transition:transform 0.3s}.navbar-link:hover>.icon{transform:scale(1.2) rotate(360deg);transition:transform 0.3s}.navbar-item:hover>.icon{transform:scale(1.2) rotate(360deg);transition:transform 0.3s}a:hover>.icon{transform:scale(1.2) rotate(360deg);transition:transform 0.3s}span.button:hover>.icon{transform:scale(1.2) rotate(360deg);transition:transform 0.3s}div.button:hover>.icon{transform:scale(1.2) rotate(360deg);transition:transform 0.3s}button.button:hover>.icon{transform:scale(1.2) rotate(360deg);transition:transform 0.3s}.error-stack pre{overflow-x:auto;overflow-y:auto;white-space:pre-wrap;font-size:14px}.highlight-card-rank .fa-medal{font-size:2.5em}.highlight-card-rank .fa-award{font-size:2em;color:theme('colors.gray.400')}.audience-box ul li .icon{vertical-align:middle;margin-right:0.75rem}.gradient-text{z-index:10;background:linear-gradient(to right,var(--wise-yellow),var(--wise-purple));background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}.faq-question .title{margin:0;flex-grow:1}[data-theme="dark"] .faq-question{background-color:var(--scheme-main-ter,#2a2a2a)}[data-theme="dark"] .faq-question:hover{background-color:var(--scheme-main-bis,#3a3a3a)}[data-theme="dark"] .faq-answer{background-color:var(--scheme-main-bis,#1f1f1f);border-left-color:#444}[data-theme="dark"] .faq-show-answer{color:#a0a0a0}#tab-toggle-livebattle a{transition:all 0.3s ease}#tab-toggle-livebattle.is-active a{border-color:var(--bulma-link) !important}.livebattle-hero .hero-body{padding:1rem 1.5rem;align-items:flex-start}.try-hero .hero-body{align-items:flex-start !important}.result-stats-compact .tags{flex-wrap:wrap;gap:0.5rem}.result-stats-compact .tag{margin:0}.result-actions .button{border-radius:50%;width:2rem;height:2rem;padding:0}.result-actions-bar .button{border-radius:2rem}.try-navigation .button{border-radius:8px}.try-inline-controls .button.is-small{padding-left:0.6rem;padding-right:0.6rem}.changelog-logo img{height:2.5rem;width:auto}.changelog-item-details p{margin:0 0 0.5rem 0;font-weight:400;line-height:1.45;color:#555}[data-theme="dark"] .changelog-item-details p{color:#bbb}.navbar-changelog-btn.button .icon i{color:#f39c12}.quiz-edit-modal .modal-card-foot .buttons{margin-bottom:0}.qe-ai-head .icon{width:1.7rem;height:1.7rem;border-radius:50%;background:var(--bulma-info,#3e8ed0);color:var(--bulma-info-invert,#fff);font-size:0.8rem;flex-shrink:0}.qe-ai-head .icon{background:rgba(var(--bulma-info-rgb,62,142,208),0.12);color:var(--bulma-info,#3e8ed0)}.qe-ai-box .button.is-info{background:transparent;border:1px solid var(--bulma-info,#3e8ed0);color:var(--bulma-info,#3e8ed0)}.qe-ai-box .button.is-info:hover,.qe-ai-box .button.is-info.is-hovered{background:rgba(var(--bulma-info-rgb,62,142,208),0.1);border-color:var(--bulma-info,#3e8ed0);color:var(--bulma-info,#3e8ed0)}.qe-ai-box .button.is-info:active,.qe-ai-box .button.is-info.is-active{background:rgba(var(--bulma-info-rgb,62,142,208),0.18);border-color:var(--bulma-info,#3e8ed0);color:var(--bulma-info,#3e8ed0)}[data-theme="dark"] .qe-ai-box .button.is-info{border-color:rgba(var(--bulma-info-rgb,62,142,208),0.55);color:#8fc3ef}[data-theme="dark"] .qe-ai-box .button.is-info:hover{background:rgba(var(--bulma-info-rgb,62,142,208),0.18);color:#a8d0f4}:root{--bulma-size-1:2.5rem;--bulma-size-2:2.1rem;--bulma-size-3:1.75rem;--bulma-size-4:1.35rem;--bulma-size-5:1.1rem;--bulma-size-6:0.95rem;--bulma-size-7:0.7rem}.skills-modal-section-title .icon{color:var(--bulma-link,#485fc7)}.profile-skills-header .title{margin-bottom:0}@media screen and (min-width:1024px){.container{max-width:880px !important}}@media screen and (min-width:1216px){.container{max-width:1000px !important}}@media screen and (min-width:1408px){.container{max-width:1080px !important}}
+html[data-theme="dark"]{--bg-main:#121217;--bg-card:#1a1a21;--text-primary:#f0f0f5;--text-secondary:#a0a0b0;--border-color:rgba(255,255,255,0.1);--shadow-color:rgba(142,45,226,0.5);--shadow-color-hover:rgba(74,0,224,0.6);--gradient:linear-gradient(90deg,#8e2de2,#4a00e0);--gradient-hover:linear-gradient(90deg,#9f45f2,#5b10f0);--accent-purple:#8e2de2;--accent-blue:#4a00e0;--success:#2ddc7d;--stats-bar-bg:rgba(18,18,23,0.75);--bg-main:#121217;--gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32;scroll-behavior:smooth;transition:background-color 0.4s ease,color 0.4s ease}html[data-theme="light"]{--bg-main:#f8f9fa;--bg-card:#ffffff;--text-primary:#1d2129;--text-secondary:#5a6169;--border-color:rgba(0,0,0,0.1);--shadow-color:rgba(142,45,226,0.3);--shadow-color-hover:rgba(74,0,224,0.4);--gradient:linear-gradient(90deg,#8e2de2,#4a00e0);--gradient-hover:linear-gradient(90deg,#9f45f2,#5b10f0);--accent-purple:#8e2de2;--accent-blue:#4a00e0;--success:#1a9c58;--stats-bar-bg:rgba(248,249,250,0.75);--gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32}.gradient-text{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-fill-color:transparent}.stats-bar{position:absolute;top:0;width:100%;z-index:5;background:var(--bg-main,#f8f9fa);border-bottom:1px solid var(--border-color);padding:0.75rem 0}.stats-num{font-size:1.75rem;font-weight:700;color:var(--text-primary);display:block;min-width:100px}.stats-label{font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary)}.stats-sep{color:var(--border-color);font-size:1.5rem}.hero.is-fullheight-with-navbar{position:relative;overflow:hidden}.hero-body{z-index:auto}.hero .logo--small{width:200px;margin-bottom:1.5rem}.hero .logo--small:hover{transform:scale(1.05) rotate(-20deg);transition:transform 0.3s ease}.hero .title{color:var(--text-primary);font-size:3.5rem;font-weight:700;text-shadow:0 0 25px var(--shadow-color)}.hero .subtitle{color:var(--text-secondary);font-size:1.25rem;max-width:600px;margin:auto}.hero-bg-blob{position:absolute;border-radius:50%;filter:blur(100px);animation:float-blob 20s infinite ease-in-out}.hero-bg-blob.one{width:400px;height:400px;background:var(--accent-purple);top:10%;left:15%;animation-duration:25s;opacity:0.5}.hero-bg-blob.two{width:350px;height:350px;background:var(--accent-blue);bottom:10%;right:15%;animation-duration:20s;animation-delay:-10s;opacity:0.4}.button.cta-main{background:var(--gradient);border:none;font-weight:600;color:white;padding:1.5rem 2.5rem;border-radius:12px;box-shadow:0 10px 30px -10px var(--shadow-color);transition:all 0.3s ease}.button.cta-main:hover{transform:translateY(-4px);box-shadow:0 15px 35px -10px var(--shadow-color-hover);background:var(--gradient-hover);color:white}.hero-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:0.6rem;margin-top:2rem}.hero-pill{display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;border-radius:999px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-secondary);font-size:0.8rem;font-weight:600}.hero-pill i{color:var(--accent-purple);font-size:0.85rem}.section{padding:6rem 1.5rem}.section .title.is-size-2{color:var(--text-primary);font-weight:700}.section .subtitle{color:var(--text-secondary);max-width:700px;margin:0 auto}.interactive-card .icon{color:var(--gradient);font-size:1.5rem !important;margin-bottom:1rem !important}.interactive-card .title{color:var(--text-primary)}.interactive-card p,.interactive-card li{color:var(--text-secondary)}.interactive-card ul li .fa-check-circle{color:var(--success);margin-right:0.75rem}.bento-large .bento-text,.bento-medium .bento-text{max-width:420px}.buttons .button{border-radius:8px;font-weight:600;transition:transform 0.2s ease,box-shadow 0.2s ease,background-color 0.2s ease,color 0.2s ease}.buttons .button:hover{transform:translateY(-2px)}.buttons .button.is-primary.is-light{background-color:rgba(142,45,226,0.1);color:var(--accent-purple);border:1px solid var(--accent-purple)}.buttons .button.is-primary.is-light:hover{background-color:rgba(142,45,226,0.2);box-shadow:0 5px 15px rgba(142,45,226,0.2)}.buttons .button.is-link.is-light{background-color:rgba(74,0,224,0.1);color:var(--accent-blue);border:1px solid var(--accent-blue)}.buttons .button.is-link.is-light:hover{background-color:rgba(74,0,224,0.2);box-shadow:0 5px 15px rgba(74,0,224,0.2)}.buttons .button.is-dark.is-light{background-color:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color)}.buttons .button.is-dark.is-light:hover{color:var(--text-primary);border-color:var(--text-primary);box-shadow:0 5px 15px rgba(0,0,0,0.1)}.leaderboard-podium .column{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}.leaderboard-podium .column.is-visible{opacity:1;transform:translateY(0)}.podium-card .rank-badge .fa-medal{color:var(--gold)}.podium-card .title{color:var(--text-primary)}.podium-card .subtitle{color:var(--text-secondary)}.leaderboard-row .row-stat .icon{margin-right:0.5rem}
+  </style>
+  <!-- Bulma -->
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css" /> -->
+  <link rel="stylesheet" href="/bulma.min.css" />
+
+  <!-- Your existing stylesheets -->
+  <link rel="stylesheet" href="/style.css?v=20260824-lines" media="print" onload="this.media='all'" />
+
+  <!-- Font Awesome (deferred: icon fonts load after first paint; layout unaffected) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" media="print" onload="this.media='all'">
+
+  <!-- Flag Icons (deferred: only used in language pickers, below fold) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" media="print" onload="this.media='all'" />
+
+  <!-- SweetAlert2 Theme Stylesheets (deferred: only needed when a dialog opens) -->
+  <% if (theme === "dark") { %>
+  <link rel="stylesheet" id="swal-dark-theme-css" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" media="print" onload="this.media='all'"/>
+  <link rel="stylesheet" id="swal-light-theme-css" href="https://cdn.jsdelivr.net/npm/@sweetalert2/themes@5.0.18/default/default.min.css" disabled media="print" onload="this.media='all'"/>
+  <% } else if (theme === "light") { %>
+  <link rel="stylesheet" id="swal-dark-theme-css" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" disabled media="print" onload="this.media='all'"/>
+  <link rel="stylesheet" id="swal-light-theme-css" href="https://cdn.jsdelivr.net/npm/@sweetalert2/themes@5.0.18/default/default.min.css" media="print" onload="this.media='all'"/>
+  <% } %>
+
+  <!-- Chart.js (only on pages that render result charts) -->
+  <% if (needsCharts) { %>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <% } %>
+
+  <!-- Sweet Alert 2 -->
+  <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.min.js"></script>
+
+  <!-- Lazy Sizes -->
+  <script async src="/scripts/lazysizes.min.js"></script>
+
+  <!-- MathJax (only on pages that render quiz math) -->
+  <% if (needsMath) { %>
+  <script type="text/javascript" nonce="<%=nonce%>">
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']], // Single dollar sign and escaped parentheses
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true // Allow escaping of dollar signs
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <% } else { %>
+  <!-- MathJax placeholder: injected lazily by general-actions.js when the user
+       AJAX-navigates to a page containing math -->
+  <script id="MathJax-script" type="text/javascript" nonce="<%=nonce%>"></script>
+  <% } %>
+
+  <!-- Marked.js for Markdown rendering -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@18.1.1/lib/marked.umd.js"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.4.17/dist/purify.min.js"></script>
+
+  <!-- Raleway font import -->
+  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" /> -->
+
+  <!-- DM Sans + Jura + Space Grotesk fonts: inlined @font-face (no render-blocking stylesheet request) -->
+  <style id="fonts-inline">
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAopxRSW32.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Jura';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/jura/v34/z7NOdRfiaC4Vd8hhoPzfb5vBTP266pumR_g.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spacegrotesk/v22/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj4PVnskPMA.woff2) format('woff2');
+}
+  </style>
+
+  <!-- DM Sans font style -->
+  <!-- This sets the fonts to user in the body in order of preference -->
+  <style>
+    body {
+      font-family: "DM Sans", sans-serif;
+      font-size: 16px;
+    }
+  </style>
+
+  <!-- Set light or dark theme and local language -->
+  <script nonce="<%=nonce%>">
+  // Local theme variable
+  let localTheme;
+  // Respect the visitor's saved theme (already applied early in <head>)
+  // NOTE: name prefixed with ws_ to avoid clashing with other top-level scripts
+  const wsStoredTheme = (function () { try { return localStorage.getItem('bulma-theme'); } catch (e) { return null; } })();
+  if (wsStoredTheme === "dark" || wsStoredTheme === "light") {
+    localTheme = wsStoredTheme;
+    document.documentElement.setAttribute("data-theme", wsStoredTheme);
+  } else {
+  <% if (theme === "light") { %>
+  localTheme = "light";
+  document.documentElement.setAttribute("data-theme", localTheme);
+  <% } else if (theme === "dark") { %>
+  localTheme = "dark";
+  document.documentElement.setAttribute("data-theme", localTheme);
+  <% } %>
+  }
+
+  // Local lang variable
+  let localLang;
+  <% if (lang === "en") { %>
+  localLang = "en";
+  <% } else if (lang === "es") { %>
+  localLang = "es";
+  <% } %>
+  </script>
+
+</head>

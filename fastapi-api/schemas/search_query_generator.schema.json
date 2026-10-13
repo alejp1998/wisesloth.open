@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "search_query_generator.schema.json",
+  "title": "Search Query Generator Schema",
+  "description": "Schema for generating search queries to find current information for quiz creation",
+  "type": "object",
+  "required": ["search_queries", "reasoning"],
+  "properties": {
+    "search_queries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "maxItems": 3,
+      "description": "List of specific search queries with temporal indicators (latest, recent, current, new)",
+      "examples": [
+        [
+          "latest AI breakthroughs 2025",
+          "recent artificial intelligence research developments",
+          "new AI models released November 2025"
+        ]
+      ]
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Brief explanation of why these queries would help create better quiz questions with current information",
+      "minLength": 20,
+      "maxLength": 500,
+      "examples": [
+        "These queries will help find current AI developments to create questions about recent advances rather than outdated information"
+      ]
+    }
+  }
+}

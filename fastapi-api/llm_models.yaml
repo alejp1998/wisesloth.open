@@ -1,0 +1,10 @@
+output_schemas:
+  quiz: schemas/quiz.schema.json
+  personality: schemas/personality.schema.json
+  information_synthesizer: schemas/information_synthesizer.schema.json
+  search_query_generator: schemas/search_query_generator.schema.json
+  flashcards: schemas/flashcards.schema.json
+  quiz_edit: schemas/quiz-edit.schema.json
+  flashcard_edit: schemas/flashcard-edit.schema.json
+  test_edit_quiz: schemas/test-edit-quiz.schema.json
+  test_edit_flashcards: schemas/test-edit-flashcards.schema.json

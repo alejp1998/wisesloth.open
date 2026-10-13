@@ -1,0 +1,66 @@
+<% if (typeof isHelpModal === 'undefined') { %>
+  <% var isHelpModal = false %>
+<% } %>
+
+<% if (!isHelpModal) { %>
+  <!-- Modify title in meta tag -->
+  <script class="title-metadata-js" nonce="<%=nonce%>">
+    document.title = "Tips & Tricks | WiseSloth.open";
+  </script>
+
+  <!-- Include hero header -->
+  <% const heroTitleEn = "Tips & Tricks" %>
+  <% const heroTitleEs = "Consejos y Trucos" %>
+  <% const heroSubtitleEn = "" %>
+  <% const heroSubtitleEs = "" %>
+  <% const containerId = "" %>
+  <%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+<% } %>
+
+<div class="container">
+  <div class="section">
+    <h1 class="title is-2">
+        <span lang="en">Tips and Tricks</span>
+        <span lang="es">Consejos y Trucos</span>
+    </h1>
+    <h2 class="subtitle is-4">
+        <span lang="en">Learn how to improve the quality of your quizzes and get the most out of WiseSloth.open.</span>
+        <span lang="es">Aprende como mejorar la calidad de tus tests y exprimir WiseSloth.open al máximo.</span>
+    </h2>
+    <!-- <br> -->
+    <!-- <p class="is-size-5 is-italic">
+      <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+      <span lang="en">Initial version. List to be updated with better and more detailed information.</span>
+      <span lang="es">Versión inicial. Debe ser actualizada con mejor y más detallada información.</span>
+    </p> -->
+  </div>
+
+  <!-- Tips -->
+  <div class="section">
+
+    <!-- Iterate through tipsList -->
+    <% for (let i = 0; i < tipsList.length; i++) { %>
+      <% const { questionEn, questionEs, answerEn, answerEs } = tipsList[i] %>
+      <div class="faq-item">
+        <div class="faq-question is-clickable">
+          <h3 class="title is-4">
+            <span lang="en"><%= questionEn %></span>
+            <span lang="es"><%= questionEs %></span>
+            <button class="is-pulled-right faq-show-answer">
+              <i class="fas fa-lg fa-angle-down"></i>
+            </button>
+          </h3>
+        </div>
+        <div class="faq-answer" style="display: none;">
+          <br>
+          <p class="is-size-5">
+            <span lang="en"><%- answerEn %></span>
+            <span lang="es"><%- answerEs %></span>
+          </p>
+        </div>
+        <hr>
+      </div>
+    <% } %>
+
+  </div>
+</div>

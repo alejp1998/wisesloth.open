@@ -1,0 +1,93 @@
+<!-- Skills & Preferences modal: read / edit / add skills and pick which ones
+     are active per creation type (plus "Always"). Used from the creation page
+     (/tests/new) and from the user profile (/users/:username).
+
+     A skill has 3 fields: title, description (what it should do) and types
+     (semicolon-separated generation types it affects, or "always").
+
+     Layout: on desktop the detail view opens in the right pane; on mobile it
+     opens inline under the tapped row. -->
+<div id="modal-skills" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">
+        <span class="icon"><i class="fas fa-star" style="color: var(--warning-color);"></i></span>
+        <span lang="en">Skills &amp; Preferences</span>
+        <span lang="es">Habilidades y Preferencias</span>
+      </p>
+      <button class="modal-delete delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <div class="skills-modal-layout">
+        <div class="skills-modal-lists">
+          <p class="skills-modal-context" id="skills-modal-context">
+            <span lang="en">Each skill shows the creation types it affects. Click a type icon to toggle it; click a skill to view / edit it. Changes are saved when you close this window.</span>
+            <span lang="es">Cada habilidad muestra los tipos de creación a los que afecta. Pulsa un icono de tipo para activarlo o desactivarlo; pulsa una habilidad para verla / editarla. Los cambios se guardan al cerrar esta ventana.</span>
+          </p>
+
+          <p class="help skills-modal-login-note" id="skills-modal-login-note">
+            <span lang="en">Log in to save your selections and create your own skills. Your default-skill selections are remembered in this browser.</span>
+            <span lang="es">Inicia sesión para guardar tus selecciones y crear tus propias habilidades. Tus selecciones de habilidades por defecto se recuerdan en este navegador.</span>
+          </p>
+
+          <!-- Default skills (shared examples — view-only, per-user selection via checkboxes) -->
+          <div class="skills-modal-section" id="skills-section-defaults">
+            <button type="button" class="skills-modal-section-title" data-collapse="defaults" aria-expanded="true">
+              <span class="icon is-small"><i class="fas fa-book"></i></span>
+              <span lang="en">Default skills</span>
+              <span lang="es">Habilidades por defecto</span>
+              <span class="skills-modal-section-count" id="skills-modal-defaults-count"></span>
+              <span class="skills-modal-chevron"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="skills-modal-list" id="skills-modal-defaults"></div>
+          </div>
+
+          <!-- My skills (own free-text skills, fully editable) -->
+          <div class="skills-modal-section" id="skills-section-own">
+            <button type="button" class="skills-modal-section-title" data-collapse="own" aria-expanded="true">
+              <span class="icon is-small"><i class="fas fa-user"></i></span>
+              <span lang="en">My skills</span>
+              <span lang="es">Mis habilidades</span>
+              <span class="skills-modal-section-count" id="skills-modal-own-count"></span>
+              <span class="skills-modal-chevron"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="skills-modal-list" id="skills-modal-own"></div>
+            <div class="skills-modal-add-form" id="skills-modal-add-row">
+              <p class="is-size-7 has-text-grey" style="margin-bottom: 0.4rem;">
+                <span lang="en">Add a new skill:</span>
+                <span lang="es">Añade una nueva habilidad:</span>
+              </p>
+              <div class="field">
+                <input class="input is-small" type="text" id="skills-modal-add-title" maxlength="200" placeholder="Title, e.g. Diagrams" lang="en">
+              </div>
+              <div class="field">
+                <textarea class="textarea is-small" id="skills-modal-add-desc" rows="2" maxlength="1000" placeholder="What should this skill do? e.g. Always explain concepts with diagrams and visual mnemonics." lang="en"></textarea>
+              </div>
+              <div class="field has-addons">
+                <div class="control is-expanded">
+                  <input class="input is-small" type="text" id="skills-modal-add-types" maxlength="200" placeholder="Types, e.g. oldexam;notes;flashcards (or always)" lang="en">
+                </div>
+                <div class="control">
+                  <button class="button is-small is-link" id="skills-modal-add-btn" type="button">
+                    <span lang="en">Add</span>
+                    <span lang="es">Añadir</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detail pane: shows the selected skill (desktop) -->
+        <div class="skills-detail-pane" id="skills-detail-pane"></div>
+      </div>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-link" id="skills-modal-done" type="button">
+        <span lang="en">Done</span>
+        <span lang="es">Listo</span>
+      </button>
+    </footer>
+  </div>
+</div>

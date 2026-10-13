@@ -1,0 +1,248 @@
+<% if (typeof isHelpModal === 'undefined') { %>
+    <% var isHelpModal = false %>
+<% } %>
+
+<% if (!isHelpModal) { %>
+    <!-- Modify title in meta tag -->
+    <script class="title-metadata-js" nonce="<%=nonce%>">
+        document.title = "From Old Exam | WiseSloth.open";
+    </script>
+
+    <!-- Include hero header -->
+    <% const heroTitleEn = "From Old Exam" %>
+    <% const heroTitleEs = "Desde Examen Antiguo" %>
+    <% const heroSubtitleEn = "" %>
+    <% const heroSubtitleEs = "" %>
+    <% const containerId = "" %>
+    <%- include('../auxiliary/hero-header', { heroTitleEn, heroTitleEs, heroSubtitleEn, heroSubtitleEs, containerId }) %>
+<% } %>
+
+<div class="container">
+    <div class="section">
+        <h1 class="title is-2">
+            <span lang="en">How to create a test from an old exam</span>
+            <span lang="es">Cómo crear un test a partir de un examen antiguo</span>
+        </h1>
+        <h2 class="subtitle is-4">
+            <span lang="en">Make your old exams interactive: share it with friends / students, randomize order of questions and options, and compete in the leaderboard.</span>
+            <span lang="es">Haz tus exámenes antiguos interactivos: compártelos con amigos / estudiantes, ordena aleatoriamente las preguntas y opciones, y compite en la tabla de clasificación.</span>
+        </h2>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">What do you need to get started?</span>
+                <span lang="es">¿Qué necesitas para empezar?</span>
+            </h1>
+        </div>
+        <br>
+
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-7">
+                <h2 class="title is-3">
+                    <span lang="en">An old exam in PDF format or its plain text</span>
+                    <span lang="es">Un examen antiguo en formato PDF o su texto plano</span>
+                </h2>
+
+                <h2 class="title is-4">
+                    <span lang="en">Tip 1: Use an OCR tool</span>
+                    <span lang="es">Consejo 1: Usa una herramienta OCR</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">If the PDF is scanned, you can use an OCR tool to extract the text. If it is in another format, you can just copy and paste its questions and answers as plain text.</span>
+                    <span lang="es">Si el PDF está escaneado, puedes usar una herramienta OCR para extraer el texto. Si está en otro formato, simplemente puedes copiar y pegar sus preguntas y respuestas como texto plano.</span>
+                </p>
+                <br>
+                <h2 class="title is-4">
+                    <span lang="en">Tip 2: Include the correct answers</span>
+                    <span lang="es">Consejo 2: Incluye las respuestas correctas</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Ensure input includes the correct answers to each question, so the system can fecth the correct answer for each question upon creation.</span>
+                    <span lang="es">Asegúrate de que la entrada incluya las respuestas correctas a cada pregunta, para que el sistema pueda obtener la respuesta correcta para cada pregunta al crearla.</span>
+                </p>
+            </div>
+            <div class="column is-5">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img class="preview-image" src="/images/old-exam-example.png" alt="OCR tool" loading="lazy">
+                        </figure>
+                    </div>
+                    <div class="card-content has-text-centered">
+                        <h3 class="title is-5">
+                            <span lang="en">Example - Old exam</span>
+                            <span lang="es">Ejemplo - Examen antiguo</span>
+                        </h3>
+                        <h3 class="subtitle is-6">
+                            <span lang="en">Physics multiple choice exam</span>
+                            <span lang="es">Examen de opción múltiple de Física</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered">
+                <span lang="en">You are ready to create your interactive quiz!</span>
+                <span lang="es">¡Estás listo para crear tu test interactivo!</span>
+            </h1>
+        </div>
+        <br>
+
+
+        <h2 class="title is-3 has-text-centered">
+            <span lang="en">From a PDF file</span>
+            <span lang="es">Desde un archivo PDF</span>
+        </h2>
+        <br>
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-5">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img class="preview-image" src="/images/upload-pdf-from-old-exam.png" alt="Upload PDF" loading="lazy">
+                        </figure>
+                    </div>
+                    <div class="card-content has-text-centered">
+                        <h3 class="title is-5">
+                            <span lang="en">Screenshot - From PDF</span>
+                            <span lang="es">Screenshot - Desde PDF</span>
+                        </h3>
+                        <h3 class="subtitle is-6">
+                            <span lang="en">Select the pages you want to include in the quiz</span>
+                            <span lang="es">Selecciona las páginas que quieres incluir en el test</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-8">
+                <h2 class="title is-4">
+                    <span lang="en">Step 1a: Upload the PDF file</span>
+                    <span lang="es">Paso 1a: Sube el archivo PDF</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Click on the "Upload PDF" button and select the PDF file from your computer, or drag and drop it into the upload area.</span>
+                    <span lang="es">Haz clic en el botón "Subir PDF" y selecciona el archivo PDF de tu ordenador, o arrástralo y suéltalo en el área de subida.</span>
+                </p>
+                <br>
+
+                <h2 class="title is-4">
+                    <span lang="en">Step 1b: Select the pages you want to include in the quiz</span>
+                    <span lang="es">Paso 1b: Selecciona las páginas que quieres incluir en el test</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Choose the pages that contain the questions you want to include in the quiz. You can select multiple pages at once, and preview the pages to make sure you are selecting the right ones.</span>
+                    <span lang="es">Elige las páginas que contienen las preguntas que quieres incluir en el test. Puedes seleccionar varias páginas a la vez, y previsualizar las páginas para asegurarte de que estás seleccionando las correctas.</span>
+                </p>
+            </div>
+        </div>
+        <br>
+
+        <h2 class="title is-3 has-text-centered">
+            <span lang="en">From plain text</span>
+            <span lang="es">Desde texto plano</span>
+        </h2>
+        <br>
+        <div class="columns mx-0 is-vcentered">
+            <div class="column is-7">
+                <h2 class="title is-5">
+                    <span lang="en">Step 1: Copy and paste the questions and answers</span>
+                    <span lang="es">Paso 1: Copia y pega las preguntas y respuestas</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Copy the questions and answers from the plain text file or document, and paste them into the input area. Make sure to include the correct answers for each question.</span>
+                    <span lang="es">Copia las preguntas y respuestas del archivo o documento de texto plano, y pégalas en el área de entrada. Asegúrate de incluir las respuestas correctas para cada pregunta.</span>
+                </p>
+            </div>
+            <div class="column is-5">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img class="preview-image" src="/images/paste-plain-text-from-old-exam.png" alt="Paste plain text" loading="lazy">
+                        </figure>
+                    </div>
+                    <div class="card-content has-text-centered">
+                        <h3 class="title is-5">
+                            <span lang="en">Screenshot - From plain text</span>
+                            <span lang="es">Screenshot - Desde texto plano</span>
+                        </h3>
+                        <h3 class="subtitle is-6">
+                            <span lang="en">Paste questions, options and correct answers</span>
+                            <span lang="es">Pega preguntas, opciones y respuestas correctas</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <h2 class="title is-3 has-text-centered">
+            <span lang="en">Provide some more details to tailor the test to your needs</span>
+            <span lang="es">Proporciona más detalles para adaptar el test a tus necesidades</span>
+        </h2>
+        <br>
+        <div class="columns mx-0 is-vcentered">
+            <div class="column">
+                <h2 class="title is-4">
+                    <span lang="en">Step 2: Select number of questions and options</span>
+                    <span lang="es">Paso 2: Selecciona el número de preguntas y opciones</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Choose the number of questions you want to include in the quiz, and the number of options for each question.</span>
+                    <span lang="es">Elige el número de preguntas que quieres incluir en el test, y el número de opciones para cada pregunta.</span>
+                </p>
+                <br>
+
+                <h2 class="title is-4">
+                    <span lang="en">Step 3: Provide extra-guidelines on how to create the quiz</span>
+                    <span lang="es">Paso 3: Proporciona instrucciones adicionales sobre cómo crear el test</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">You can provide additional guidelines on how to create the quiz, such as the type of questions (multiple choice, true or false...), the difficulty level, or any specific instructions for the quiz takers.</span>
+                    <span lang="es">Puedes proporcionar instrucciones adicionales sobre cómo crear el test, como el tipo de preguntas (opción múltiple, verdadero o falso...), el nivel de dificultad, o cualquier instrucción específica para los que realicen el test.</span>
+                </p>
+                <br>
+
+                <h2 class="title is-4">
+                    <span lang="en">Step 4: Create the quiz</span>
+                    <span lang="es">Paso 4: Crea el test</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Click on the button to generate the quiz from the selected pages. WiseSloth.open will extract the questions and answers from the pages and create the interactive quiz for you. This might take a few seconds depending on the number of questions.</span>
+                    <span lang="es">Haz clic en el botón para generar el test a partir de las páginas seleccionadas. WiseSloth.open extraerá las preguntas y respuestas de las páginas y creará el test interactivo para ti. Esto puede tardar unos segundos dependiendo del número de preguntas.</span>
+                </p>
+                <br>
+
+                <h2 class="title is-4">
+                    <span lang="en">Step 5: Review and edit the quiz</span>
+                    <span lang="es">Paso 5: Revisa y edita el test</span>
+                </h2>
+                <p class="subtitle is-5">
+                    <span lang="en">Review the quiz to make sure all questions and answers are correct. You can edit the questions, answers, and options if needed. Once you are satisfied with the quiz, you can save it and share it with others.</span>
+                    <span lang="es">Revisa el test para asegurarte de que todas las preguntas y respuestas son correctas. Puedes editar las preguntas, respuestas y opciones si es necesario. Una vez que estés satisfecho con el test, puedes guardarlo y compartirlo con otros.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <% if (!isHelpModal) { %>
+        <div class="section">
+            <div class="box">
+                <h1 class="title is-3 has-text-centered">
+                    <span lang="en">Create an interactive quiz from your old exam now!</span>
+                    <span lang="es">¡Crea un test interactivo a partir de tu examen antiguo ahora!</span>
+                </h1>
+                <br>
+                <a class="button is-link is-rounded is-large is-fullwidth" href="/tests/new?type=oldexam">
+                    <span lang="en">Create Quiz</span>
+                    <span lang="es">Crear Test</span>
+                </a>
+            </div>
+        </div>
+    <% } %>
+</div>

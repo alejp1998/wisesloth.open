@@ -1,0 +1,9 @@
+{
+  "watch": ["app.js", "controllers/", "helpers/", "middleware/", "models/", "routes/", "services/", "views/"],
+  "ext": "js,json,ejs",
+  "ignore": [
+    "public/**",
+    "node_modules/**",
+    "__tests__/**"
+  ]
+}

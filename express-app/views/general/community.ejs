@@ -1,0 +1,408 @@
+<!-- Set title -->
+<script class="title-metadata-js" nonce="<%=nonce%>">
+  document.title = "Community | WiseSloth.open";
+</script>
+
+<!-- Showcase number of tests created, tried, and number of users three column boxes -->
+<% const indexes = [3, 1, 0, 2, 4]; %>
+<% const borderColors = ['golden', 'silver', 'bronze', 'fourth-fifth', 'fourth-fifth']; %>
+<section class="section">
+  <div class="container has-text-centered">
+    <p class="title is-2">
+      <span class="icon is-large"><i class="fas fa-users"></i></span>
+      <span lang="en">Our Community</span>
+      <span lang="es">Nuestra Comunidad</span>
+    </p>
+    <p class="subtitle is-5 is-hidden-touch">
+      <span lang="en">&#128080; Join our growing community of learners and educators, and start generating quizzes with AI today!</span>
+      <span lang="es">&#128080; ¡Únete a nuestra creciente comunidad de estudiantes y educadores, y comienza a generar tests con IA hoy!</span>
+    </p>
+  </div>
+  <br>
+  <div class="container has-text-centered">
+    <div class="columns community-stats-grid">
+      <div class="column">
+        <% if (isLoggedIn) { %>
+        <div class="box equal-height-as-sibling selected is-clickable" data-href="/users">
+        <% } else { %>
+        <div class="box equal-height-as-sibling selected">
+        <% } %>
+          <p class="title is-2">
+            <span class="icon"><i class="fas fa-user-astronaut"></i></span>
+            <span lang="en"><%=nUsers%></span>
+            <span lang="es"><%=nUsers%></span>
+          </p>
+          <p class="subtitle is-4">
+            <span lang="en">Users</span>
+            <span lang="es">Usuarios</span>
+          </p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box equal-height-as-sibling marked" data-href="/tests">
+          <p class="title is-2">
+            <span class="icon"><i class="fas fa-question-circle"></i></span>
+            <span lang="en"><%=nQuizQuestionsCreated%></span>
+            <span lang="es"><%=nQuizQuestionsCreated%></span>
+          </p>
+          <p class="subtitle is-4">
+            <span lang="en">Questions</span>
+            <span lang="es">Preguntas</span>
+          </p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box is-clickable equal-height-as-sibling marked" data-href="/tests">
+          <p class="title is-2">
+            <span class="icon"><i class="fas fa-clipboard-list"></i></span>
+            <span lang="en"><%=nTestsCreated%></span>
+            <span lang="es"><%=nTestsCreated%></span>
+          </p>
+          <p class="subtitle is-4">
+            <span lang="en">Quizzes</span>
+            <span lang="es">Tests</span>
+          </p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box equal-height-as-sibling omitted" data-href="/results">
+          <p class="title is-2">
+            <span class="icon"><i class="fas fa-check-double"></i></span>
+            <span lang="en"><%=nQuizQuestionsAnswered%></span>
+            <span lang="es"><%=nQuizQuestionsAnswered%></span>
+          </p>
+          <p class="subtitle is-4">
+            <span lang="en">Answers</span>
+            <span lang="es">Respuestas</span>
+          </p>
+        </div>
+      </div>
+      <div class="column">
+        <% if (isLoggedIn) { %>
+        <div class="box equal-height-as-sibling omitted is-clickable" data-href="/results">
+        <% } else { %>
+        <div class="box equal-height-as-sibling omitted">
+        <% } %>
+          <p class="title is-2">
+            <span class="icon"><i class="fas fa-trophy"></i></span>
+            <span lang="en"><%=nTestsTried%></span>
+            <span lang="es"><%=nTestsTried%></span>
+          </p>
+          <p class="subtitle is-4">
+            <span lang="en">Results</span>
+            <span lang="es">Resultados</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+  <br>
+
+  <!-- Showcase top users by : public tests created, tries -->
+  <div class="container has-text-centered">
+    <p class="title is-4">
+      <i class="fas fa-crown"></i>
+      <span lang="en">Top Users</span>
+      <span lang="es">Top Usuarios</span>
+    </p>
+
+    <div class="tabs is-boxed is-medium is-centered">
+      <ul>
+        <li class="tab is-active" id="tab-toggle-usersByTests">
+          <a title="Top Users by Public Quizzes" aria-label="Top Users by Public Quizzes">
+            <span class="icon"><i class="fas fa-globe-europe has-text-success"></i></span>
+            <span lang="en">By Public Quizzes</span>
+            <span lang="es">Por Tests Públicos</span>
+          </a>
+        </li>
+        <li class="tab" id="tab-toggle-usersByTries">
+          <a title="Top Users by Tries" aria-label="Top Users by Tries">
+            <span class="icon"><i class="fas fa-play"></i></span>
+            <span lang="en">By Tries</span>
+            <span lang="es">Por Intentos</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Top users by public tests created -->
+    <!-- Show the user's username under username -->
+    <!-- In the order 4th, 2nd, 1st, 3rd, 5th -->
+    <!-- 4th and 5th have grey border and no medal -->
+    <!-- 2nd and 3rd have silver and bronze medals respectively with same border color -->
+    <!-- 1st has gold medal and gold border -->
+    <div id="tab-content-usersByTests" class="tab-content">
+      <div class="columns is-multiline">
+        <% for (let i of indexes) { %>
+          <% if (topUsersByPublicTests[i] === undefined) continue; %>
+          <div class="column is-one-fifth-desktop <%= (i === 4) || (i === 3) ? 'is-hidden-touch' : '' %>">
+            <div class="box is-clickable equal-height-as-sibling <%=borderColors[i]%>" data-href="/users/<%=topUsersByPublicTests[i].username%>" style="position: relative; padding-bottom: 40px;">
+              <p class="is-size-4 has-text-centered">
+                <% if (i === 0) { %>
+                  <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--gold-color);" title="1st Place"></i></span>
+                <% } else if (i === 1) { %>
+                  <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--silver-color);" title="2nd Place"></i></span>
+                <% } else if (i === 2) { %>
+                  <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--bronze-color);" title="3rd Place"></i></span>
+                <% } else if (i === 3) { %>
+                  <b class="icon is-large has-text-grey-light">4th</b>
+                <% } else if (i === 4) { %>
+                  <b class="icon is-large has-text-grey-light">5th</b>
+                <% } %>
+              </p>
+              <p class="title is-5 has-text-centered">
+                <%=topUsersByPublicTests[i].username%>
+              </p>
+              <div class="bottom-center-pos">
+                <p class="title is-4 has-text-centered">
+                  <span class="icon"><i class="fas fa-globe-europe has-text-success" title="Public Quizzes Created"></i></span>
+                  <span lang="en"><%=topUsersByPublicTests[i].nPublicTests%></span>
+                  <span lang="es"><%=topUsersByPublicTests[i].nPublicTests%></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+      <!-- Add a button to see the full ranking -->
+      <div class="has-text-centered">
+        <a href="/users?orderby=public&orderdir=desc" class="button is-success is-light is-medium">
+          <span class="icon"><i class="fas fa-list-ol"></i></span>
+          <span lang="en">See Full Ranking</span>
+          <span lang="es">Ver Clasificación Completa</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Top users by tries -->
+    <!-- Same as top users by public tests created but with tries -->
+    <div id="tab-content-usersByTries" class="tab-content is-hidden">
+      <div class="columns is-multiline">
+        <% for (let i of indexes) { %>
+          <% if (topUsersByTries[i] === undefined) continue; %>
+          <div class="column is-one-fifth-desktop <%= (i === 4) || (i === 3) ? 'is-hidden-touch' : '' %>">
+            <div class="box is-clickable equal-height-as-sibling <%=borderColors[i]%>" data-href="/users/<%=topUsersByTries[i].username%>" style="position: relative; padding-bottom: 40px;">
+              <p class="is-size-4 has-text-centered">
+                <% if (i === 0) { %>
+                  <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--gold-color);" title="1st Place"></i></span>
+                <% } else if (i === 1) { %>
+                  <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--silver-color);" title="2nd Place"></i></span>
+                <% } else if (i === 2) { %>
+                  <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--bronze-color);" title="3rd Place"></i></span>
+                <% } else if (i === 3) { %>
+                  <b class="icon is-large has-text-grey-light">4th</b>
+                <% } else if (i === 4) { %>
+                  <b class="icon is-large has-text-grey-light">5th</b>
+                <% } %>
+              </p>
+              <p class="title is-5 has-text-centered">
+                <%=topUsersByTries[i].username%>
+              </p>
+              <div class="bottom-center-pos">
+                <p class="title is-4 has-text-centered">
+                  <span class="icon"><i class="fas fa-play" title="Tries"></i></span>
+                  <span lang="en"><%=topUsersByTries[i].nTries%></span>
+                  <span lang="es"><%=topUsersByTries[i].nTries%></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+      <!-- Add a button to see the full ranking -->
+      <div class="has-text-centered">
+        <a href="/users?orderby=tries&orderdir=desc" class="button is-link is-light is-medium">
+          <span class="icon"><i class="fas fa-list-ol"></i></span>
+          <span lang="en">See Full Ranking</span>
+          <span lang="es">Ver Clasificación Completa</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+
+  <!-- Showcase top tests by : likes & tries -->
+  <div class="container has-text-centered">
+    <p class="title is-4">
+      <i class="fas fa-globe-europe"></i>
+      <span lang="en">Top Public Quizzes</span>
+      <span lang="es">Top Tests Públicos</span>
+    </p>
+
+    <!-- Tabs to toggle between top tests by likes and tries -->
+    <div class="tabs is-boxed is-medium is-centered">
+      <ul>
+        <li class="tab is-active" id="tab-toggle-testsByLikes">
+          <a title="Top Quizzes by Likes" aria-label="Top Public Quizzes by Likes">
+            <span class="icon"><i class="fas fa-heart" style="color: red;"></i></span>
+            <span lang="en">By Likes</span>
+            <span lang="es">Por Me Gustas</span>
+          </a>
+        </li>
+        <li class="tab" id="tab-toggle-testsByTries">
+          <a title="Top Quizzes by Tries" aria-label="Top Public Quizzes by Tries">
+            <span class="icon"><i class="fas fa-play"></i></span>
+            <span lang="en">By Tries</span>
+            <span lang="es">Por Intentos</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Top tests by likes -->
+    <!-- Show the creator username under author -->
+    <!-- In the order 4th, 2nd, 1st, 3rd, 5th -->
+    <!-- 4th and 5th have grey border and no medal -->
+    <!-- 2nd and 3rd have silver and bronze medals respectively with same border color -->
+    <!-- 1st has gold medal and gold border -->
+    <div id="tab-content-testsByLikes" class="tab-content">
+      <div class="columns is-multiline">
+        <% for (let i of indexes) { %>
+          <% if (topTestsByLikes[i] === undefined) continue; %>
+          <div class="column is-one-fifth-desktop <%= (i === 4) || (i === 3) ? 'is-hidden-touch' : '' %>">
+            <div class="box is-clickable equal-height-as-sibling <%=borderColors[i]%>" data-href="/tests/<%=topTestsByLikes[i].id%>" style="position: relative; padding-bottom: 40px;">
+              <p class="is-size-4 has-text-centered">
+              <% if (i === 0) { %>
+                <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--gold-color);" title="1st Place"></i></span>
+              <% } else if (i === 1) { %>
+                <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--silver-color);" title="2nd Place"></i></span>
+              <% } else if (i === 2) { %>
+                <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--bronze-color);" title="3rd Place"></i></span>
+              <% } else if (i === 3) { %>
+                <b class="icon is-large has-text-grey-light">4th</b>
+              <% } else if (i === 4) { %>
+                <b class="icon is-large has-text-grey-light">5th</b>
+              <% } %>
+              </p>
+              <p class="title is-5 has-text-centered">
+                <%=topTestsByLikes[i].name%>
+              </p>
+              <p class="subtitle is-6 has-text-centered is-clickable" data-href="/users/<%=topTestsByLikes[i].author%>">
+                <span lang="en">by <%=topTestsByLikes[i].author%></span>
+                <span lang="es">por <%=topTestsByLikes[i].author%></span>
+              </p>
+              <div class="bottom-center-pos">
+                <p class="title is-4 has-text-centered">
+                  <span class="icon"><i class="fas fa-heart" title="Likes" style="color: red;"></i></span>
+                  <span lang="en"><%=topTestsByLikes[i].nFavorites%></span>
+                  <span lang="es"><%=topTestsByLikes[i].nFavorites%></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+      <!-- Add a button to see the full ranking -->
+      <div class="has-text-centered">
+        <a href="/tests?visibility=public&orderby=likes&orderdir=desc" class="button is-danger is-light is-medium">
+          <span class="icon"><i class="fas fa-list-ol"></i></span>
+          <span lang="en">See Full Ranking</span>
+          <span lang="es">Ver Clasificación Completa</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Top tests by tries -->
+    <!-- Same as top tests by likes but with tries -->
+    <div id="tab-content-testsByTries" class="tab-content is-hidden">
+      <div class="columns is-multiline">
+        <% for (let i of indexes) { %>
+          <% if (topTestsByTries[i] === undefined) continue; %>
+          <div class="column is-one-fifth-desktop <%= (i === 4) || (i === 3) ? 'is-hidden-touch' : '' %>">
+            <div class="box is-clickable equal-height-as-sibling <%=borderColors[i]%>" data-href="/tests/<%=topTestsByTries[i].id%>" style="position: relative; padding-bottom: 40px;">
+              <p class="is-size-4 has-text-centered">
+                <% if (i === 0) { %>
+                  <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--gold-color);" title="1st Place"></i></span>
+                <% } else if (i === 1) { %>
+                  <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--silver-color);" title="2nd Place"></i></span>
+                <% } else if (i === 2) { %>
+                  <span class="icon is-large"><i class="fas fa-medal fa-2x" style="color: var(--bronze-color);" title="3rd Place"></i></span>
+                <% } else if (i === 3) { %>
+                  <b class="icon is-large has-text-grey-light">4th</b>
+                <% } else if (i === 4) { %>
+                  <b class="icon is-large has-text-grey-light">5th</b>
+                <% } %>
+              </p>
+              <p class="title is-5 has-text-centered">
+                <%=topTestsByTries[i].name%>
+              </p>
+              <p class="subtitle is-6 has-text-centered is-clickable" data-href="/users/<%=topTestsByTries[i].author%>">
+                <span lang="en">by <%=topTestsByTries[i].author%></span>
+                <span lang="es">por <%=topTestsByTries[i].author%></span>
+              </p>
+              <div class="bottom-center-pos">
+                <p class="title is-4 has-text-centered">
+                  <span class="icon"><i class="fas fa-play" title="Tries"></i></span>
+                  <span lang="en"><%=topTestsByTries[i].nTestResults%></span>
+                  <span lang="es"><%=topTestsByTries[i].nTestResults%></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+      <!-- Add a button to see the full ranking -->
+      <div class="has-text-centered">
+        <a href="/tests?visibility=public&orderby=tries&orderdir=desc" class="button is-link is-light is-medium">
+          <span class="icon"><i class="fas fa-list-ol"></i></span>
+          <span lang="en">See Full Ranking</span>
+          <span lang="es">Ver Clasificación Completa</span>
+        </a>
+      </div>
+    </div>
+    <br>
+  </div>
+
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Setup tab switching for all tab groups
+    document.querySelectorAll('[data-tab-group]').forEach(tabContainer => {
+        const tabs = tabContainer.querySelectorAll('li');
+        const contentContainer = tabContainer.nextElementSibling.parentElement;
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', e => {
+                e.preventDefault();
+
+                // Get the target content ID from the clicked tab's link
+                const targetId = tab.querySelector('a').dataset.target;
+                const targetContent = document.getElementById(targetId);
+
+                // If the tab is already active or target doesn't exist, do nothing
+                if (tab.classList.contains('is-active') || !targetContent) {
+                    return;
+                }
+
+                // Deactivate all tabs in the current group
+                tabs.forEach(t => t.classList.remove('is-active'));
+                // Activate the clicked tab
+                tab.classList.add('is-active');
+
+                // Hide all tab content within the same section
+                contentContainer.querySelectorAll('.tab-content-item').forEach(content => {
+                    content.classList.add('is-hidden');
+                });
+
+                // Show the target content
+                targetContent.classList.remove('is-hidden');
+            });
+        });
+    });
+
+    // Setup navigation for elements with a 'data-href' attribute
+    document.querySelectorAll('[data-href]').forEach(element => {
+        element.addEventListener('click', e => {
+            // Prevent redirecting if a nested link or another data-href was the actual click target
+            if (e.target.closest('a') || (e.target.closest('[data-href]') !== element)) {
+                return;
+            }
+            window.location.href = element.dataset.href;
+        });
+    });
+});
+</script>
